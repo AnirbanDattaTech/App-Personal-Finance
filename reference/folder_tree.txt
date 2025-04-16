@@ -1,0 +1,22 @@
+app-personal-finance/
+    combined_files.txt
+    create_db.py
+    create_file_data.py
+    db_utils.py
+    dummy_expenses.csv
+    expenses.db
+    expense_metadata.json
+    main.py
+    requirements.txt
+    styles.css
+    style_utils.py
+    reference/
+        folder_tree.txt
+        generate_tree.py
+        plotly_charts.py
+        prompts copy.txt
+        prompts.txt
+    tabs/
+        add_expense.py
+        reports.py
+        visuals.py

@@ -1,0 +1,173 @@
+# --- Database Files ---
+# Ignore the live SQLite database and its journal file
+# *.db
+# *.db-journal
+# *.sqlite
+# *.sqlite3
+# *.sqlite3-journal
+
+# --- Python ---
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+# Note: *.sqlite3 already covered above
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+# .python-version
+
+# pipenv
+# Pipfile.lock
+
+# UV
+# uv.lock
+
+# poetry
+# poetry.lock
+
+# pdm
+# pdm.lock
+.pdm.toml
+.pdm-python
+.pdm-build/
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments (Redundant entries removed, kept common ones)
+.env
+.venv/
+env/
+venv/
+ENV/
+# env.bak/ # Less common
+# venv.bak/ # Less common
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm / JetBrains (Keep .idea ignored)
+.idea/
+
+# PyPI configuration file
+.pypirc
+
+# Misc
+# env-path.txt # If used
+
+# --- OS Specific ---
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# --- IDE Specific ---
+.vscode/ # Keep ignoring VS Code settings
+
+# --- Streamlit Specific ---
+# Streamlit secrets file - VERY IMPORTANT TO IGNORE
+.streamlit/secrets.toml
+
+# Note: We are intentionally *NOT* ignoring the 'reference/' folder for now.
+# Note: We are intentionally *NOT* ignoring 'requirements.txt'.

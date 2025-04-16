@@ -1,0 +1,912 @@
+Date,Account,Category,Sub-category,Type,User,Amount
+2025-01-01,Anirban-ICICI,Rent,House Rent,Monthly House Rent - January,Anirban,30000
+2025-01-01,Anirban-SBI,Shopping,Meesho,Meesho Find - Clothing,Anirban,7740
+2025-01-01,Anirban-SBI,Shopping,Lifestyle,Lifestyle Store - Books,Anirban,5870
+2025-01-01,Anirban-ICICI,Household,Electricity Bill,Electricity Bill related expense,Anirban,1570
+2025-01-01,Anirban-SBI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,230
+2025-01-01,Anirban-ICICI,Travel,Commute,Metro Card Recharge - Airport,Anirban,150
+2025-01-01,Puspita-SBI,Household,Maid,Monthly Maid Salary - January,Puspita,2500
+2025-01-01,Puspita-SBI,Household,Electricity Bill,Electricity Bill related expense,Puspita,2240
+2025-01-01,Puspita-SBI,Grocery,Other,Other related expense,Puspita,2180
+2025-01-01,Puspita-SBI,Health,Doctor Visit,Consultation @ Manipal Hospital,Puspita,1200
+2025-01-01,Puspita-Bandhan,Beauty,Makeup,Sephora Purchase - Skincare,Puspita,770
+2025-01-01,Puspita-SBI,Utilities,Electricity,BESCOM Bill,Puspita,630
+2025-01-01,Puspita-SBI,Restaurant,Snacks,Snacks from Meghana Foods,Puspita,470
+2025-01-01,Puspita-SBI,Connectivity,Netflix,Netflix Subscription,Puspita,300
+2025-01-01,Puspita-SBI,Waste,Smoke,Smoke related expense,Puspita,270
+2025-01-02,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,2070
+2025-01-02,Anirban-SBI,Connectivity,Airtel WiFi,Airtel Broadband Bill - January,Anirban,820
+2025-01-02,Anirban-ICICI,Waste,Smoke,Smoke related expense,Anirban,670
+2025-01-02,Anirban-ICICI,Connectivity,Prime Video,Prime Subscription - January,Anirban,500
+2025-01-02,Puspita-Bandhan,Travel,Flight,Air India - Chennai,Puspita,4970
+2025-01-03,Anirban-ICICI,Shopping,Nykaa,Nykaa Beauty - Clothing,Anirban,5000
+2025-01-03,Anirban-SBI,Utilities,Maintenance,Apartment Monthly Maintenance,Anirban,3730
+2025-01-03,Anirban-ICICI,Beauty,Salon,Facial Treatment,Anirban,2480
+2025-01-03,Anirban-ICICI,Utilities,Electricity,BESCOM Bill - January,Anirban,1960
+2025-01-03,Anirban-ICICI,Shopping,Lifestyle,Lifestyle Store - Books,Anirban,1200
+2025-01-03,Anirban-ICICI,Restaurant,Snacks,Snacks from Third Wave Coffee,Anirban,310
+2025-01-03,Anirban-ICICI,Connectivity,Disney+ Hotstar,Hotstar Subscription - January,Anirban,300
+2025-01-03,Anirban-ICICI,Utilities,Garbage Collection,Monthly Waste Pickup Fee - January,Anirban,140
+2025-01-03,Puspita-Bandhan,Travel,Train,Tatkal Ticket - Chennai,Puspita,2050
+2025-01-03,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Puspita,1700
+2025-01-03,Puspita-SBI,Restaurant,Takeaway,Takeaway from Meghana Foods,Puspita,1540
+2025-01-03,Puspita-SBI,Restaurant,Cafe,Coffee/Snack at Third Wave Coffee,Puspita,570
+2025-01-03,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,100
+2025-01-03,Puspita-SBI,Utilities,Garbage Collection,Monthly Waste Pickup Fee,Puspita,80
+2025-01-04,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Anirban,1620
+2025-01-04,Puspita-SBI,Entertainment,Games,Games related expense,Puspita,1060
+2025-01-05,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - January,Anirban,3000
+2025-01-05,Anirban-SBI,Household,Plumbing,Local Plumber Fix,Anirban,2810
+2025-01-05,Anirban-SBI,Travel,Day Trip,Day Trip Expense,Anirban,2500
+2025-01-05,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Empire,Anirban,1190
+2025-01-05,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Third Wave Coffee,Anirban,1020
+2025-01-05,Anirban-SBI,Entertainment,Concerts,Concerts related expense,Anirban,980
+2025-01-05,Anirban-ICICI,Grocery,BigBasket,BB Order - Monthly Topup,Anirban,870
+2025-01-05,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Nagarjuna,Anirban,140
+2025-01-05,Puspita-SBI,Restaurant,Food Delivery,Swiggy Order - Empire,Puspita,1820
+2025-01-05,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Quick Need,Puspita,1780
+2025-01-05,Puspita-SBI,Restaurant,Food Delivery,Swiggy Order - Nagarjuna,Puspita,1480
+2025-01-05,Puspita-SBI,Health,Doctor Visit,Consultation @ Apollo Clinic,Puspita,1300
+2025-01-05,Puspita-SBI,Restaurant,Dine-in,Snacks @ Empire,Puspita,1050
+2025-01-05,Puspita-SBI,Connectivity,Prime Video,Prime Subscription,Puspita,500
+2025-01-05,Puspita-SBI,Restaurant,Drinks,Drinks from Truffles,Puspita,460
+2025-01-06,Anirban-ICICI,Utilities,Maintenance,Apartment Monthly Maintenance - January,Anirban,2370
+2025-01-06,Anirban-ICICI,Restaurant,Dine-in,Dinner @ Third Wave Coffee,Anirban,640
+2025-01-06,Puspita-SBI,Health,Medicines,Apollo Pharmacy / Local Chemist - Prescription,Puspita,1100
+2025-01-07,Anirban-SBI,Gifts & Donations,Temple,Temple related expense,Anirban,1100
+2025-01-07,Anirban-SBI,Connectivity,Netflix,Netflix Subscription - January,Anirban,800
+2025-01-07,Anirban-SBI,Utilities,Water,BWSSB Bill - January,Anirban,600
+2025-01-07,Anirban-SBI,Travel,Commute,Metro Card Recharge - Friend Place,Anirban,120
+2025-01-07,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Puspita,2400
+2025-01-07,Puspita-SBI,Shopping,Nykaa,Nykaa Beauty - Books,Puspita,1310
+2025-01-08,Anirban-ICICI,Beauty,Purplle,Purplle Order - Skincare,Anirban,4550
+2025-01-08,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Empire,Anirban,1470
+2025-01-08,Anirban-ICICI,Household,Plumbing,Local Plumber Fix,Anirban,560
+2025-01-08,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Anirban,460
+2025-01-08,Puspita-Bandhan,Travel,Flight,Indigo - Home,Puspita,9580
+2025-01-08,Puspita-SBI,Connectivity,Airtel WiFi,Airtel Broadband Bill,Puspita,1290
+2025-01-08,Puspita-SBI,Restaurant,Snacks,Snacks from Third Wave Coffee,Puspita,240
+2025-01-08,Puspita-Bandhan,Travel,Commute,Bus Ticket - Chennai,Puspita,60
+2025-01-09,Anirban-ICICI,Household,Electricity Bill,Electricity Bill related expense,Anirban,1240
+2025-01-09,Puspita-Bandhan,Travel,Flight,GoAir Booking - Home,Puspita,3480
+2025-01-09,Puspita-SBI,Household,Cleaning,Urban Company Cleaning,Puspita,810
+2025-01-10,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - January,Anirban,4000
+2025-01-10,Anirban-ICICI,Gifts & Donations,Temple,Temple related expense,Anirban,3110
+2025-01-10,Anirban-ICICI,Health,Lab Test,Test at Metropolis,Anirban,2170
+2025-01-10,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Quick Need,Anirban,1130
+2025-01-10,Anirban-ICICI,Waste,Smoke,Smoke related expense,Anirban,210
+2025-01-10,Puspita-SBI,Shopping,Max,Max Fashion - Home Needs,Puspita,6060
+2025-01-10,Puspita-SBI,Shopping,Meesho,Meesho Find - Clothing,Puspita,5320
+2025-01-10,Puspita-SBI,Insurance Premium,Vehicle Insurance,Vehicle Insurance related expense,Puspita,2840
+2025-01-10,Puspita-SBI,Restaurant,Food Delivery,Zomato Order - Toit,Puspita,740
+2025-01-10,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Puspita,540
+2025-01-11,Anirban-ICICI,Entertainment,Movies,Movies related expense,Anirban,2420
+2025-01-11,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Weekly Stock,Anirban,2140
+2025-01-11,Anirban-ICICI,Connectivity,Jio Recharge,Jio Mobile Recharge,Anirban,260
+2025-01-11,Puspita-SBI,Grocery,Other,Other related expense,Puspita,1970
+2025-01-11,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Quick Need,Puspita,1900
+2025-01-11,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Quick Need,Puspita,830
+2025-01-11,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Puspita,740
+2025-01-11,Puspita-SBI,Grocery,BigBasket,BB Order - Monthly Topup,Puspita,350
+2025-01-12,Anirban-ICICI,Shopping,Purple,Purplle Haul - Books,Anirban,3400
+2025-01-12,Anirban-SBI,Travel,Flight,GoAir Booking - Home,Anirban,3060
+2025-01-12,Anirban-ICICI,Connectivity,Airtel Mobile,Airtel Postpaid/Prepaid,Anirban,620
+2025-01-12,Anirban-ICICI,Travel,Parking Fee,Parking @ Orion Mall,Anirban,120
+2025-01-12,Puspita-SBI,Household,Furniture,Furniture related expense,Puspita,14770
+2025-01-12,Puspita-Bandhan,Travel,Train,IRCTC Booking - Mysore,Puspita,2310
+2025-01-12,Puspita-SBI,Household,Electrical Repairs,Electrician Visit,Puspita,2060
+2025-01-12,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Monthly Topup,Puspita,2040
+2025-01-12,Puspita-SBI,Household,Appliance Repair,AC Service/Fridge Repair,Puspita,1590
+2025-01-13,Anirban-ICICI,Travel,Flight,Indigo - Mall,Anirban,9720
+2025-01-13,Anirban-SBI,Shopping,Nykaa,Nykaa Beauty - Electronics,Anirban,7190
+2025-01-13,Anirban-SBI,Health,Lab Test,Test at Thyrocare,Anirban,3950
+2025-01-13,Anirban-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Anirban,2080
+2025-01-13,Anirban-ICICI,Entertainment,Games,Games related expense,Anirban,1170
+2025-01-13,Anirban-ICICI,Utilities,Gas Cylinder,Indane/HP Gas Booking,Anirban,1140
+2025-01-13,Anirban-SBI,Waste,Smoke,Smoke related expense,Anirban,910
+2025-01-13,Anirban-ICICI,Waste,Smoke,Smoke related expense,Anirban,820
+2025-01-13,Puspita-SBI,Health,Health Checkup,Health Checkup,Puspita,4540
+2025-01-13,Puspita-SBI,Health,Lab Test,Test at Local Lab,Puspita,2660
+2025-01-13,Puspita-SBI,Household,Plumbing,Local Plumber Fix,Puspita,2510
+2025-01-13,Puspita-SBI,Grocery,BigBasket,BB Order - Monthly Topup,Puspita,1800
+2025-01-13,Puspita-SBI,Household,Ironing,Local Presswala,Puspita,160
+2025-01-14,Anirban-ICICI,Grocery,BigBasket,BB Order - Quick Need,Anirban,810
+2025-01-14,Puspita-SBI,Investment,Stocks,Stocks related expense,Puspita,15900
+2025-01-14,Puspita-SBI,Investment,Stocks,Stocks related expense,Puspita,2670
+2025-01-15,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Nagarjuna,Anirban,1800
+2025-01-15,Anirban-ICICI,Restaurant,Dine-in,Lunch @ Toit,Anirban,1140
+2025-01-15,Anirban-ICICI,Health,Doctor Visit,Consultation @ Local GP,Anirban,1100
+2025-01-15,Anirban-SBI,Connectivity,Jio Recharge,Jio Mobile Recharge,Anirban,800
+2025-01-15,Anirban-ICICI,Shopping,Max,Max Fashion - Home Needs,Anirban,480
+2025-01-15,Puspita-SBI,Grocery,Other,Other related expense,Puspita,2200
+2025-01-15,Puspita-SBI,Connectivity,Airtel WiFi,Airtel Broadband Bill,Puspita,780
+2025-01-16,Anirban-ICICI,Gifts & Donations,Charity,Charity related expense,Anirban,4510
+2025-01-16,Anirban-ICICI,Insurance Premium,Vehicle Insurance,Vehicle Insurance related expense,Anirban,4350
+2025-01-16,Anirban-ICICI,Household,Electrical Repairs,Electrician Visit,Anirban,1650
+2025-01-16,Puspita-SBI,Grocery,Other,Other related expense,Puspita,2180
+2025-01-16,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Puspita,2080
+2025-01-16,Puspita-SBI,Household,Bike Maintenance,Bike Maintenance related expense,Puspita,1510
+2025-01-16,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Puspita,1280
+2025-01-16,Puspita-SBI,Restaurant,Takeaway,Takeaway from Nagarjuna,Puspita,1010
+2025-01-16,Puspita-SBI,Household,Kitchen Tools,Kitchen Tools related expense,Puspita,990
+2025-01-16,Puspita-SBI,Health,Medicines,Apollo Pharmacy / Local Chemist - Pain Relief,Puspita,890
+2025-01-16,Puspita-SBI,Waste,Smoke,Smoke related expense,Puspita,820
+2025-01-17,Anirban-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Anirban,700
+2025-01-17,Anirban-ICICI,Shopping,Meesho,Meesho Find - Clothing,Anirban,260
+2025-01-17,Puspita-Bandhan,Travel,Commute,Bus Ticket - Airport,Puspita,70
+2025-01-18,Anirban-SBI,Grocery,Other,Other related expense,Anirban,2320
+2025-01-18,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Anirban,1960
+2025-01-18,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,1610
+2025-01-18,Anirban-SBI,Health,Medicines,Apollo Pharmacy / Local Chemist - Prescription,Anirban,1290
+2025-01-18,Anirban-ICICI,Utilities,Gas Cylinder,Indane/HP Gas Booking,Anirban,1190
+2025-01-18,Puspita-SBI,Investment,FD/RD,FD/RD related expense,Puspita,8280
+2025-01-18,Puspita-SBI,Health,Lab Test,Test at Metropolis,Puspita,2430
+2025-01-18,Puspita-SBI,Restaurant,Takeaway,Takeaway from Third Wave Coffee,Puspita,1340
+2025-01-18,Puspita-SBI,Household,Bike Maintenance,Bike Maintenance related expense,Puspita,1090
+2025-01-18,Puspita-Bandhan,Travel,Day Trip,Day Trip Expense,Puspita,950
+2025-01-18,Puspita-SBI,Grocery,Other,Other related expense,Puspita,710
+2025-01-18,Puspita-SBI,Restaurant,Drinks,Drinks from CTR,Puspita,550
+2025-01-18,Puspita-SBI,Shopping,Max,Max Fashion - Books,Puspita,320
+2025-01-19,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Toit,Anirban,1390
+2025-01-19,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,620
+2025-01-19,Anirban-ICICI,Travel,Cab,Uber - Home,Anirban,250
+2025-01-19,Anirban-ICICI,Travel,Cab,Ola - Airport,Anirban,130
+2025-01-19,Puspita-SBI,Restaurant,Snacks,Snacks from Third Wave Coffee,Puspita,100
+2025-01-20,Anirban-ICICI,Travel,Vacation,Vacation Expense,Anirban,6850
+2025-01-20,Anirban-ICICI,Travel,Hotel/Stay,Stay at Local Hotel - Vacation,Anirban,3690
+2025-01-20,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Quick Need,Anirban,2240
+2025-01-20,Anirban-ICICI,Grocery,Other,Other related expense,Anirban,2220
+2025-01-20,Anirban-ICICI,Travel,Train,Tatkal Ticket - Friend Place,Anirban,1730
+2025-01-20,Anirban-ICICI,Restaurant,Dine-in,Snacks @ Meghana Foods,Anirban,1720
+2025-01-20,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Weekly Stock,Anirban,1060
+2025-01-20,Anirban-SBI,Restaurant,Cafe,Coffee/Snack at CTR,Anirban,560
+2025-01-20,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Anirban,530
+2025-01-20,Anirban-ICICI,Household,Ironing,Local Presswala,Anirban,350
+2025-01-20,Puspita-SBI,Shopping,Purple,Purplle Haul - Electronics,Puspita,5530
+2025-01-20,Puspita-SBI,Connectivity,Airtel WiFi,Airtel Broadband Bill,Puspita,1360
+2025-01-20,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Weekly Stock,Puspita,940
+2025-01-21,Puspita-Bandhan,Travel,Train,Tatkal Ticket - Airport,Puspita,1750
+2025-01-21,Puspita-SBI,Restaurant,Dine-in,Lunch @ Meghana Foods,Puspita,790
+2025-01-21,Puspita-SBI,Restaurant,Snacks,Snacks from Nagarjuna,Puspita,330
+2025-01-22,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Anirban,2440
+2025-01-22,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Anirban,2030
+2025-01-22,Anirban-ICICI,Grocery,BigBasket,BB Order - Weekly Stock,Anirban,1140
+2025-01-22,Puspita-SBI,Investment,FD/RD,FD/RD related expense,Puspita,11060
+2025-01-23,Anirban-ICICI,Entertainment,Games,Games related expense,Anirban,2360
+2025-01-23,Anirban-ICICI,Grocery,BigBasket,BB Order - Weekly Stock,Anirban,2270
+2025-01-23,Anirban-SBI,Grocery,Other,Other related expense,Anirban,530
+2025-01-23,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Anirban,450
+2025-01-23,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Puspita,2400
+2025-01-23,Puspita-SBI,Household,Cleaning,Urban Company Cleaning,Puspita,890
+2025-01-23,Puspita-SBI,Health,Lab Test,Test at Metropolis,Puspita,820
+2025-01-23,Puspita-SBI,Connectivity,Prime Video,Prime Subscription,Puspita,500
+2025-01-23,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,330
+2025-01-23,Puspita-SBI,Restaurant,Drinks,Drinks from Third Wave Coffee,Puspita,160
+2025-01-23,Puspita-SBI,Restaurant,Snacks,Snacks from CTR,Puspita,150
+2025-01-23,Puspita-SBI,Utilities,Garbage Collection,Monthly Waste Pickup Fee,Puspita,120
+2025-01-24,Anirban-ICICI,Travel,Vacation,Vacation Expense,Anirban,33060
+2025-01-24,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance related expense,Anirban,13610
+2025-01-24,Anirban-SBI,Shopping,Purple,Purplle Haul - Electronics,Anirban,6950
+2025-01-24,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Anirban,2350
+2025-01-24,Anirban-ICICI,Health,Doctor Visit,Consultation @ Apollo Clinic,Anirban,1210
+2025-01-24,Anirban-ICICI,Household,Pest Control,PCI Service,Anirban,500
+2025-01-24,Anirban-ICICI,Household,Ironing,Local Presswala,Anirban,490
+2025-01-24,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Puspita,1250
+2025-01-24,Puspita-SBI,Connectivity,Airtel WiFi,Airtel Broadband Bill,Puspita,1080
+2025-01-24,Puspita-SBI,Utilities,Water,BWSSB Bill,Puspita,600
+2025-01-24,Puspita-SBI,Restaurant,Snacks,Snacks from CTR,Puspita,490
+2025-01-24,Puspita-SBI,Grocery,Other,Other related expense,Puspita,400
+2025-01-24,Puspita-SBI,Connectivity,Jio Recharge,Jio Mobile Recharge,Puspita,370
+2025-01-25,Anirban-ICICI,Shopping,Myntra,Myntra Fashion - Electronics,Anirban,6750
+2025-01-25,Anirban-ICICI,Shopping,Max,Max Fashion - Books,Anirban,3480
+2025-01-25,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Anirban,1910
+2025-01-25,Anirban-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Anirban,1690
+2025-01-25,Anirban-SBI,Household,Plumbing,Local Plumber Fix,Anirban,1580
+2025-01-25,Anirban-ICICI,Grocery,BigBasket,BB Order - Monthly Topup,Anirban,1310
+2025-01-25,Anirban-SBI,Restaurant,Drinks,Drinks from CTR,Anirban,190
+2025-01-25,Anirban-ICICI,Connectivity,Prime Video,Prime Subscription,Anirban,150
+2025-01-25,Puspita-SBI,Grocery,BigBasket,BB Order - Quick Need,Puspita,2020
+2025-01-25,Puspita-SBI,Shopping,Flipkart,Flipkart Order - Home Needs,Puspita,1950
+2025-01-25,Puspita-SBI,Entertainment,Movies,Movies related expense,Puspita,840
+2025-01-25,Puspita-SBI,Household,Appliance Repair,AC Service/Fridge Repair,Puspita,730
+2025-01-26,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Toit,Anirban,1850
+2025-01-26,Anirban-SBI,Education,Workshops,Workshops related expense,Anirban,560
+2025-01-26,Anirban-SBI,Restaurant,Takeaway,Takeaway from CTR,Anirban,360
+2025-01-26,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Monthly Topup,Puspita,770
+2025-01-26,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Quick Need,Puspita,450
+2025-01-26,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,370
+2025-01-27,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Third Wave Coffee,Anirban,1640
+2025-01-27,Anirban-ICICI,Household,Cleaning,Urban Company Cleaning,Anirban,350
+2025-01-27,Anirban-SBI,Restaurant,Takeaway,Takeaway from Nagarjuna,Anirban,320
+2025-01-27,Anirban-SBI,Restaurant,Snacks,Snacks from CTR,Anirban,120
+2025-01-27,Puspita-SBI,Gifts & Donations,Temple,Temple related expense,Puspita,4420
+2025-01-27,Puspita-SBI,Household,Electrical Repairs,Electrician Visit,Puspita,2220
+2025-01-27,Puspita-SBI,Grocery,BigBasket,BB Order - Quick Need,Puspita,1700
+2025-01-27,Puspita-SBI,Connectivity,Airtel WiFi,Airtel Broadband Bill,Puspita,1380
+2025-01-27,Puspita-SBI,Health,Doctor Visit,Consultation @ Apollo Clinic,Puspita,1100
+2025-01-27,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Quick Need,Puspita,930
+2025-01-28,Anirban-SBI,Health,Doctor Visit,Consultation @ Local GP,Anirban,790
+2025-01-28,Puspita-Bandhan,Travel,Flight,Indigo - Chennai,Puspita,5420
+2025-01-28,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Weekly Stock,Puspita,2120
+2025-01-28,Puspita-SBI,Household,Kitchen Tools,Kitchen Tools related expense,Puspita,1330
+2025-01-28,Puspita-SBI,Utilities,Garbage Collection,Monthly Waste Pickup Fee,Puspita,140
+2025-01-29,Anirban-ICICI,Travel,Day Trip,Day Trip Expense,Anirban,1620
+2025-01-29,Anirban-ICICI,Connectivity,Airtel Mobile,Airtel Postpaid/Prepaid,Anirban,770
+2025-01-29,Anirban-ICICI,Restaurant,Snacks,Snacks from Toit,Anirban,530
+2025-01-29,Anirban-SBI,Connectivity,Netflix,Netflix Subscription,Anirban,300
+2025-01-29,Anirban-SBI,Restaurant,Drinks,Drinks from Truffles,Anirban,240
+2025-01-29,Anirban-SBI,Restaurant,Snacks,Snacks from Truffles,Anirban,220
+2025-01-29,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,630
+2025-01-30,Anirban-ICICI,Shopping,Max,Max Fashion - Electronics,Anirban,3960
+2025-01-30,Anirban-ICICI,Grocery,Other,Other related expense,Anirban,1950
+2025-01-30,Anirban-ICICI,Grocery,BigBasket,BB Order - Quick Need,Anirban,1840
+2025-01-30,Anirban-ICICI,Travel,Train,IRCTC Booking - Mysore,Anirban,1420
+2025-01-30,Anirban-SBI,Waste,Smoke,Smoke related expense,Anirban,530
+2025-01-30,Puspita-Bandhan,Travel,Flight,Indigo - Home,Puspita,6240
+2025-01-30,Puspita-Bandhan,Travel,Train,Tatkal Ticket - Friend Place,Puspita,1770
+2025-01-30,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Puspita,1640
+2025-01-30,Puspita-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Puspita,660
+2025-01-31,Anirban-ICICI,Shopping,Meesho,Meesho Find - Clothing,Anirban,5640
+2025-01-31,Anirban-SBI,Shopping,Myntra,Myntra Fashion - Home Needs,Anirban,5560
+2025-01-31,Anirban-ICICI,Health,Health Checkup,Health Checkup,Anirban,4490
+2025-01-31,Anirban-ICICI,Shopping,Flipkart,Flipkart Order - Home Needs,Anirban,3800
+2025-01-31,Anirban-SBI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,790
+2025-01-31,Anirban-SBI,Waste,Alcohol,Alcohol related expense,Anirban,620
+2025-01-31,Anirban-SBI,Waste,Smoke,Smoke related expense,Anirban,580
+2025-01-31,Anirban-ICICI,Waste,Alcohol,Alcohol related expense,Anirban,320
+2025-01-31,Anirban-ICICI,Connectivity,Prime Video,Prime Subscription,Anirban,300
+2025-01-31,Anirban-ICICI,Utilities,Garbage Collection,Monthly Waste Pickup Fee,Anirban,120
+2025-01-31,Puspita-SBI,Gifts & Donations,Temple,Temple related expense,Puspita,3660
+2025-01-31,Puspita-SBI,Health,Health Checkup,Health Checkup,Puspita,2800
+2025-01-31,Puspita-SBI,Connectivity,Airtel Mobile,Airtel Postpaid/Prepaid,Puspita,710
+2025-01-31,Puspita-SBI,Restaurant,Snacks,Snacks from Nagarjuna,Puspita,380
+2025-02-01,Anirban-ICICI,Rent,House Rent,Monthly House Rent - February,Anirban,30000
+2025-02-01,Anirban-ICICI,Travel,Hotel/Stay,Stay at Local Hotel - Vacation,Anirban,13590
+2025-02-01,Anirban-ICICI,Shopping,Lifestyle,Lifestyle Store - Books,Anirban,6790
+2025-02-01,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Third Wave Coffee,Anirban,1590
+2025-02-01,Anirban-ICICI,Shopping,Meesho,Meesho Find - Home Needs,Anirban,810
+2025-02-01,Puspita-SBI,Utilities,Maintenance,Apartment Monthly Maintenance,Puspita,2910
+2025-02-01,Puspita-SBI,Household,Maid,Monthly Maid Salary - February,Puspita,2500
+2025-02-01,Puspita-SBI,Household,Maid,Monthly Salary,Puspita,2500
+2025-02-01,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Puspita,2390
+2025-02-01,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Weekly Stock,Puspita,2240
+2025-02-01,Puspita-SBI,Restaurant,Takeaway,Takeaway from Third Wave Coffee,Puspita,1670
+2025-02-01,Puspita-SBI,Grocery,BigBasket,BB Order - Monthly Topup,Puspita,1230
+2025-02-01,Puspita-SBI,Connectivity,Disney+ Hotstar,Hotstar Subscription,Puspita,800
+2025-02-01,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,430
+2025-02-01,Puspita-Bandhan,Travel,Cab,Ola - Friend Place,Puspita,400
+2025-02-02,Anirban-SBI,Connectivity,Airtel WiFi,Airtel Broadband Bill - February,Anirban,1090
+2025-02-02,Anirban-SBI,Connectivity,Prime Video,Prime Subscription - February,Anirban,800
+2025-02-03,Anirban-SBI,Travel,Vacation,Vacation Expense,Anirban,16640
+2025-02-03,Anirban-ICICI,Entertainment,Concerts,Concerts related expense,Anirban,2460
+2025-02-03,Anirban-ICICI,Household,Electrical Repairs,Electrician Visit,Anirban,2390
+2025-02-03,Anirban-ICICI,Utilities,Electricity,BESCOM Bill - February,Anirban,610
+2025-02-03,Anirban-ICICI,Waste,Smoke,Smoke related expense,Anirban,470
+2025-02-03,Anirban-ICICI,Connectivity,Disney+ Hotstar,Hotstar Subscription - February,Anirban,150
+2025-02-03,Anirban-ICICI,Utilities,Garbage Collection,Monthly Waste Pickup Fee - February,Anirban,130
+2025-02-03,Puspita-SBI,Restaurant,Dine-in,Lunch @ Meghana Foods,Puspita,1530
+2025-02-03,Puspita-SBI,Grocery,Other,Other related expense,Puspita,1020
+2025-02-03,Puspita-SBI,Restaurant,Drinks,Drinks from Toit,Puspita,360
+2025-02-04,Anirban-ICICI,Grocery,Other,Other related expense,Anirban,1610
+2025-02-04,Anirban-ICICI,Entertainment,Movies,Movies related expense,Anirban,770
+2025-02-04,Anirban-ICICI,Connectivity,Prime Video,Prime Subscription,Anirban,300
+2025-02-04,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Empire,Anirban,110
+2025-02-04,Puspita-Bandhan,Travel,Hotel/Stay,Stay at OYO - Weekend Trip,Puspita,11000
+2025-02-04,Puspita-SBI,Investment,FD/RD,FD/RD related expense,Puspita,8180
+2025-02-04,Puspita-Bandhan,Travel,Flight,GoAir Booking - Mysore,Puspita,7260
+2025-02-04,Puspita-SBI,Shopping,Purple,Purplle Haul - Electronics,Puspita,6680
+2025-02-04,Puspita-SBI,Shopping,Max,Max Fashion - Electronics,Puspita,3710
+2025-02-04,Puspita-SBI,Utilities,Maintenance,Apartment Monthly Maintenance,Puspita,2530
+2025-02-04,Puspita-SBI,Entertainment,Games,Games related expense,Puspita,1390
+2025-02-04,Puspita-SBI,Grocery,Other,Other related expense,Puspita,660
+2025-02-05,Anirban-ICICI,Travel,Flight,Air India - Mysore,Anirban,4100
+2025-02-05,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - February,Anirban,3000
+2025-02-05,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Nagarjuna,Anirban,820
+2025-02-05,Puspita-SBI,Household,Appliance Repair,AC Service/Fridge Repair,Puspita,1140
+2025-02-05,Puspita-SBI,Connectivity,Airtel Mobile,Airtel Postpaid/Prepaid,Puspita,230
+2025-02-06,Anirban-SBI,Travel,Hotel/Stay,Stay at Local Hotel - Weekend Trip,Anirban,14310
+2025-02-06,Anirban-ICICI,Utilities,Maintenance,Apartment Monthly Maintenance - February,Anirban,2260
+2025-02-06,Anirban-ICICI,Household,Appliance Repair,AC Service/Fridge Repair,Anirban,1470
+2025-02-06,Anirban-ICICI,Entertainment,Movies,Movies related expense,Anirban,1460
+2025-02-06,Anirban-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Anirban,340
+2025-02-06,Anirban-ICICI,Restaurant,Snacks,Snacks from CTR,Anirban,310
+2025-02-06,Anirban-ICICI,Waste,Smoke,Smoke related expense,Anirban,230
+2025-02-07,Anirban-ICICI,Household,Car Maintenance,Car Maintenance related expense,Anirban,9190
+2025-02-07,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Truffles,Anirban,1470
+2025-02-07,Anirban-SBI,Travel,Train,Tatkal Ticket - Friend Place,Anirban,1450
+2025-02-07,Anirban-ICICI,Connectivity,Netflix,Netflix Subscription - February,Anirban,650
+2025-02-07,Anirban-SBI,Health,Medicines,Apollo Pharmacy / Local Chemist - Pain Relief,Anirban,650
+2025-02-07,Anirban-ICICI,Utilities,Water,BWSSB Bill - February,Anirban,550
+2025-02-07,Anirban-ICICI,Travel,Cab,Uber - Airport,Anirban,470
+2025-02-07,Anirban-ICICI,Restaurant,Drinks,Drinks from Meghana Foods,Anirban,120
+2025-02-07,Puspita-SBI,Household,Bike Maintenance,Bike Maintenance related expense,Puspita,1940
+2025-02-08,Anirban-SBI,Beauty,Purplle,Purplle Order - Makeup,Anirban,4260
+2025-02-08,Anirban-SBI,Household,Electrical Repairs,Electrician Visit,Anirban,2400
+2025-02-08,Anirban-ICICI,Health,Lab Test,Test at Local Lab,Anirban,1860
+2025-02-08,Anirban-ICICI,Entertainment,Movies,Movies related expense,Anirban,1200
+2025-02-08,Anirban-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Anirban,350
+2025-02-08,Puspita-SBI,Shopping,Amazon,Amazon Order - Books,Puspita,7510
+2025-02-08,Puspita-SBI,Shopping,Amazon,Amazon Order - Books,Puspita,6690
+2025-02-08,Puspita-SBI,Gifts & Donations,Charity,Charity related expense,Puspita,2920
+2025-02-08,Puspita-SBI,Grocery,Other,Other related expense,Puspita,2500
+2025-02-08,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Weekly Stock,Puspita,1710
+2025-02-08,Puspita-Bandhan,Travel,Hotel/Stay,Stay at Treebo - Weekend Trip,Puspita,1710
+2025-02-08,Puspita-SBI,Shopping,Flipkart,Flipkart Order - Clothing,Puspita,810
+2025-02-08,Puspita-SBI,Household,Ironing,Local Presswala,Puspita,460
+2025-02-08,Puspita-SBI,Restaurant,Cafe,Coffee/Snack at Nagarjuna,Puspita,450
+2025-02-09,Anirban-SBI,Household,Furniture,Furniture related expense,Anirban,23680
+2025-02-09,Anirban-ICICI,Household,Bike Maintenance,Bike Maintenance related expense,Anirban,1350
+2025-02-09,Anirban-SBI,Grocery,BigBasket,BB Order - Quick Need,Anirban,650
+2025-02-09,Anirban-SBI,Restaurant,Drinks,Drinks from Meghana Foods,Anirban,360
+2025-02-09,Puspita-Bandhan,Travel,Flight,Air India - Mall,Puspita,7950
+2025-02-09,Puspita-Bandhan,Beauty,Makeup,Sephora Purchase - Skincare,Puspita,2180
+2025-02-09,Puspita-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Puspita,1400
+2025-02-09,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Puspita,880
+2025-02-10,Anirban-ICICI,Household,Furniture,Furniture related expense,Anirban,19410
+2025-02-10,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - February,Anirban,4000
+2025-02-10,Anirban-SBI,Grocery,BigBasket,BB Order - Quick Need,Anirban,2370
+2025-02-10,Anirban-SBI,Restaurant,Dine-in,Lunch @ Truffles,Anirban,1380
+2025-02-10,Puspita-SBI,Grocery,Other,Other related expense,Puspita,810
+2025-02-11,Anirban-ICICI,Travel,Vacation,Vacation Expense,Anirban,23780
+2025-02-11,Anirban-ICICI,Household,Furniture,Furniture related expense,Anirban,9150
+2025-02-11,Anirban-SBI,Health,Health Checkup,Health Checkup,Anirban,3660
+2025-02-11,Anirban-ICICI,Entertainment,Games,Games related expense,Anirban,2050
+2025-02-11,Anirban-ICICI,Waste,Alcohol,Alcohol related expense,Anirban,710
+2025-02-11,Puspita-SBI,Insurance Premium,Health Insurance,Health Insurance related expense,Puspita,10610
+2025-02-11,Puspita-SBI,Gifts & Donations,Temple,Temple related expense,Puspita,4040
+2025-02-11,Puspita-SBI,Insurance Premium,Vehicle Insurance,Vehicle Insurance related expense,Puspita,3560
+2025-02-11,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Weekly Stock,Puspita,1190
+2025-02-11,Puspita-Bandhan,Beauty,Salon,Manicure @ Local Salon,Puspita,840
+2025-02-11,Puspita-SBI,Connectivity,Disney+ Hotstar,Hotstar Subscription,Puspita,650
+2025-02-11,Puspita-SBI,Connectivity,Netflix,Netflix Subscription,Puspita,650
+2025-02-11,Puspita-Bandhan,Beauty,Salon,Facial Treatment,Puspita,380
+2025-02-11,Puspita-SBI,Restaurant,Drinks,Drinks from Truffles,Puspita,360
+2025-02-11,Puspita-SBI,Household,Ironing,Local Presswala,Puspita,210
+2025-02-12,Anirban-ICICI,Travel,Hotel/Stay,Stay at Treebo - Vacation,Anirban,13420
+2025-02-12,Anirban-ICICI,Health,Medicines,Apollo Pharmacy / Local Chemist - Cold/Flu,Anirban,1250
+2025-02-12,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Weekly Stock,Anirban,340
+2025-02-12,Puspita-Bandhan,Travel,Train,IRCTC Booking - Airport,Puspita,930
+2025-02-12,Puspita-SBI,Health,Doctor Visit,Consultation @ Manipal Hospital,Puspita,660
+2025-02-13,Anirban-ICICI,Health,Health Checkup,Health Checkup,Anirban,7420
+2025-02-13,Anirban-ICICI,Travel,Flight,GoAir Booking - Mysore,Anirban,3950
+2025-02-13,Anirban-ICICI,Travel,Train,Tatkal Ticket - Mall,Anirban,2090
+2025-02-13,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at CTR,Anirban,380
+2025-02-13,Puspita-SBI,Shopping,Meesho,Meesho Find - Home Needs,Puspita,2730
+2025-02-13,Puspita-Bandhan,Travel,Day Trip,Day Trip Expense,Puspita,1280
+2025-02-13,Puspita-SBI,Restaurant,Drinks,Drinks from Toit,Puspita,550
+2025-02-13,Puspita-SBI,Grocery,BigBasket,BB Order - Monthly Topup,Puspita,220
+2025-02-14,Anirban-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Anirban,1770
+2025-02-14,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Empire,Anirban,1750
+2025-02-14,Anirban-ICICI,Connectivity,Netflix,Netflix Subscription,Anirban,300
+2025-02-14,Puspita-SBI,Shopping,Max,Max Fashion - Home Needs,Puspita,5180
+2025-02-14,Puspita-SBI,Health,Lab Test,Test at Local Lab,Puspita,1370
+2025-02-14,Puspita-SBI,Restaurant,Drinks,Drinks from Toit,Puspita,580
+2025-02-15,Anirban-ICICI,Grocery,BigBasket,BB Order - Monthly Topup,Anirban,1600
+2025-02-15,Anirban-ICICI,Restaurant,Drinks,Drinks from Toit,Anirban,490
+2025-02-15,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Toit,Anirban,320
+2025-02-15,Anirban-ICICI,Connectivity,Netflix,Netflix Subscription,Anirban,150
+2025-02-15,Puspita-SBI,Utilities,Water,BWSSB Bill,Puspita,380
+2025-02-16,Anirban-ICICI,Shopping,Max,Max Fashion - Home Needs,Anirban,1090
+2025-02-16,Anirban-SBI,Connectivity,Airtel Mobile,Airtel Postpaid/Prepaid,Anirban,590
+2025-02-16,Anirban-ICICI,Restaurant,Drinks,Drinks from Third Wave Coffee,Anirban,330
+2025-02-17,Anirban-ICICI,Shopping,Amazon,Amazon Order - Electronics,Anirban,7420
+2025-02-17,Anirban-SBI,Household,Car Maintenance,Car Maintenance related expense,Anirban,4690
+2025-02-17,Anirban-SBI,Household,Plumbing,Local Plumber Fix,Anirban,1240
+2025-02-17,Anirban-ICICI,Health,Doctor Visit,Consultation @ Local GP,Anirban,1010
+2025-02-17,Anirban-ICICI,Household,Electricity Bill,Electricity Bill related expense,Anirban,940
+2025-02-18,Anirban-ICICI,Health,Health Checkup,Health Checkup,Anirban,4750
+2025-02-18,Anirban-ICICI,Shopping,Flipkart,Flipkart Order - Electronics,Anirban,2000
+2025-02-18,Anirban-SBI,Health,Lab Test,Test at Thyrocare,Anirban,1630
+2025-02-18,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Weekly Stock,Anirban,1400
+2025-02-18,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Quick Need,Anirban,1020
+2025-02-18,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Toit,Anirban,140
+2025-02-18,Puspita-Bandhan,Beauty,Skincare,Body Shop Items - Haircare,Puspita,2040
+2025-02-18,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Monthly Topup,Puspita,1620
+2025-02-18,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Weekly Stock,Puspita,1560
+2025-02-18,Puspita-SBI,Grocery,BigBasket,BB Order - Quick Need,Puspita,1530
+2025-02-18,Puspita-SBI,Gifts & Donations,Friends,Friends related expense,Puspita,990
+2025-02-18,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,920
+2025-02-19,Anirban-SBI,Shopping,Lifestyle,Lifestyle Store - Electronics,Anirban,6910
+2025-02-19,Anirban-ICICI,Household,Electricity Bill,Electricity Bill related expense,Anirban,2220
+2025-02-19,Anirban-SBI,Health,Medicines,Apollo Pharmacy / Local Chemist - Prescription,Anirban,1000
+2025-02-19,Anirban-SBI,Waste,Smoke,Smoke related expense,Anirban,150
+2025-02-19,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Quick Need,Puspita,440
+2025-02-20,Anirban-SBI,Grocery,Local Store,Local Kirana Store - Quick Need,Anirban,1940
+2025-02-20,Anirban-ICICI,Travel,Cab,Rapido Auto - Airport,Anirban,130
+2025-02-21,Anirban-ICICI,Investment,Mutual Funds,Mutual Funds related expense,Anirban,14180
+2025-02-21,Anirban-SBI,Restaurant,Snacks,Snacks from Nagarjuna,Anirban,420
+2025-02-21,Anirban-ICICI,Restaurant,Snacks,Snacks from Third Wave Coffee,Anirban,240
+2025-02-22,Anirban-ICICI,Beauty,Salon,Manicure @ Local Salon,Anirban,4320
+2025-02-22,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Anirban,1400
+2025-02-22,Anirban-ICICI,Waste,Alcohol,Alcohol related expense,Anirban,790
+2025-02-22,Anirban-SBI,Beauty,Purplle,Purplle Order - Haircare,Anirban,410
+2025-02-22,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Cafe Coffee Day,Anirban,150
+2025-02-22,Anirban-ICICI,Travel,Commute,Bus Ticket - Chennai,Anirban,140
+2025-02-22,Puspita-SBI,Shopping,Lifestyle,Lifestyle Store - Electronics,Puspita,6600
+2025-02-22,Puspita-Bandhan,Travel,Flight,Indigo - Airport,Puspita,5440
+2025-02-22,Puspita-Bandhan,Beauty,Meesho,Meesho Beauty - Makeup,Puspita,4320
+2025-02-22,Puspita-SBI,Grocery,BigBasket,BB Order - Quick Need,Puspita,2270
+2025-02-22,Puspita-SBI,Restaurant,Food Delivery,Zomato Order - Empire,Puspita,1420
+2025-02-22,Puspita-SBI,Household,Electricity Bill,Electricity Bill related expense,Puspita,1020
+2025-02-23,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Third Wave Coffee,Anirban,1550
+2025-02-23,Anirban-ICICI,Health,Doctor Visit,Consultation @ Apollo Clinic,Anirban,1390
+2025-02-23,Anirban-ICICI,Travel,Day Trip,Day Trip Expense,Anirban,750
+2025-02-23,Anirban-ICICI,Shopping,Purple,Purplle Haul - Clothing,Anirban,220
+2025-02-23,Anirban-ICICI,Utilities,Garbage Collection,Monthly Waste Pickup Fee,Anirban,150
+2025-02-23,Puspita-SBI,Health,Health Checkup,Health Checkup,Puspita,3900
+2025-02-23,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Quick Need,Puspita,2480
+2025-02-23,Puspita-SBI,Health,Lab Test,Test at Metropolis,Puspita,1380
+2025-02-23,Puspita-SBI,Waste,Smoke,Smoke related expense,Puspita,650
+2025-02-23,Puspita-Bandhan,Beauty,Makeup,Sephora Purchase - Haircare,Puspita,550
+2025-02-24,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Weekly Stock,Anirban,1830
+2025-02-24,Anirban-ICICI,Restaurant,Dine-in,Lunch @ Meghana Foods,Anirban,1690
+2025-02-24,Anirban-SBI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,720
+2025-02-24,Anirban-SBI,Household,Ironing,Local Presswala,Anirban,310
+2025-02-25,Anirban-ICICI,Insurance Premium,Vehicle Insurance,Vehicle Insurance related expense,Anirban,11700
+2025-02-25,Anirban-ICICI,Household,Car Maintenance,Car Maintenance related expense,Anirban,9270
+2025-02-25,Anirban-ICICI,Health,Lab Test,Test at Local Lab,Anirban,2140
+2025-02-25,Anirban-SBI,Grocery,Local Store,Local Kirana Store - Quick Need,Anirban,2140
+2025-02-25,Anirban-ICICI,Grocery,Other,Other related expense,Anirban,1790
+2025-02-25,Anirban-ICICI,Restaurant,Food Delivery,Swiggy Order - Nagarjuna,Anirban,1480
+2025-02-25,Anirban-ICICI,Connectivity,Airtel WiFi,Airtel Broadband Bill,Anirban,1420
+2025-02-25,Anirban-ICICI,Health,Doctor Visit,Consultation @ Local GP,Anirban,620
+2025-02-25,Anirban-SBI,Connectivity,Airtel Mobile,Airtel Postpaid/Prepaid,Anirban,140
+2025-02-25,Puspita-SBI,Grocery,BigBasket,BB Order - Quick Need,Puspita,2270
+2025-02-25,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Puspita,1660
+2025-02-25,Puspita-Bandhan,Travel,Train,IRCTC Booking - Airport,Puspita,1510
+2025-02-25,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Puspita,310
+2025-02-25,Puspita-Bandhan,Travel,Cab,Rapido Auto - Office,Puspita,240
+2025-02-26,Anirban-SBI,Connectivity,Airtel Mobile,Airtel Postpaid/Prepaid,Anirban,570
+2025-02-26,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Truffles,Anirban,360
+2025-02-26,Anirban-ICICI,Travel,Parking Fee,Parking @ Orion Mall,Anirban,170
+2025-02-26,Anirban-ICICI,Travel,Parking Fee,Parking @ Forum Mall,Anirban,80
+2025-02-26,Puspita-SBI,Restaurant,Dine-in,Dinner @ Meghana Foods,Puspita,1600
+2025-02-26,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Puspita,1280
+2025-02-26,Puspita-SBI,Restaurant,Drinks,Drinks from Empire,Puspita,400
+2025-02-26,Puspita-SBI,Household,Ironing,Local Presswala,Puspita,180
+2025-02-27,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Anirban,1560
+2025-02-27,Anirban-ICICI,Household,Kitchen Tools,Kitchen Tools related expense,Anirban,1260
+2025-02-27,Anirban-ICICI,Restaurant,Snacks,Snacks from Nagarjuna,Anirban,420
+2025-02-27,Anirban-SBI,Restaurant,Cafe,Coffee/Snack at Cafe Coffee Day,Anirban,310
+2025-02-27,Anirban-SBI,Household,Cleaning,Urban Company Cleaning,Anirban,170
+2025-02-27,Anirban-ICICI,Travel,Parking Fee,Parking @ Office Basement,Anirban,60
+2025-02-27,Puspita-Bandhan,Travel,Vacation,Vacation Expense,Puspita,29020
+2025-02-27,Puspita-SBI,Restaurant,Dine-in,Snacks @ Toit,Puspita,1960
+2025-02-27,Puspita-SBI,Health,Lab Test,Test at Local Lab,Puspita,1640
+2025-02-27,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Puspita,960
+2025-02-27,Puspita-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Puspita,900
+2025-02-28,Anirban-ICICI,Household,Appliance Repair,AC Service/Fridge Repair,Anirban,2870
+2025-02-28,Anirban-SBI,Entertainment,Movies,Movies related expense,Anirban,1580
+2025-02-28,Anirban-ICICI,Household,Kitchen Tools,Kitchen Tools related expense,Anirban,1380
+2025-02-28,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Anirban,1130
+2025-02-28,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Anirban,640
+2025-02-28,Anirban-ICICI,Restaurant,Drinks,Drinks from Truffles,Anirban,470
+2025-02-28,Anirban-ICICI,Restaurant,Snacks,Snacks from CTR,Anirban,230
+2025-02-28,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Quick Need,Puspita,1970
+2025-02-28,Puspita-SBI,Household,Electricity Bill,Electricity Bill related expense,Puspita,1860
+2025-02-28,Puspita-SBI,Health,Doctor Visit,Consultation @ Manipal Hospital,Puspita,1210
+2025-02-28,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Quick Need,Puspita,740
+2025-03-01,Anirban-ICICI,Rent,House Rent,Monthly House Rent - March,Anirban,30000
+2025-03-01,Anirban-ICICI,Utilities,Maintenance,Apartment Monthly Maintenance,Anirban,2280
+2025-03-01,Anirban-ICICI,Entertainment,Games,Games related expense,Anirban,1480
+2025-03-01,Anirban-SBI,Travel,Parking Fee,Parking @ Office Basement,Anirban,240
+2025-03-01,Anirban-ICICI,Connectivity,Jio Recharge,Jio Mobile Recharge,Anirban,150
+2025-03-01,Puspita-SBI,Gifts & Donations,Temple,Temple related expense,Puspita,3710
+2025-03-01,Puspita-SBI,Household,Maid,Monthly Maid Salary - March,Puspita,2500
+2025-03-01,Puspita-SBI,Restaurant,Takeaway,Takeaway from Empire,Puspita,1660
+2025-03-01,Puspita-SBI,Health,Medicines,Apollo Pharmacy / Local Chemist - Prescription,Puspita,1240
+2025-03-01,Puspita-SBI,Grocery,Other,Other related expense,Puspita,670
+2025-03-01,Puspita-SBI,Connectivity,Netflix,Netflix Subscription,Puspita,650
+2025-03-02,Anirban-ICICI,Shopping,Nykaa,Nykaa Beauty - Books,Anirban,4290
+2025-03-02,Anirban-ICICI,Entertainment,Concerts,Concerts related expense,Anirban,1990
+2025-03-02,Anirban-SBI,Health,Lab Test,Test at Local Lab,Anirban,1570
+2025-03-02,Anirban-SBI,Grocery,Other,Other related expense,Anirban,970
+2025-03-02,Anirban-ICICI,Connectivity,Airtel WiFi,Airtel Broadband Bill - March,Anirban,930
+2025-03-02,Anirban-ICICI,Connectivity,Prime Video,Prime Subscription - March,Anirban,800
+2025-03-02,Anirban-SBI,Connectivity,Airtel Mobile,Airtel Postpaid/Prepaid,Anirban,340
+2025-03-02,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Weekly Stock,Anirban,220
+2025-03-02,Puspita-SBI,Insurance Premium,Vehicle Insurance,Vehicle Insurance related expense,Puspita,12470
+2025-03-02,Puspita-SBI,Shopping,Meesho,Meesho Find - Home Needs,Puspita,6060
+2025-03-02,Puspita-SBI,Grocery,Other,Other related expense,Puspita,2110
+2025-03-02,Puspita-SBI,Shopping,Meesho,Meesho Find - Home Needs,Puspita,1240
+2025-03-02,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Monthly Topup,Puspita,910
+2025-03-02,Puspita-SBI,Restaurant,Takeaway,Takeaway from Meghana Foods,Puspita,670
+2025-03-03,Anirban-SBI,Connectivity,Disney+ Hotstar,Hotstar Subscription - March,Anirban,800
+2025-03-03,Anirban-ICICI,Utilities,Electricity,BESCOM Bill - March,Anirban,600
+2025-03-03,Anirban-ICICI,Utilities,Garbage Collection,Monthly Waste Pickup Fee - March,Anirban,110
+2025-03-03,Puspita-SBI,Household,Appliance Repair,AC Service/Fridge Repair,Puspita,1520
+2025-03-03,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,660
+2025-03-03,Puspita-SBI,Household,Pest Control,PCI Service,Puspita,430
+2025-03-04,Anirban-ICICI,Household,Electrical Repairs,Electrician Visit,Anirban,1920
+2025-03-04,Anirban-SBI,Restaurant,Takeaway,Takeaway from Nagarjuna,Anirban,1830
+2025-03-04,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Quick Need,Anirban,510
+2025-03-04,Anirban-SBI,Household,Ironing,Local Presswala,Anirban,430
+2025-03-04,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Quick Need,Puspita,2050
+2025-03-04,Puspita-Bandhan,Travel,Train,Tatkal Ticket - Mysore,Puspita,1280
+2025-03-04,Puspita-SBI,Household,Plumbing,Local Plumber Fix,Puspita,380
+2025-03-04,Puspita-SBI,Shopping,Purple,Purplle Haul - Books,Puspita,290
+2025-03-05,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - March,Anirban,3000
+2025-03-05,Anirban-SBI,Entertainment,Concerts,Concerts related expense,Anirban,1790
+2025-03-05,Anirban-ICICI,Grocery,BigBasket,BB Order - Monthly Topup,Anirban,1480
+2025-03-05,Anirban-ICICI,Connectivity,Netflix,Netflix Subscription,Anirban,800
+2025-03-05,Anirban-ICICI,Restaurant,Food Delivery,Swiggy Order - Nagarjuna,Anirban,700
+2025-03-05,Anirban-SBI,Health,Lab Test,Test at Metropolis,Anirban,590
+2025-03-05,Anirban-ICICI,Household,Electrical Repairs,Electrician Visit,Anirban,550
+2025-03-05,Anirban-ICICI,Restaurant,Drinks,Drinks from Nagarjuna,Anirban,410
+2025-03-05,Anirban-ICICI,Connectivity,Jio Recharge,Jio Mobile Recharge,Anirban,350
+2025-03-05,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Cafe Coffee Day,Anirban,290
+2025-03-05,Anirban-ICICI,Travel,Parking Fee,Parking @ Orion Mall,Anirban,80
+2025-03-05,Puspita-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Puspita,1540
+2025-03-05,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Puspita,1320
+2025-03-05,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Monthly Topup,Puspita,660
+2025-03-05,Puspita-SBI,Utilities,Garbage Collection,Monthly Waste Pickup Fee,Puspita,90
+2025-03-06,Anirban-ICICI,Utilities,Maintenance,Apartment Monthly Maintenance - March,Anirban,3510
+2025-03-06,Anirban-ICICI,Grocery,Other,Other related expense,Anirban,1670
+2025-03-06,Anirban-ICICI,Shopping,Lifestyle,Lifestyle Store - Clothing,Anirban,780
+2025-03-06,Anirban-ICICI,Household,Electrical Repairs,Electrician Visit,Anirban,530
+2025-03-06,Puspita-SBI,Shopping,Purple,Purplle Haul - Home Needs,Puspita,7110
+2025-03-06,Puspita-Bandhan,Travel,Train,Tatkal Ticket - Home,Puspita,1830
+2025-03-06,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Weekly Stock,Puspita,970
+2025-03-07,Anirban-SBI,Household,Furniture,Furniture related expense,Anirban,7070
+2025-03-07,Anirban-ICICI,Insurance Premium,Life Insurance,Life Insurance related expense,Anirban,2460
+2025-03-07,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,1940
+2025-03-07,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Quick Need,Anirban,1130
+2025-03-07,Anirban-ICICI,Utilities,Water,BWSSB Bill - March,Anirban,530
+2025-03-07,Anirban-ICICI,Connectivity,Netflix,Netflix Subscription - March,Anirban,150
+2025-03-07,Puspita-SBI,Health,Doctor Visit,Consultation @ Manipal Hospital,Puspita,820
+2025-03-07,Puspita-SBI,Restaurant,Snacks,Snacks from Truffles,Puspita,560
+2025-03-07,Puspita-SBI,Household,Pest Control,PCI Service,Puspita,180
+2025-03-08,Anirban-SBI,Insurance Premium,Vehicle Insurance,Vehicle Insurance related expense,Anirban,9570
+2025-03-08,Anirban-SBI,Household,Furniture,Furniture related expense,Anirban,4470
+2025-03-08,Anirban-ICICI,Shopping,Myntra,Myntra Fashion - Home Needs,Anirban,4170
+2025-03-08,Anirban-ICICI,Household,Electrical Repairs,Electrician Visit,Anirban,2650
+2025-03-08,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Weekly Stock,Anirban,1890
+2025-03-08,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Anirban,1720
+2025-03-08,Anirban-SBI,Utilities,Gas Cylinder,Indane/HP Gas Booking,Anirban,1000
+2025-03-08,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Meghana Foods,Anirban,530
+2025-03-08,Anirban-ICICI,Connectivity,Disney+ Hotstar,Hotstar Subscription,Anirban,500
+2025-03-08,Anirban-ICICI,Connectivity,Disney+ Hotstar,Hotstar Subscription,Anirban,150
+2025-03-08,Puspita-SBI,Gifts & Donations,Family,Family related expense,Puspita,2310
+2025-03-08,Puspita-SBI,Insurance Premium,Life Insurance,Life Insurance related expense,Puspita,2230
+2025-03-08,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Quick Need,Puspita,1190
+2025-03-08,Puspita-SBI,Entertainment,Concerts,Concerts related expense,Puspita,1130
+2025-03-09,Anirban-SBI,Shopping,Amazon,Amazon Order - Books,Anirban,6910
+2025-03-09,Anirban-ICICI,Travel,Hotel/Stay,Stay at Treebo - Vacation,Anirban,4970
+2025-03-09,Anirban-SBI,Grocery,BigBasket,BB Order - Monthly Topup,Anirban,1940
+2025-03-09,Anirban-ICICI,Utilities,Electricity,BESCOM Bill,Anirban,1890
+2025-03-09,Anirban-ICICI,Entertainment,Movies,Movies related expense,Anirban,1160
+2025-03-09,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Meghana Foods,Anirban,410
+2025-03-09,Anirban-ICICI,Beauty,Salon,Manicure @ Local Salon,Anirban,360
+2025-03-09,Anirban-ICICI,Travel,Parking Fee,Parking @ Office Basement,Anirban,140
+2025-03-09,Puspita-SBI,Health,Health Checkup,Health Checkup,Puspita,3270
+2025-03-09,Puspita-SBI,Education,Workshops,Workshops related expense,Puspita,2540
+2025-03-09,Puspita-SBI,Restaurant,Dine-in,Lunch @ CTR,Puspita,1060
+2025-03-09,Puspita-SBI,Restaurant,Cafe,Coffee/Snack at Truffles,Puspita,600
+2025-03-09,Puspita-SBI,Restaurant,Drinks,Drinks from Nagarjuna,Puspita,500
+2025-03-09,Puspita-SBI,Waste,Smoke,Smoke related expense,Puspita,240
+2025-03-10,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - March,Anirban,4000
+2025-03-10,Anirban-ICICI,Utilities,Maintenance,Apartment Monthly Maintenance,Anirban,2920
+2025-03-10,Anirban-SBI,Gifts & Donations,Temple,Temple related expense,Anirban,2830
+2025-03-10,Anirban-ICICI,Grocery,Other,Other related expense,Anirban,2250
+2025-03-10,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Weekly Stock,Anirban,1820
+2025-03-10,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,1480
+2025-03-10,Anirban-SBI,Restaurant,Drinks,Drinks from Third Wave Coffee,Anirban,450
+2025-03-10,Puspita-SBI,Health,Health Checkup,Health Checkup,Puspita,7280
+2025-03-10,Puspita-SBI,Gifts & Donations,Friends,Friends related expense,Puspita,2440
+2025-03-10,Puspita-SBI,Shopping,Lifestyle,Lifestyle Store - Electronics,Puspita,1380
+2025-03-10,Puspita-SBI,Grocery,Other,Other related expense,Puspita,1200
+2025-03-10,Puspita-SBI,Household,Electricity Bill,Electricity Bill related expense,Puspita,960
+2025-03-11,Anirban-SBI,Shopping,Purple,Purplle Haul - Home Needs,Anirban,5380
+2025-03-11,Anirban-SBI,Restaurant,Drinks,Drinks from CTR,Anirban,190
+2025-03-12,Anirban-SBI,Shopping,Purple,Purplle Haul - Electronics,Anirban,4650
+2025-03-12,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Truffles,Anirban,340
+2025-03-12,Puspita-SBI,Grocery,Other,Other related expense,Puspita,2170
+2025-03-12,Puspita-SBI,Restaurant,Cafe,Coffee/Snack at Cafe Coffee Day,Puspita,230
+2025-03-12,Puspita-SBI,Household,Ironing,Local Presswala,Puspita,120
+2025-03-13,Anirban-ICICI,Travel,Vacation,Vacation Expense,Anirban,40310
+2025-03-13,Anirban-ICICI,Insurance Premium,Vehicle Insurance,Vehicle Insurance related expense,Anirban,10950
+2025-03-13,Anirban-SBI,Shopping,Amazon,Amazon Order - Books,Anirban,4780
+2025-03-13,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Anirban,1490
+2025-03-13,Anirban-ICICI,Household,Electrical Repairs,Electrician Visit,Anirban,1400
+2025-03-13,Anirban-ICICI,Restaurant,Drinks,Drinks from Toit,Anirban,420
+2025-03-13,Puspita-SBI,Health,Lab Test,Test at Metropolis,Puspita,3520
+2025-03-13,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Puspita,1730
+2025-03-13,Puspita-SBI,Entertainment,Games,Games related expense,Puspita,1570
+2025-03-13,Puspita-SBI,Restaurant,Drinks,Drinks from CTR,Puspita,200
+2025-03-14,Anirban-ICICI,Connectivity,Disney+ Hotstar,Hotstar Subscription,Anirban,800
+2025-03-14,Anirban-ICICI,Travel,Cab,Uber - Mysore,Anirban,560
+2025-03-14,Anirban-ICICI,Utilities,Garbage Collection,Monthly Waste Pickup Fee,Anirban,60
+2025-03-14,Puspita-SBI,Health,Lab Test,Test at Local Lab,Puspita,2270
+2025-03-14,Puspita-Bandhan,Travel,Train,IRCTC Booking - Office,Puspita,1520
+2025-03-14,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Puspita,620
+2025-03-14,Puspita-SBI,Restaurant,Cafe,Coffee/Snack at Empire,Puspita,350
+2025-03-14,Puspita-SBI,Waste,Smoke,Smoke related expense,Puspita,330
+2025-03-15,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Anirban,2450
+2025-03-15,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Truffles,Anirban,600
+2025-03-15,Anirban-ICICI,Travel,Commute,Metro Card Recharge - Chennai,Anirban,120
+2025-03-15,Puspita-SBI,Health,Health Checkup,Health Checkup,Puspita,5420
+2025-03-15,Puspita-SBI,Health,Lab Test,Test at Thyrocare,Puspita,2380
+2025-03-15,Puspita-Bandhan,Beauty,Nykaa,Nykaa Order - Makeup,Puspita,1780
+2025-03-15,Puspita-SBI,Restaurant,Takeaway,Takeaway from Toit,Puspita,1760
+2025-03-15,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Puspita,1560
+2025-03-15,Puspita-SBI,Health,Doctor Visit,Consultation @ Manipal Hospital,Puspita,1460
+2025-03-15,Puspita-Bandhan,Travel,Train,Tatkal Ticket - Home,Puspita,1070
+2025-03-15,Puspita-SBI,Entertainment,Concerts,Concerts related expense,Puspita,570
+2025-03-16,Anirban-ICICI,Education,Books,Books related expense,Anirban,8460
+2025-03-16,Anirban-SBI,Shopping,Meesho,Meesho Find - Electronics,Anirban,4420
+2025-03-16,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Anirban,2470
+2025-03-16,Anirban-ICICI,Grocery,BigBasket,BB Order - Quick Need,Anirban,2360
+2025-03-16,Anirban-ICICI,Restaurant,Takeaway,Takeaway from CTR,Anirban,1620
+2025-03-16,Anirban-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Anirban,1530
+2025-03-16,Puspita-Bandhan,Travel,Hotel/Stay,Stay at OYO - Vacation,Puspita,4060
+2025-03-16,Puspita-SBI,Connectivity,Disney+ Hotstar,Hotstar Subscription,Puspita,800
+2025-03-16,Puspita-Bandhan,Beauty,Salon,Facial Treatment,Puspita,500
+2025-03-16,Puspita-SBI,Restaurant,Food Delivery,Swiggy Order - Empire,Puspita,500
+2025-03-17,Anirban-SBI,Beauty,Skincare,Body Shop Items - Haircare,Anirban,4780
+2025-03-17,Puspita-Bandhan,Beauty,Purplle,Purplle Order - Skincare,Puspita,1510
+2025-03-17,Puspita-SBI,Utilities,Electricity,BESCOM Bill,Puspita,500
+2025-03-17,Puspita-SBI,Health,Medicines,Apollo Pharmacy / Local Chemist - Prescription,Puspita,360
+2025-03-18,Anirban-ICICI,Travel,Vacation,Vacation Expense,Anirban,39560
+2025-03-18,Anirban-SBI,Health,Lab Test,Test at Metropolis,Anirban,2620
+2025-03-18,Anirban-SBI,Household,Appliance Repair,AC Service/Fridge Repair,Anirban,2440
+2025-03-18,Anirban-ICICI,Health,Doctor Visit,Consultation @ Local GP,Anirban,1420
+2025-03-18,Anirban-SBI,Utilities,Gas Cylinder,Indane/HP Gas Booking,Anirban,1010
+2025-03-18,Anirban-ICICI,Restaurant,Snacks,Snacks from Meghana Foods,Anirban,480
+2025-03-18,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Nagarjuna,Anirban,160
+2025-03-18,Anirban-ICICI,Travel,Parking Fee,Parking @ Forum Mall,Anirban,140
+2025-03-18,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Puspita,2470
+2025-03-18,Puspita-SBI,Grocery,BigBasket,BB Order - Quick Need,Puspita,2250
+2025-03-18,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Quick Need,Puspita,1750
+2025-03-18,Puspita-SBI,Grocery,Other,Other related expense,Puspita,780
+2025-03-18,Puspita-SBI,Household,Ironing,Local Presswala,Puspita,220
+2025-03-19,Anirban-SBI,Household,Car Maintenance,Car Maintenance related expense,Anirban,8760
+2025-03-19,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Anirban,2370
+2025-03-19,Anirban-ICICI,Waste,Smoke,Smoke related expense,Anirban,650
+2025-03-19,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Puspita,1410
+2025-03-20,Anirban-ICICI,Shopping,Flipkart,Flipkart Order - Books,Anirban,6040
+2025-03-20,Anirban-SBI,Household,Car Maintenance,Car Maintenance related expense,Anirban,2940
+2025-03-20,Anirban-SBI,Connectivity,Disney+ Hotstar,Hotstar Subscription,Anirban,500
+2025-03-20,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Anirban,460
+2025-03-20,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Truffles,Anirban,400
+2025-03-20,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Weekly Stock,Puspita,2150
+2025-03-20,Puspita-SBI,Entertainment,Movies,Movies related expense,Puspita,1640
+2025-03-20,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Puspita,260
+2025-03-20,Puspita-Bandhan,Travel,Cab,Uber - Chennai,Puspita,220
+2025-03-20,Puspita-Bandhan,Travel,Commute,Metro Card Recharge - Home,Puspita,40
+2025-03-21,Anirban-ICICI,Insurance Premium,Vehicle Insurance,Vehicle Insurance related expense,Anirban,9310
+2025-03-21,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Anirban,2200
+2025-03-21,Anirban-SBI,Grocery,Local Store,Local Kirana Store - Weekly Stock,Anirban,1170
+2025-03-21,Anirban-ICICI,Household,Cleaning,Urban Company Cleaning,Anirban,300
+2025-03-21,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Puspita,2240
+2025-03-21,Puspita-SBI,Health,Lab Test,Test at Thyrocare,Puspita,1080
+2025-03-21,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Puspita,1030
+2025-03-22,Anirban-ICICI,Gifts & Donations,Family,Family related expense,Anirban,2670
+2025-03-22,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Monthly Topup,Anirban,2070
+2025-03-22,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Weekly Stock,Anirban,1430
+2025-03-22,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Puspita,2390
+2025-03-22,Puspita-SBI,Grocery,Other,Other related expense,Puspita,2310
+2025-03-22,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Weekly Stock,Puspita,1560
+2025-03-22,Puspita-SBI,Household,Appliance Repair,AC Service/Fridge Repair,Puspita,1430
+2025-03-22,Puspita-SBI,Education,Online Courses,Online Courses related expense,Puspita,1340
+2025-03-22,Puspita-SBI,Health,Lab Test,Test at Metropolis,Puspita,680
+2025-03-23,Anirban-ICICI,Gifts & Donations,Friends,Friends related expense,Anirban,2820
+2025-03-23,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,1820
+2025-03-23,Anirban-SBI,Connectivity,Jio Recharge,Jio Mobile Recharge,Anirban,800
+2025-03-23,Anirban-SBI,Household,Plumbing,Local Plumber Fix,Anirban,610
+2025-03-23,Anirban-SBI,Household,Pest Control,PCI Service,Anirban,440
+2025-03-23,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Meghana Foods,Anirban,350
+2025-03-23,Anirban-ICICI,Household,Ironing,Local Presswala,Anirban,170
+2025-03-23,Anirban-SBI,Travel,Parking Fee,Parking @ Office Basement,Anirban,100
+2025-03-23,Puspita-SBI,Shopping,Flipkart,Flipkart Order - Electronics,Puspita,4140
+2025-03-23,Puspita-SBI,Grocery,Other,Other related expense,Puspita,2030
+2025-03-23,Puspita-SBI,Health,Lab Test,Test at Thyrocare,Puspita,1660
+2025-03-23,Puspita-SBI,Health,Medicines,Apollo Pharmacy / Local Chemist - Cold/Flu,Puspita,1150
+2025-03-23,Puspita-Bandhan,Beauty,Skincare,Body Shop Items - Makeup,Puspita,1100
+2025-03-23,Puspita-SBI,Household,Cleaning,Urban Company Cleaning,Puspita,510
+2025-03-24,Anirban-ICICI,Household,Car Maintenance,Car Maintenance related expense,Anirban,4250
+2025-03-24,Anirban-ICICI,Beauty,Meesho,Meesho Beauty - Skincare,Anirban,3370
+2025-03-24,Anirban-ICICI,Household,Electrical Repairs,Electrician Visit,Anirban,1760
+2025-03-24,Anirban-ICICI,Travel,Train,Tatkal Ticket - Airport,Anirban,1430
+2025-03-24,Anirban-SBI,Restaurant,Snacks,Snacks from Truffles,Anirban,260
+2025-03-24,Anirban-ICICI,Connectivity,Prime Video,Prime Subscription,Anirban,150
+2025-03-24,Puspita-SBI,Investment,Stocks,Stocks related expense,Puspita,10430
+2025-03-24,Puspita-SBI,Household,Car Maintenance,Car Maintenance related expense,Puspita,6880
+2025-03-24,Puspita-SBI,Investment,FD/RD,FD/RD related expense,Puspita,3320
+2025-03-24,Puspita-SBI,Household,Electrical Repairs,Electrician Visit,Puspita,2180
+2025-03-24,Puspita-SBI,Shopping,Nykaa,Nykaa Beauty - Electronics,Puspita,820
+2025-03-24,Puspita-SBI,Restaurant,Dine-in,Lunch @ Third Wave Coffee,Puspita,590
+2025-03-24,Puspita-SBI,Restaurant,Drinks,Drinks from Truffles,Puspita,230
+2025-03-25,Anirban-ICICI,Household,Car Maintenance,Car Maintenance related expense,Anirban,3460
+2025-03-25,Anirban-SBI,Beauty,Skincare,Body Shop Items - Makeup,Anirban,2710
+2025-03-25,Anirban-ICICI,Health,Medicines,Apollo Pharmacy / Local Chemist - Cold/Flu,Anirban,1110
+2025-03-25,Anirban-ICICI,Restaurant,Dine-in,Lunch @ Toit,Anirban,1080
+2025-03-25,Anirban-ICICI,Health,Doctor Visit,Consultation @ Apollo Clinic,Anirban,1000
+2025-03-25,Anirban-ICICI,Waste,Smoke,Smoke related expense,Anirban,950
+2025-03-25,Anirban-ICICI,Restaurant,Dine-in,Coffee @ Truffles,Anirban,770
+2025-03-25,Puspita-SBI,Insurance Premium,Life Insurance,Life Insurance related expense,Puspita,8980
+2025-03-25,Puspita-SBI,Education,Online Courses,Online Courses related expense,Puspita,6890
+2025-03-25,Puspita-SBI,Gifts & Donations,Family,Family related expense,Puspita,2530
+2025-03-25,Puspita-SBI,Household,Kitchen Tools,Kitchen Tools related expense,Puspita,1390
+2025-03-25,Puspita-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Puspita,1030
+2025-03-26,Anirban-ICICI,Travel,Train,Tatkal Ticket - Airport,Anirban,2220
+2025-03-26,Anirban-SBI,Health,Lab Test,Test at Metropolis,Anirban,1790
+2025-03-26,Anirban-ICICI,Restaurant,Dine-in,Snacks @ Empire,Anirban,1520
+2025-03-26,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Anirban,1260
+2025-03-26,Anirban-SBI,Restaurant,Snacks,Snacks from Nagarjuna,Anirban,420
+2025-03-26,Anirban-SBI,Health,Medicines,Apollo Pharmacy / Local Chemist - Cold/Flu,Anirban,320
+2025-03-26,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at CTR,Anirban,240
+2025-03-26,Puspita-SBI,Health,Health Checkup,Health Checkup,Puspita,5970
+2025-03-26,Puspita-SBI,Gifts & Donations,Friends,Friends related expense,Puspita,4390
+2025-03-26,Puspita-SBI,Household,Appliance Repair,AC Service/Fridge Repair,Puspita,2140
+2025-03-26,Puspita-SBI,Household,Appliance Repair,AC Service/Fridge Repair,Puspita,2100
+2025-03-26,Puspita-SBI,Utilities,Garbage Collection,Monthly Waste Pickup Fee,Puspita,80
+2025-03-27,Anirban-ICICI,Waste,Alcohol,Alcohol related expense,Anirban,950
+2025-03-27,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Monthly Topup,Anirban,450
+2025-03-27,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Weekly Stock,Puspita,2070
+2025-03-27,Puspita-SBI,Health,Doctor Visit,Consultation @ Local GP,Puspita,740
+2025-03-27,Puspita-SBI,Restaurant,Cafe,Coffee/Snack at Meghana Foods,Puspita,510
+2025-03-27,Puspita-SBI,Household,Kitchen Tools,Kitchen Tools related expense,Puspita,430
+2025-03-28,Anirban-SBI,Shopping,Amazon,Amazon Order - Clothing,Anirban,5120
+2025-03-28,Anirban-ICICI,Health,Lab Test,Test at Metropolis,Anirban,2370
+2025-03-28,Anirban-ICICI,Shopping,Nykaa,Nykaa Beauty - Home Needs,Anirban,2130
+2025-03-28,Anirban-SBI,Grocery,Zepto,Zepto Quick Order - Weekly Stock,Anirban,1700
+2025-03-28,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Truffles,Anirban,1680
+2025-03-28,Anirban-ICICI,Restaurant,Dine-in,Snacks @ Nagarjuna,Anirban,1320
+2025-03-28,Anirban-ICICI,Beauty,Purplle,Purplle Order - Skincare,Anirban,1260
+2025-03-28,Anirban-ICICI,Restaurant,Food Delivery,Swiggy Order - CTR,Anirban,1190
+2025-03-28,Anirban-ICICI,Grocery,BigBasket,BB Order - Monthly Topup,Anirban,1030
+2025-03-28,Anirban-ICICI,Connectivity,Airtel WiFi,Airtel Broadband Bill,Anirban,640
+2025-03-28,Puspita-SBI,Shopping,Myntra,Myntra Fashion - Books,Puspita,5690
+2025-03-28,Puspita-Bandhan,Beauty,Meesho,Meesho Beauty - Skincare,Puspita,3800
+2025-03-28,Puspita-SBI,Health,Medicines,Apollo Pharmacy / Local Chemist - Cold/Flu,Puspita,380
+2025-03-28,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,300
+2025-03-28,Puspita-SBI,Utilities,Water,BWSSB Bill,Puspita,300
+2025-03-29,Puspita-Bandhan,Beauty,Meesho,Meesho Beauty - Skincare,Puspita,1370
+2025-03-29,Puspita-SBI,Health,Doctor Visit,Consultation @ Manipal Hospital,Puspita,1320
+2025-03-29,Puspita-SBI,Restaurant,Snacks,Snacks from Nagarjuna,Puspita,240
+2025-03-30,Anirban-ICICI,Shopping,Max,Max Fashion - Home Needs,Anirban,2040
+2025-03-30,Anirban-ICICI,Household,Bike Maintenance,Bike Maintenance related expense,Anirban,570
+2025-03-30,Puspita-SBI,Investment,Stocks,Stocks related expense,Puspita,10590
+2025-03-30,Puspita-SBI,Household,Car Maintenance,Car Maintenance related expense,Puspita,8930
+2025-03-30,Puspita-SBI,Shopping,Lifestyle,Lifestyle Store - Home Needs,Puspita,7260
+2025-03-30,Puspita-SBI,Insurance Premium,Vehicle Insurance,Vehicle Insurance related expense,Puspita,2010
+2025-03-30,Puspita-SBI,Entertainment,Movies,Movies related expense,Puspita,1910
+2025-03-30,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Quick Need,Puspita,1800
+2025-03-30,Puspita-Bandhan,Travel,Train,Tatkal Ticket - Office,Puspita,1140
+2025-03-30,Puspita-SBI,Connectivity,Airtel WiFi,Airtel Broadband Bill,Puspita,910
+2025-03-30,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,760
+2025-03-30,Puspita-SBI,Restaurant,Cafe,Coffee/Snack at Empire,Puspita,320
+2025-03-31,Anirban-ICICI,Shopping,Meesho,Meesho Find - Books,Anirban,2210
+2025-03-31,Anirban-SBI,Shopping,Lifestyle,Lifestyle Store - Home Needs,Anirban,1980
+2025-03-31,Anirban-ICICI,Grocery,BigBasket,BB Order - Weekly Stock,Anirban,1800
+2025-03-31,Anirban-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Anirban,1330
+2025-03-31,Anirban-SBI,Restaurant,Drinks,Drinks from Third Wave Coffee,Anirban,440
+2025-03-31,Anirban-ICICI,Connectivity,Airtel Mobile,Airtel Postpaid/Prepaid,Anirban,170
+2025-03-31,Puspita-SBI,Grocery,Other,Other related expense,Puspita,1860
+2025-03-31,Puspita-SBI,Restaurant,Drinks,Drinks from Nagarjuna,Puspita,170
+2025-03-31,Puspita-SBI,Household,Ironing,Local Presswala,Puspita,150
+2025-04-01,Anirban-ICICI,Rent,House Rent,Monthly House Rent - April,Anirban,30000
+2025-04-01,Anirban-ICICI,Household,Electrical Repairs,Electrician Visit,Anirban,1630
+2025-04-01,Anirban-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Anirban,1420
+2025-04-01,Anirban-ICICI,Household,Bike Maintenance,Bike Maintenance related expense,Anirban,1330
+2025-04-01,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Toit,Anirban,1160
+2025-04-01,Anirban-ICICI,Connectivity,Disney+ Hotstar,Hotstar Subscription,Anirban,300
+2025-04-01,Puspita-Bandhan,Travel,Flight,Indigo - Mysore,Puspita,5900
+2025-04-01,Puspita-SBI,Investment,Stocks,Stocks related expense,Puspita,5820
+2025-04-01,Puspita-SBI,Household,Maid,Monthly Maid Salary - April,Puspita,2500
+2025-04-01,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Puspita,2150
+2025-04-01,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Weekly Stock,Puspita,950
+2025-04-01,Puspita-SBI,Waste,Smoke,Smoke related expense,Puspita,660
+2025-04-01,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Weekly Stock,Puspita,200
+2025-04-02,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,1680
+2025-04-02,Anirban-ICICI,Connectivity,Airtel WiFi,Airtel Broadband Bill - April,Anirban,780
+2025-04-02,Anirban-ICICI,Waste,Alcohol,Alcohol related expense,Anirban,780
+2025-04-02,Anirban-SBI,Restaurant,Takeaway,Takeaway from Meghana Foods,Anirban,740
+2025-04-02,Anirban-ICICI,Connectivity,Prime Video,Prime Subscription - April,Anirban,300
+2025-04-02,Anirban-ICICI,Travel,Commute,Metro Card Recharge - Friend Place,Anirban,130
+2025-04-02,Puspita-SBI,Household,Plumbing,Local Plumber Fix,Puspita,2200
+2025-04-02,Puspita-SBI,Grocery,Other,Other related expense,Puspita,1650
+2025-04-02,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Puspita,890
+2025-04-02,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Weekly Stock,Puspita,290
+2025-04-03,Anirban-ICICI,Utilities,Electricity,BESCOM Bill - April,Anirban,2100
+2025-04-03,Anirban-SBI,Connectivity,Disney+ Hotstar,Hotstar Subscription - April,Anirban,150
+2025-04-03,Anirban-ICICI,Utilities,Garbage Collection,Monthly Waste Pickup Fee - April,Anirban,140
+2025-04-03,Puspita-SBI,Shopping,Meesho,Meesho Find - Home Needs,Puspita,2050
+2025-04-04,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Anirban,2480
+2025-04-04,Anirban-ICICI,Travel,Day Trip,Day Trip Expense,Anirban,2400
+2025-04-04,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Nagarjuna,Anirban,1250
+2025-04-04,Anirban-ICICI,Household,Kitchen Tools,Kitchen Tools related expense,Anirban,540
+2025-04-04,Anirban-ICICI,Travel,Cab,Uber - Home,Anirban,220
+2025-04-04,Puspita-Bandhan,Travel,Flight,Air India - Home,Puspita,4930
+2025-04-04,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Puspita,1470
+2025-04-04,Puspita-SBI,Household,Electrical Repairs,Electrician Visit,Puspita,1430
+2025-04-04,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,370
+2025-04-05,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - April,Anirban,3000
+2025-04-05,Anirban-ICICI,Household,Appliance Repair,AC Service/Fridge Repair,Anirban,2230
+2025-04-05,Anirban-ICICI,Household,Bike Maintenance,Bike Maintenance related expense,Anirban,1090
+2025-04-05,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Nagarjuna,Anirban,990
+2025-04-05,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Monthly Topup,Anirban,900
+2025-04-05,Anirban-SBI,Health,Doctor Visit,Consultation @ Local GP,Anirban,520
+2025-04-05,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Starbucks,Anirban,470
+2025-04-05,Puspita-SBI,Health,Health Checkup,Health Checkup,Puspita,7530
+2025-04-05,Puspita-SBI,Shopping,Flipkart,Flipkart Order - Electronics,Puspita,3260
+2025-04-05,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Weekly Stock,Puspita,2070
+2025-04-05,Puspita-SBI,Restaurant,Drinks,Drinks from Third Wave Coffee,Puspita,400
+2025-04-06,Anirban-SBI,Utilities,Maintenance,Apartment Monthly Maintenance - April,Anirban,2540
+2025-04-06,Puspita-SBI,Grocery,BigBasket,BB Order - Monthly Topup,Puspita,2280
+2025-04-06,Puspita-SBI,Utilities,Gas Cylinder,Indane/HP Gas Booking,Puspita,1100
+2025-04-07,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Truffles,Anirban,1990
+2025-04-07,Anirban-ICICI,Utilities,Water,BWSSB Bill - April,Anirban,740
+2025-04-07,Anirban-ICICI,Connectivity,Netflix,Netflix Subscription - April,Anirban,500
+2025-04-07,Puspita-SBI,Health,Health Checkup,Health Checkup,Puspita,4500
+2025-04-07,Puspita-Bandhan,Travel,Flight,Air India - Friend Place,Puspita,4080
+2025-04-07,Puspita-SBI,Restaurant,Drinks,Drinks from Meghana Foods,Puspita,210
+2025-04-08,Anirban-SBI,Travel,Hotel/Stay,Stay at OYO - Weekend Trip,Anirban,8580
+2025-04-08,Anirban-ICICI,Household,Car Maintenance,Car Maintenance related expense,Anirban,6260
+2025-04-08,Anirban-ICICI,Shopping,Max,Max Fashion - Clothing,Anirban,2420
+2025-04-08,Anirban-ICICI,Travel,Hotel/Stay,Stay at Treebo - Vacation,Anirban,2160
+2025-04-08,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Anirban,1910
+2025-04-08,Anirban-ICICI,Waste,Alcohol,Alcohol related expense,Anirban,770
+2025-04-08,Anirban-ICICI,Restaurant,Snacks,Snacks from Meghana Foods,Anirban,540
+2025-04-08,Anirban-ICICI,Restaurant,Drinks,Drinks from Third Wave Coffee,Anirban,420
+2025-04-08,Anirban-ICICI,Travel,Commute,Bus Ticket - Mysore,Anirban,120
+2025-04-08,Puspita-SBI,Shopping,Nykaa,Nykaa Beauty - Electronics,Puspita,6050
+2025-04-08,Puspita-SBI,Shopping,Lifestyle,Lifestyle Store - Electronics,Puspita,5440
+2025-04-08,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Puspita,1210
+2025-04-08,Puspita-SBI,Health,Doctor Visit,Consultation @ Manipal Hospital,Puspita,940
+2025-04-08,Puspita-SBI,Household,Pest Control,PCI Service,Puspita,560
+2025-04-08,Puspita-SBI,Restaurant,Drinks,Drinks from CTR,Puspita,360
+2025-04-09,Anirban-ICICI,Travel,Hotel/Stay,Stay at Treebo - Weekend Trip,Anirban,12320
+2025-04-09,Anirban-ICICI,Shopping,Amazon,Amazon Order - Electronics,Anirban,7720
+2025-04-09,Anirban-SBI,Shopping,Purple,Purplle Haul - Books,Anirban,5320
+2025-04-09,Anirban-ICICI,Beauty,Skincare,Body Shop Items - Makeup,Anirban,2150
+2025-04-09,Anirban-ICICI,Shopping,Max,Max Fashion - Home Needs,Anirban,1880
+2025-04-09,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Anirban,1530
+2025-04-09,Anirban-SBI,Household,Pest Control,PCI Service,Anirban,890
+2025-04-09,Anirban-ICICI,Restaurant,Food Delivery,Swiggy Order - Nagarjuna,Anirban,880
+2025-04-09,Anirban-ICICI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Anirban,770
+2025-04-09,Anirban-ICICI,Restaurant,Snacks,Snacks from CTR,Anirban,250
+2025-04-09,Puspita-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Puspita,1130
+2025-04-09,Puspita-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Puspita,340
+2025-04-09,Puspita-SBI,Restaurant,Cafe,Coffee/Snack at Starbucks,Puspita,130
+2025-04-10,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - April,Anirban,4000
+2025-04-10,Anirban-ICICI,Restaurant,Takeaway,Takeaway from Nagarjuna,Anirban,1670
+2025-04-10,Anirban-ICICI,Shopping,Meesho,Meesho Find - Electronics,Anirban,1490
+2025-04-10,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Anirban,1200
+2025-04-10,Anirban-SBI,Household,Cleaning,Urban Company Cleaning,Anirban,890
+2025-04-10,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Quick Need,Anirban,540
+2025-04-10,Puspita-Bandhan,Travel,Flight,GoAir Booking - Airport,Puspita,7070
+2025-04-10,Puspita-Bandhan,Travel,Train,Tatkal Ticket - Mysore,Puspita,1210
+2025-04-10,Puspita-SBI,Connectivity,Airtel Mobile,Airtel Postpaid/Prepaid,Puspita,370
+2025-04-11,Anirban-ICICI,Household,Car Maintenance,Car Maintenance related expense,Anirban,8640
+2025-04-11,Anirban-SBI,Grocery,BigBasket,BB Order - Weekly Stock,Anirban,2410
+2025-04-11,Anirban-SBI,Beauty,Skincare,Body Shop Items - Haircare,Anirban,1910
+2025-04-11,Anirban-SBI,Entertainment,Games,Games related expense,Anirban,1430
+2025-04-11,Anirban-ICICI,Grocery,BigBasket,BB Order - Quick Need,Anirban,1420
+2025-04-11,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Quick Need,Anirban,460
+2025-04-11,Puspita-SBI,Gifts & Donations,Temple,Temple related expense,Puspita,3540
+2025-04-11,Puspita-SBI,Entertainment,Movies,Movies related expense,Puspita,1860
+2025-04-11,Puspita-SBI,Entertainment,Movies,Movies related expense,Puspita,1830
+2025-04-11,Puspita-SBI,Grocery,Local Store,Local Kirana Store - Monthly Topup,Puspita,1690
+2025-04-11,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Monthly Topup,Puspita,1600
+2025-04-11,Puspita-SBI,Health,Doctor Visit,Consultation @ Manipal Hospital,Puspita,710
+2025-04-11,Puspita-SBI,Restaurant,Snacks,Snacks from Empire,Puspita,430
+2025-04-12,Anirban-ICICI,Travel,Train,Tatkal Ticket - Friend Place,Anirban,1220
+2025-04-12,Anirban-ICICI,Restaurant,Food Delivery,Swiggy Order - CTR,Anirban,740
+2025-04-12,Puspita-Bandhan,Travel,Vacation,Vacation Expense,Puspita,19870
+2025-04-12,Puspita-SBI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Puspita,760
+2025-04-13,Anirban-ICICI,Restaurant,Dine-in,Dinner @ Nagarjuna,Anirban,1620
+2025-04-13,Anirban-ICICI,Grocery,Flipkart Grocery,Flipkart Grocery Order - Monthly Topup,Anirban,1020
+2025-04-13,Anirban-SBI,Travel,Cab,Uber - Friend Place,Anirban,510
+2025-04-13,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Monthly Topup,Puspita,1500
+2025-04-13,Puspita-SBI,Waste,Alcohol,Alcohol related expense,Puspita,440
+2025-04-13,Puspita-Bandhan,Travel,Train,Tatkal Ticket - Airport,Puspita,350
+2025-04-14,Anirban-SBI,Restaurant,Dine-in,Coffee @ CTR,Anirban,1800
+2025-04-14,Anirban-ICICI,Travel,Day Trip,Day Trip Expense,Anirban,930
+2025-04-14,Anirban-ICICI,Restaurant,Snacks,Snacks from Third Wave Coffee,Anirban,460
+2025-04-14,Anirban-ICICI,Utilities,Garbage Collection,Monthly Waste Pickup Fee,Anirban,200
+2025-04-14,Puspita-SBI,Gifts & Donations,Temple,Temple related expense,Puspita,2990
+2025-04-14,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Weekly Stock,Puspita,620
+2025-04-14,Puspita-SBI,Household,Pest Control,PCI Service,Puspita,350
+2025-04-15,Anirban-SBI,Household,Furniture,Furniture related expense,Anirban,21500
+2025-04-15,Anirban-ICICI,Entertainment,Concerts,Concerts related expense,Anirban,1540

@@ -1,0 +1,190 @@
+/* styles.css - Reverted Light Theme */
+
+/* --- Base Font --- */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* --- Light Theme Variables --- */
+:root {
+    --primary-bg-color: #FFFFFF;       /* White main background */
+    --secondary-bg-color: #F8F9FA;   /* Very light grey for sidebar, tables */
+    --widget-bg-color: #FFFFFF;      /* Widget background (White) */
+    --text-color: #212529;           /* Dark text color */
+    --subtle-text-color: #6C757D;    /* Grey for less important text */
+    --accent-color: #007BFF;         /* Standard Blue for buttons, highlights */
+    --accent-hover-color: #0056b3;   /* Darker blue on hover */
+    --border-color: #DEE2E6;         /* Light grey border */
+    --border-focus-color: #80BDFF;   /* Lighter blue for focus rings */
+    --border-radius: 4px;            /* Subtle rounded corners */
+    --font-family: 'Roboto', sans-serif;
+
+    --success-color: #198754;        /* Bootstrap Green */
+    --warning-color: #FFC107;        /* Bootstrap Yellow */
+    --error-color: #DC3545;          /* Bootstrap Red */
+    --success-bg-color: #D1E7DD;
+    --warning-bg-color: #FFF3CD;
+    --error-bg-color: #F8D7DA;
+}
+
+/* --- General Styles --- */
+body {
+    color: var(--text-color);
+    background-color: var(--primary-bg-color);
+    font-family: var(--font-family);
+    font-size: 14px;
+}
+
+h1, h2, h3, h4, h5, h6 { color: var(--text-color); font-weight: 500; }
+h3 { margin-top: 1.8rem; margin-bottom: 0.8rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border-color); font-weight: 600; }
+a { color: var(--accent-color); text-decoration: none; }
+a:hover { color: var(--accent-hover-color); text-decoration: underline; }
+hr { border-top: 1px solid var(--border-color); margin-top: 1.5rem; margin-bottom: 1.5rem; }
+
+/* --- Main Content Area --- */
+.main .block-container {
+    padding-top: 2rem; padding-bottom: 2rem; padding-left: 2.5rem; padding-right: 2.5rem;
+}
+
+/* --- Sidebar --- */
+[data-testid="stSidebar"] { background-color: var(--secondary-bg-color); border-right: 1px solid var(--border-color); }
+[data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 { color: var(--text-color); font-weight: 600; }
+[data-testid="stSidebar"] .stRadio > label { color: var(--text-color); display: block; padding: 0.5rem 0.8rem; margin-bottom: 0.2rem; border-radius: var(--border-radius); transition: background-color 0.2s ease, color 0.2s ease; font-weight: 400; }
+[data-testid="stSidebar"] .stRadio > label:hover { background-color: #E9ECEF; color: var(--accent-color); }
+[data-testid="stSidebar"] .stRadio [type="radio"]:checked + div > label { color: var(--accent-color); font-weight: 600; background-color: #E9ECEF; }
+
+
+/* --- Widgets --- General Appearance (Light Theme) --- */
+
+/* Buttons */
+.stButton > button { background-color: var(--accent-color); color: #FFFFFF; border: 1px solid var(--accent-color); padding: 0.4rem 1rem; border-radius: var(--border-radius); font-weight: 400; transition: background-color 0.2s ease, border-color 0.2s ease; }
+.stButton > button:hover { background-color: var(--accent-hover-color); border-color: var(--accent-hover-color); color: #FFFFFF; }
+.stButton > button:focus { outline: none; box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }
+
+/* Text Input, Number Input, Date Input (Single rule for all) */
+.stTextInput input,
+.stNumberInput input,
+.stDateInput input {
+    background-color: var(--widget-bg-color); /* Should be #FFFFFF */
+    color: var(--text-color); /* Should be dark */
+    border: 1px solid var(--border-color); /* Should be light grey */
+    border-radius: var(--border-radius);
+    padding: 0.4rem 0.7rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+.stTextInput input:focus,
+.stNumberInput input:focus,
+.stDateInput input:focus {
+    border-color: var(--border-focus-color); /* Light blue focus */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+/* Style the container for DateInput for consistency */
+[data-testid="stDateInput"] > div:first-child {
+     background-color: var(--widget-bg-color);
+     border: 1px solid var(--border-color);
+     border-radius: var(--border-radius);
+     overflow: hidden;
+}
+[data-testid="stDateInput"] > div:first-child:has(input:focus) {
+    border-color: var(--border-focus-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Selectbox, Multiselect (Single rule for all) */
+.stSelectbox > div[data-baseweb="select"],
+.stMultiSelect > div[role="listbox"] {
+    background-color: var(--widget-bg-color) !important; /* White background */
+    border: 1px solid var(--border-color) !important; /* Light grey border */
+    border-radius: var(--border-radius) !important;
+    color: var(--text-color) !important; /* Dark text */
+    overflow: hidden !important;
+}
+.stMultiSelect input { /* Text typed into multiselect */
+    color: var(--text-color) !important;
+    background-color: transparent !important;
+}
+/* Focus state for Selectbox/Multiselect */
+.stSelectbox > div[aria-expanded="true"],
+.stMultiSelect > div[aria-expanded="true"] {
+    border-color: var(--border-focus-color) !important; /* Light blue focus */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+/* Multiselect Tags (Default Appearance) */
+.stMultiSelect [data-baseweb="tag"] {
+    border-radius: 3px !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    font-weight: 400 !important;
+    /* Let Streamlit/BaseWeb handle default tag colors */
+}
+
+/* Dropdown menu styling */
+div[data-baseweb="popover"] > div[data-baseweb="menu"] { background-color: var(--primary-bg-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); overflow: hidden; }
+div[data-baseweb="popover"] ul li { color: var(--text-color); padding: 0.4rem 1rem; }
+div[data-baseweb="popover"] ul li:hover { background-color: var(--secondary-bg-color); }
+div[data-baseweb="popover"] ul li[aria-selected="true"] { background-color: var(--accent-color); color: #FFFFFF; }
+
+/* Radio Buttons / Checkbox (Keep simple) */
+.stRadio > label { color: var(--text-color); padding-bottom: 0.2rem; }
+.stCheckbox > label { color: var(--text-color); }
+
+
+/* --- Forms & Expanders (Subtle styling) --- */
+[data-testid="stForm"] {
+    padding: 1.5rem;
+    border: 1px solid var(--border-color); /* Just a border */
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+[data-testid="stExpander"] {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+[data-testid="stExpander"] summary { font-weight: 500; padding: 0.6rem 1rem; color: var(--text-color); border-bottom: 1px solid var(--border-color); }
+[data-testid="stExpander"] summary:hover { color: var(--accent-color); }
+[data-testid="stExpander"] div[role="button"] svg { fill: var(--text-color); }
+[data-testid="stExpander"] .streamlit-expanderContent { padding: 1rem 1rem 1rem 1rem; background-color: var(--primary-bg-color); }
+
+/* Labels WITHIN Form/Expander (Use default text color) */
+[data-testid="stForm"] label,
+[data-testid="stExpander"] label {
+    color: var(--text-color);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+/* --- Dataframe / Table --- */
+/* ... (Dataframe styles remain the same) ... */
+.stDataFrame { border: 1px solid var(--border-color); border-radius: var(--border-radius); overflow: hidden; }
+.stDataFrame > div { border-radius: inherit; overflow: hidden; }
+.stDataFrame thead th { background-color: var(--secondary-bg-color); color: var(--text-color); font-weight: 600; border-bottom: 2px solid var(--border-color); text-align: left; padding: 0.6rem 0.8rem; }
+.stDataFrame thead th:first-child { border-top-left-radius: var(--border-radius); }
+.stDataFrame thead th:last-child { border-top-right-radius: var(--border-radius); }
+.stDataFrame tbody tr:nth-child(even) { background-color: var(--secondary-bg-color); }
+.stDataFrame tbody tr:nth-child(odd) { background-color: var(--primary-bg-color); }
+.stDataFrame tbody td { color: var(--text-color); border-bottom: none; padding: 0.5rem 0.8rem; border-right: 1px solid var(--border-color); }
+.stDataFrame tbody td:last-child { border-right: none; }
+.stDataFrame tbody tr:last-child td:first-child { border-bottom-left-radius: var(--border-radius); }
+.stDataFrame tbody tr:last-child td:last-child { border-bottom-right-radius: var(--border-radius); }
+.stDataFrame tbody tr:hover td { background-color: #E9ECEF; }
+
+
+/* --- Alerts / Messages --- */
+/* ... (Alert styles remain the same) ... */
+[data-testid="stAlert"] { border-radius: var(--border-radius); border: 1px solid transparent; padding: 0.8rem 1rem; }
+[data-testid="stAlert"][data-baseweb="notification-positive"] { background-color: var(--success-bg-color); border-color: var(--success-color); color: #0f5132; }
+[data-testid="stAlert"][data-baseweb="notification-warning"] { background-color: var(--warning-bg-color); border-color: var(--warning-color); color: #664d03; }
+[data-testid="stAlert"][data-baseweb="notification-negative"] { background-color: var(--error-bg-color); border-color: var(--error-color); color: #842029; }
+
+/* --- Sidebar Download Button Style --- */
+/* ... (Sidebar download button style remains the same) ... */
+[data-testid="stSidebar"] .stDownloadButton > button { background-color: var(--error-color); border-color: var(--error-color); color: #FFFFFF; }
+[data-testid="stSidebar"] .stDownloadButton > button:hover { background-color: #C82333; border-color: #BD2130; color: #FFFFFF; }
+[data-testid="stSidebar"] .stDownloadButton > button:focus { box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5); outline: none; }
