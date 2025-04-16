@@ -34,98 +34,314 @@ print("✅ Database 'expenses.db' created from CSV!")
 import sqlite3
 import pandas as pd
 from uuid import uuid4
+import logging
+from typing import Optional, Dict, Any, List # Import types for hinting
 
-DB_NAME = "expenses.db"
+# Setup basic logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def get_connection():
-    return sqlite3.connect(DB_NAME, check_same_thread=False)
+DB_NAME: str = "expenses.db" # Add type hint for constant
 
-def fetch_all_expenses():
+def get_connection() -> Optional[sqlite3.Connection]:
+    """
+    Establishes a connection to the SQLite database.
+
+    Returns:
+        Optional[sqlite3.Connection]: A connection object or None if connection fails.
+    """
+    try:
+        conn = sqlite3.connect(DB_NAME, check_same_thread=False)
+        conn.row_factory = sqlite3.Row # Return rows as dictionary-like objects
+        logging.debug("Database connection established.") # Use debug level for successful connection
+        return conn
+    except sqlite3.Error as e:
+        logging.error(f"Database connection error: {e}")
+        return None
+
+def fetch_all_expenses() -> pd.DataFrame:
+    """
+    Fetches all expenses from the database, ordered by date descending.
+
+    Returns:
+        pd.DataFrame: DataFrame containing all expenses, empty if error or no data.
+    """
     conn = get_connection()
-    df = pd.read_sql("SELECT * FROM expenses", conn)
-    conn.close()
-    df['date'] = pd.to_datetime(df['date'], errors='coerce')
-    return df
+    if conn is None: return pd.DataFrame()
 
-def insert_expense(data):
+    try:
+        df = pd.read_sql("SELECT * FROM expenses ORDER BY date DESC", conn)
+        # Coerce errors in date conversion to NaT (Not a Time)
+        df['date'] = pd.to_datetime(df['date'], errors='coerce')
+        # Optionally drop rows where date conversion failed
+        # df = df.dropna(subset=['date'])
+        logging.info(f"Fetched {len(df)} expenses.")
+        return df
+    except (sqlite3.Error, pd.errors.DatabaseError) as e:
+        logging.error(f"Error fetching all expenses: {e}")
+        return pd.DataFrame()
+    finally:
+        if conn: conn.close()
+
+def fetch_expense_by_id(expense_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetches a single expense record by its UUID.
+
+    Args:
+        expense_id (str): The UUID of the expense to fetch.
+
+    Returns:
+        Optional[Dict[str, Any]]: A dictionary representing the expense, or None if not found or error.
+    """
     conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("""
+    if conn is None: return None
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM expenses WHERE id = ?", (expense_id,))
+        record = cursor.fetchone()
+        logging.debug(f"Fetched expense for ID {expense_id}: {'Found' if record else 'Not Found'}")
+        return dict(record) if record else None
+    except sqlite3.Error as e:
+        logging.error(f"Error fetching expense by ID {expense_id}: {e}")
+        return None
+    finally:
+        if conn: conn.close()
+
+
+def insert_expense(data: Dict[str, Any]) -> bool:
+    """
+    Inserts a new expense record into the database.
+
+    Args:
+        data (Dict[str, Any]): Dictionary containing expense details. Expected keys:
+                               'date', 'account', 'category', 'sub_category', 'type', 'user', 'amount'.
+
+    Returns:
+        bool: True if insertion was successful, False otherwise.
+    """
+    conn = get_connection()
+    if conn is None: return False
+
+    required_fields = ['date', 'account', 'category', 'sub_category', 'type', 'user', 'amount']
+    if not all(field in data for field in required_fields):
+        logging.error(f"Missing required fields for inserting expense. Got: {data.keys()}")
+        return False
+
+    sql = """
     INSERT INTO expenses (id, date, account, category, sub_category, type, user, amount)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-""", (str(uuid4()), data['date'], data['account'], data['category'], data['sub_category'],
-      data['type'], data['user'], data['amount']))
-    conn.commit()
-    conn.close()
+    """
+    try:
+        cursor = conn.cursor()
+        new_id = str(uuid4())
+        cursor.execute(sql, (
+            new_id, data['date'], data['account'], data['category'],
+            data['sub_category'], data['type'], data['user'], float(data['amount']) # Ensure amount is float
+        ))
+        conn.commit()
+        logging.info(f"Expense inserted successfully with ID: {new_id}")
+        return True
+    except (sqlite3.Error, ValueError) as e: # Catch potential float conversion error
+        logging.error(f"Error inserting expense: {e}")
+        conn.rollback()
+        return False
+    finally:
+        if conn: conn.close()
 
-def fetch_last_expenses(n=10):
+def update_expense(expense_id: str, data: Dict[str, Any]) -> bool:
+    """
+    Updates an existing expense record identified by its UUID.
+
+    Args:
+        expense_id (str): The UUID of the expense to update.
+        data (Dict[str, Any]): Dictionary containing the updated expense details. Expected keys:
+                               'date', 'account', 'category', 'sub_category', 'type', 'user', 'amount'.
+
+    Returns:
+        bool: True if update was successful (record found and updated), False otherwise.
+    """
     conn = get_connection()
-    df = pd.read_sql(f"SELECT * FROM expenses ORDER BY date DESC LIMIT {n}", conn)
-    conn.close()
-    df['date'] = pd.to_datetime(df['date'], errors='coerce')
-    return df
+    if conn is None: return False
 
+    required_fields = ['date', 'account', 'category', 'sub_category', 'type', 'user', 'amount']
+    if not all(field in data for field in required_fields):
+        logging.error(f"Missing required fields for updating expense ID {expense_id}. Got: {data.keys()}")
+        return False
+
+    sql = """
+    UPDATE expenses
+    SET date = ?, account = ?, category = ?, sub_category = ?, type = ?, user = ?, amount = ?
+    WHERE id = ?
+    """
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql, (
+            data['date'], data['account'], data['category'], data['sub_category'],
+            data['type'], data['user'], float(data['amount']), # Ensure amount is float
+            expense_id
+        ))
+        conn.commit()
+        if cursor.rowcount == 0:
+            logging.warning(f"No expense found with ID {expense_id} to update.")
+            return False
+        logging.info(f"Expense {expense_id} updated successfully.")
+        return True
+    except (sqlite3.Error, ValueError) as e:
+        logging.error(f"Error updating expense {expense_id}: {e}")
+        conn.rollback()
+        return False
+    finally:
+        if conn: conn.close()
+
+
+def delete_expense(expense_id: str) -> bool:
+    """
+    Deletes an expense record by its UUID.
+
+    Args:
+        expense_id (str): The UUID of the expense to delete.
+
+    Returns:
+        bool: True if deletion was successful (record found and deleted), False otherwise.
+    """
+    conn = get_connection()
+    if conn is None: return False
+
+    sql = "DELETE FROM expenses WHERE id = ?"
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql, (expense_id,))
+        conn.commit()
+        if cursor.rowcount == 0:
+            logging.warning(f"No expense found with ID {expense_id} to delete.")
+            return False
+        logging.info(f"Expense {expense_id} deleted successfully.")
+        return True
+    except sqlite3.Error as e:
+        logging.error(f"Error deleting expense {expense_id}: {e}")
+        conn.rollback()
+        return False
+    finally:
+        if conn: conn.close()
+
+
+def fetch_last_expenses(n: int = 10) -> pd.DataFrame:
+    """
+    Fetches the last N expenses, ordered most recent first.
+
+    Args:
+        n (int): The number of recent expenses to fetch. Defaults to 10.
+
+    Returns:
+        pd.DataFrame: DataFrame containing the last N expenses, empty if error or no data.
+    """
+    conn = get_connection()
+    if conn is None: return pd.DataFrame()
+
+    try:
+        # Added rowid desc as secondary sort for deterministic order if dates are identical
+        df = pd.read_sql(f"SELECT * FROM expenses ORDER BY date DESC, rowid DESC LIMIT ?", conn, params=(n,))
+        df['date'] = pd.to_datetime(df['date'], errors='coerce')
+        logging.info(f"Fetched last {len(df)} expenses (requested {n}).")
+        return df
+    except (sqlite3.Error, pd.errors.DatabaseError) as e:
+        logging.error(f"Error fetching last {n} expenses: {e}")
+        return pd.DataFrame()
+    finally:
+        if conn: conn.close()
 
 # Contents of main.py
 # main.py
+"""
+Main Streamlit application file for the Personal Expense Tracker.
+Handles page navigation and calls rendering functions for each tab.
+"""
 import streamlit as st
 from tabs import add_expense, reports, visuals
 from style_utils import load_css
 import os # Import os for file path checking
+import logging # Ensure logging is imported if used within main
 
+# --- Page Configuration ---
 st.set_page_config(
     layout="wide",
     page_title="Personal Expense Tracker",
     page_icon="💰"
 )
 
-# Load CSS styles
-load_css()
+# --- Load CSS ---
+load_css() # Load custom styles first
 
-# Navigation in sidebar
+# --- Add Application Header Banner ---
+st.title("My Personal Finance App")
+# --- End Application Header Banner ---
+
+# --- Sidebar Navigation ---
 st.sidebar.title("Navigation")
 page = st.sidebar.radio(
     "Go to",
     ["Add Expenses", "Reports", "Visualizations"],
-    label_visibility="collapsed"
+    label_visibility="collapsed",
+    key="main_nav"
 )
 
-st.sidebar.markdown("---") # Add a separator
+st.sidebar.markdown("---")
 
-# --- Add Data Backup Button ---
+# --- Sidebar Data Management ---
 st.sidebar.header("Data Management")
 DB_FILE = "expenses.db"
 if os.path.exists(DB_FILE):
-    with open(DB_FILE, "rb") as fp:
-        st.sidebar.download_button(
-            label="Download Data Backup (.db)",
-            data=fp,
-            file_name="expenses_backup.db",
-            mime="application/octet-stream",
-            help="Download the entire SQLite database file."
-        )
+    try:
+        with open(DB_FILE, "rb") as fp:
+            st.sidebar.download_button(
+                label="Download Data Backup (.db)",
+                data=fp,
+                file_name="expenses_backup.db",
+                mime="application/octet-stream",
+                help="Download the entire SQLite database file."
+            )
+    except OSError as e:
+        st.sidebar.error(f"Error reading database file: {e}")
+        logging.error(f"Error reading DB for backup: {e}") # Log error
 else:
-    st.sidebar.warning("Database file not found.")
-# --- End Data Backup Button ---
+    st.sidebar.warning("Database file not found for backup.")
 
-
-# Render selected page
+# --- Page Rendering ---
 if page == "Add Expenses":
     add_expense.render()
 elif page == "Reports":
     reports.render()
 elif page == "Visualizations":
     visuals.render()
+else:
+    st.error("Invalid page selected.")
 
 # Contents of style_utils.py
 # style_utils.py
 import streamlit as st
+import logging # For logging errors
+import os # For checking file existence
 
 def load_css(file_path: str = "styles.css"):
-    with open(file_path, "r") as f:
-        css = f.read()
-        st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+    """
+    Loads CSS from a file and injects it into the Streamlit app.
 
+    Args:
+        file_path (str): The path to the CSS file. Defaults to "styles.css".
+    """
+    if not os.path.exists(file_path):
+        logging.warning(f"CSS file not found at {file_path}. Skipping CSS load.")
+        return # Exit gracefully if file doesn't exist
+
+    try:
+        with open(file_path, "r", encoding='utf-8') as f: # Specify encoding
+            css = f.read()
+            st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+            logging.debug(f"Successfully loaded CSS from {file_path}")
+    except OSError as e:
+        logging.error(f"Error reading CSS file {file_path}: {e}")
+    except Exception as e:
+        logging.error(f"An unexpected error occurred while loading CSS: {e}")
 
 # Contents of reference/plotly_charts.py
 # --- Import Libraries ---
@@ -240,352 +456,314 @@ except Exception as e:
 
 print("\n--- Script Finished ---")
 
-# Contents of reference/vis_backup.py
-# tabs/visuals.py
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-from db_utils import fetch_all_expenses
-import json
-import datetime # Import datetime for date calculations
-
-def load_metadata():
-    """Loads metadata from the JSON file."""
-    try:
-        with open("expense_metadata.json", "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        st.error("Error: expense_metadata.json not found. Please ensure the file exists.")
-        return None
-    except json.JSONDecodeError:
-        st.error("Error: Could not decode expense_metadata.json. Please check its format.")
-        return None
-
-def render():
-    """Renders the Visualizations tab."""
-    metadata = load_metadata()
-    if metadata is None:
-        return
-
-    df_all = fetch_all_expenses() # Load all data once
-    if df_all.empty:
-        st.warning("No expense data found to display visualizations.")
-        return
-
-    # Ensure 'date' is datetime and get overall date range
-    df_all['date'] = pd.to_datetime(df_all['date'])
-    min_date_overall = df_all['date'].min().date() # Get date part
-    max_date_overall = df_all['date'].max().date() # Get date part
-
-    # Add 'month' column for Pie Chart filtering
-    df_all['month'] = df_all['date'].dt.strftime('%Y-%m')
-
-    st.subheader("Expense Visualizations")
-
-    # ----- PIE CHART -----
-    st.markdown("### Category-wise Expense Distribution")
-    with st.expander("Pie Chart Filters", expanded=True):
-        # --- Use separate column sets for alignment ---
-        # Row 1 of filters
-        col_pie_r1_1, col_pie_r1_2 = st.columns(2)
-        with col_pie_r1_1:
-            pie_month = st.selectbox(
-                "Select Month",
-                ["All"] + sorted(df_all['month'].unique(), reverse=True),
-                index=0,
-                key="pie_month_select",
-                help="Filter expenses by month for the pie chart."
-            )
-        with col_pie_r1_2:
-            pie_accounts = st.multiselect(
-                "Filter by Account",
-                ["All"] + metadata["Account"],
-                default=["All"],
-                key="pie_account_select"
-            )
-
-        # Row 2 of filters
-        col_pie_r2_1, col_pie_r2_2 = st.columns(2)
-        with col_pie_r2_1:
-            pie_categories = st.multiselect(
-                "Filter by Category",
-                ["All"] + list(metadata["categories"].keys()),
-                default=["All"],
-                key="pie_category_select"
-            )
-        with col_pie_r2_2:
-            pie_users = st.multiselect(
-                "Filter by User",
-                ["All"] + list(set(metadata["User"].values())),
-                default=["All"],
-                key="pie_user_select"
-            )
-        # --- End separate column sets ---
-
-        # Checkbox remains below the filter grid
-        show_pie_legend = st.checkbox(
-            "Show Pie Chart Legend",
-            value=True,
-            key="show_pie_legend_cb",
-            help="Toggle the visibility of the category legend."
-        )
-
-    # Filter data for pie chart (logic remains the same)
-    pie_df = df_all.copy()
-    if pie_month != "All":
-        pie_df = pie_df[pie_df['month'] == pie_month]
-    if "All" not in pie_accounts:
-        pie_df = pie_df[pie_df['account'].isin(pie_accounts)]
-    if "All" not in pie_categories:
-        pie_df = pie_df[pie_df['category'].isin(pie_categories)]
-    if "All" not in pie_users:
-        pie_df = pie_df[pie_df['user'].isin(pie_users)]
-
-    if pie_df.empty:
-        st.warning("No data matches the selected filters for the Pie Chart.")
-    else:
-        pie_data = pie_df.groupby('category')['amount'].sum().reset_index()
-        fig1 = px.pie(
-            pie_data, values='amount', names='category',
-            title=f"Expenses by Category ({pie_month})", hole=0.4,
-            labels={'amount': 'Total Amount', 'category': 'Category'}
-        )
-        fig1.update_traces(
-            textposition='inside', textinfo='percent+label',
-            hovertemplate="<b>%{label}</b><br>Amount: ₹%{value:,.2f}<br>Percentage: %{percent}<extra></extra>"
-        )
-        fig1.update_layout(
-            showlegend=show_pie_legend, legend_title_text='Categories',
-            legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
-        )
-        st.plotly_chart(fig1, use_container_width=True)
-
-
-    # ----- LINE CHART -----
-    # (Line Chart section remains unchanged)
-    st.markdown("---")
-    st.markdown("### Expense Trend Over Time")
-    with st.expander("Line Chart Filters", expanded=True):
-        col_date1, col_date2 = st.columns(2)
-        with col_date1:
-            start_date = st.date_input(
-                "Start Date", value=min_date_overall,
-                min_value=min_date_overall, max_value=max_date_overall,
-                key="line_start_date"
-            )
-        with col_date2:
-            end_date = st.date_input(
-                "End Date", value=max_date_overall,
-                min_value=min_date_overall, max_value=max_date_overall,
-                key="line_end_date"
-            )
-
-        if start_date > end_date:
-            st.error("Error: Start date cannot be after end date.")
-            line_df_filtered = pd.DataFrame()
-        else:
-            line_df_filtered = df_all[
-                (df_all['date'].dt.date >= start_date) &
-                (df_all['date'].dt.date <= end_date)
-            ].copy()
-
-            col_filter1, col_filter2, col_filter3 = st.columns(3)
-            with col_filter1:
-                line_accounts = st.multiselect(
-                    "Filter by Account ", ["All"] + metadata["Account"], default=["All"], key="line_account_select"
-                )
-            with col_filter2:
-                line_categories = st.multiselect(
-                    "Filter by Category ", ["All"] + list(metadata["categories"].keys()), default=["All"], key="line_category_select"
-                )
-            with col_filter3:
-                 line_users = st.multiselect(
-                    "Filter by User ", ["All"] + list(set(metadata["User"].values())), default=["All"], key="line_user_select"
-                )
-
-            if "All" not in line_accounts:
-                line_df_filtered = line_df_filtered[line_df_filtered['account'].isin(line_accounts)]
-            if "All" not in line_categories:
-                line_df_filtered = line_df_filtered[line_df_filtered['category'].isin(line_categories)]
-            if "All" not in line_users:
-                line_df_filtered = line_df_filtered[line_df_filtered['user'].isin(line_users)]
-
-        chart_mode = st.radio(
-            "Select Trend View", ["Daily", "Cumulative"], index=0,
-            key="chart_mode_select", horizontal=True,
-            help="Choose to view daily spending or cumulative spending."
-        )
-
-    if line_df_filtered.empty:
-        st.warning("No data matches the selected date range and filters for the Line Chart.")
-    else:
-        trend_data = line_df_filtered.groupby('date')['amount'].sum().reset_index().sort_values('date')
-        fig2 = go.Figure()
-        chart_title = f'{chart_mode} Expense Trend ({start_date.strftime("%d %b %Y")} to {end_date.strftime("%d %b %Y")})'
-
-        if chart_mode == "Daily":
-            fig2.add_trace(go.Scatter(
-                x=trend_data['date'], y=trend_data['amount'], name='Daily Expenses', mode='lines+markers',
-                line=dict(color='#1f77b4', width=2), marker=dict(size=4),
-                hovertemplate="<b>%{x|%Y-%m-%d}</b><br>Daily: ₹%{y:,.2f}<extra></extra>"
-            ))
-            yaxis_title = 'Daily Amount (INR)'
-        elif chart_mode == "Cumulative":
-            trend_data['cumulative_amount'] = trend_data['amount'].cumsum()
-            fig2.add_trace(go.Scatter(
-                x=trend_data['date'], y=trend_data['cumulative_amount'], name='Cumulative Expenses', mode='lines+markers',
-                line=dict(color='#ff7f0e', width=2, dash='dot'), marker=dict(size=4),
-                hovertemplate="<b>%{x|%Y-%m-%d}</b><br>Cumulative: ₹%{y:,.2f}<extra></extra>"
-            ))
-            yaxis_title = 'Cumulative Amount (INR)'
-
-        fig2.update_layout(
-            title=chart_title, xaxis_title='Date', yaxis_title=yaxis_title,
-            hovermode="x unified",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-            margin=dict(l=40, r=40, t=60, b=40),
-            xaxis=dict(rangeslider=dict(visible=True), type="date")
-        )
-        st.plotly_chart(fig2, use_container_width=True)
-
 # Contents of tabs/add_expense.py
 # tabs/add_expense.py
 import streamlit as st
 import pandas as pd
 from db_utils import insert_expense, fetch_last_expenses
 import json
-import datetime # Import datetime
+import datetime
+from typing import Dict, Any, Optional
+import logging # <<<--- ADD THIS IMPORT
 
-def load_metadata():
-    # ... (load_metadata function remains the same) ...
-     with open("expense_metadata.json", "r") as f:
-        return json.load(f)
+@st.cache_data
+def load_metadata() -> Optional[Dict[str, Any]]:
+    """Loads metadata from the expense_metadata.json file."""
+    try:
+        with open("expense_metadata.json", "r") as f:
+            metadata = json.load(f)
+            logging.debug("Metadata loaded successfully for Add Expense.") # More specific log
+            return metadata
+    except FileNotFoundError:
+        st.error("Error: expense_metadata.json not found.")
+        logging.error("expense_metadata.json not found.")
+        return None
+    except json.JSONDecodeError:
+        st.error("Error: Could not decode expense_metadata.json.")
+        logging.error("Could not decode expense_metadata.json.")
+        return None
 
 def render():
-    metadata = load_metadata()
+    """Renders the 'Add Expense' page."""
     st.subheader("Add New Expense")
 
-    # --- Default to Today's Date ---
-    date = st.date_input(
+    metadata = load_metadata()
+    if metadata is None:
+        # Error already shown by load_metadata
+        return
+
+    # Fetch necessary lists from metadata safely
+    all_accounts = metadata.get("Account", [])
+    all_categories = sorted(list(metadata.get("categories", {}).keys()))
+    user_map = metadata.get("User", {})
+    category_map = metadata.get("categories", {})
+
+    if not all_accounts or not all_categories:
+        st.error("Metadata is missing essential 'Account' or 'categories' information.")
+        logging.error("Metadata missing Account or categories in Add Expense.")
+        return
+
+    # --- Date Input ---
+    expense_date = st.date_input(
         "Date of Expense",
-        value=datetime.date.today(), # Set default value to today
-        help="Format: YYYY-MM-DD"
+        value=datetime.date.today(),
+        help="Select the date the expense occurred (defaults to today)."
     )
-    # --- End Default Date ---
 
-    # Get category first
-    all_categories = sorted(list(metadata["categories"].keys()))
-    category = st.selectbox("Category", all_categories)
-    available_subcategories = sorted(metadata["categories"].get(category, [])) # Ensure sorted
+    # --- Category / Sub-category Selection ---
+    selected_category = st.selectbox(
+        "Category", options=all_categories, index=0, key="add_category",
+        help="Select the main expense category."
+    )
+    available_subcategories = sorted(category_map.get(selected_category, []))
+    if not available_subcategories:
+        st.warning(f"No sub-categories defined for '{selected_category}'. Please add them to metadata if needed.", icon="⚠️")
 
-    # Expense form
-    with st.form("expense_form", clear_on_submit=True): # Clear form after successful submission
+    # --- Expense Entry Form ---
+    with st.form("expense_form", clear_on_submit=True):
         col1, col2 = st.columns(2)
-
         with col1:
-            account = st.selectbox("Account", metadata["Account"])
-            sub_category = st.selectbox("Sub-category", available_subcategories) # Uses dynamic options
-
+            selected_account = st.selectbox(
+                "Account", options=all_accounts, index=0, key="add_account",
+                help="Select the account used for the expense."
+            )
+            selected_sub_category = st.selectbox(
+                "Sub-category", options=available_subcategories, key="add_sub_category",
+                help="Select the specific sub-category.",
+                disabled=not available_subcategories
+            )
         with col2:
-            type_ = st.text_input("Type (Description)", max_chars=60) # Increased chars slightly
-            user = metadata["User"].get(account, "Unknown") # Use .get for safety
-            amount = st.number_input("Amount (INR)", min_value=0.01, format="%.2f", step=10.0) # Min 0.01, added step
+            expense_type = st.text_input(
+                "Type (Description)", max_chars=60, key="add_type",
+                help="Enter a brief description (e.g., 'Lunch with team')."
+            )
+            expense_user = user_map.get(selected_account, "Unknown")
+            # st.text(f"User: {expense_user}") # Display derived user
+            expense_amount = st.number_input(
+                "Amount (INR)", min_value=0.01, format="%.2f", step=10.0, key="add_amount",
+                help="Enter the expense amount (must be positive)."
+            )
 
         submitted = st.form_submit_button("Add Expense")
         if submitted:
-            # --- Use st.toast for feedback ---
-            if not type_:
-                st.toast("⚠️ Please enter a valid 'Type' (Description).", icon="⚠️")
-            elif amount <= 0.0:
-                st.toast("⚠️ Amount must be greater than zero.", icon="⚠️")
-            # Ensure sub_category is valid for the selected category (redundant check, but safe)
-            elif sub_category not in metadata["categories"].get(category, []):
-                 st.toast(f"❌ Error: '{sub_category}' is not a valid sub-category for '{category}'.", icon="❌")
-            else:
-                try:
-                    insert_expense({
-                        "date": date.strftime("%Y-%m-%d"),
-                        "account": account,
-                        "category": category,
-                        "sub_category": sub_category,
-                        "type": type_,
-                        "user": user,
-                        "amount": amount
-                    })
-                    st.toast(f"✅ Expense added successfully!", icon="✅")
-                    # Don't clear form manually, clear_on_submit=True handles it
-                except Exception as e:
-                    st.toast(f"❌ Error adding expense: {e}", icon="❌")
-            # --- End st.toast ---
+            is_valid = True
+            if not expense_type: st.toast("⚠️ Please enter a Type (Description).", icon="⚠️"); is_valid = False
+            if expense_amount <= 0.0: st.toast("⚠️ Amount must be > 0.", icon="⚠️"); is_valid = False
+            if available_subcategories and not selected_sub_category: st.toast(f"⚠️ Sub-category required for {selected_category}.", icon="⚠️"); is_valid = False
+            # Check only if sub-category *should* exist but wasn't selected, or if selected one is invalid
+            elif selected_sub_category and selected_sub_category not in available_subcategories: st.toast(f"❌ Invalid sub-category '{selected_sub_category}'.", icon="❌"); is_valid = False
+            # Handle case where no sub-cats exist and none should be selected
+            elif not available_subcategories and selected_sub_category: st.toast(f"❌ No sub-categories exist for {selected_category}.", icon="❌"); is_valid = False
 
-    # Show recent entries section
+            if is_valid:
+                # Ensure sub-category is empty string if none are available/selected
+                final_sub_category = selected_sub_category if available_subcategories else ""
+                expense_data = {
+                    "date": expense_date.strftime("%Y-%m-%d"), "account": selected_account,
+                    "category": selected_category, "sub_category": final_sub_category,
+                    "type": expense_type, "user": expense_user, "amount": expense_amount
+                }
+                try:
+                    success = insert_expense(expense_data) # This function now logs internally
+                    if success: st.toast(f"✅ Expense added!", icon="✅")
+                    else: st.toast(f"❌ Failed to add expense (DB error).", icon="❌") # DB util logs specifics
+                except Exception as e:
+                    st.toast(f"❌ Error submitting expense: {e}", icon="❌")
+                    logging.error(f"Exception during expense submission: {e}") # Log here too
+
+    # --- Display Recent Expenses ---
     st.markdown("---")
-    st.subheader("Last 10 Expenses")
+    st.subheader("Last 10 Expenses Added")
     try:
-        df_recent = fetch_last_expenses(10)
+        df_recent = fetch_last_expenses(10) # This function logs internally
         if df_recent.empty:
-            st.info("No recent expenses to display.")
+            st.info("No recent expenses recorded yet.")
         else:
-            display_df_recent = df_recent.drop(columns=["id"]).rename(columns={
+            display_df_recent = df_recent.drop(columns=["id"], errors='ignore').rename(columns={
                 "date": "Date", "account": "Account", "category": "Category",
                 "sub_category": "Sub Category", "type": "Type", "user": "User", "amount": "Amount"
             })
             st.dataframe(
-                display_df_recent.style.format({'Date': '{:%Y-%m-%d}', 'Amount': '₹{:.2f}'}), # Format date
-                use_container_width=True,
-                height=380, # Adjusted height slightly
-                hide_index=True
+                display_df_recent.style.format({'Date': '{:%Y-%m-%d}', 'Amount': '₹{:.2f}'}),
+                use_container_width=True, height=380, hide_index=True
             )
     except Exception as e:
         st.error(f"Error loading recent expenses: {e}")
+        logging.error(f"Error displaying recent expenses: {e}")
 
 # Contents of tabs/reports.py
 # tabs/reports.py
 import streamlit as st
 import pandas as pd
-from db_utils import fetch_all_expenses
+from db_utils import fetch_all_expenses, fetch_expense_by_id, update_expense, delete_expense
 import json
+import datetime
+from typing import Dict, Any, Optional, List
+import logging # <<<--- ADD THIS IMPORT
 
-def load_metadata():
-    # ... (load_metadata function remains the same) ...
-    with open("expense_metadata.json", "r") as f:
-        return json.load(f)
+@st.cache_data
+def load_metadata() -> Optional[Dict[str, Any]]:
+    """Loads metadata from the expense_metadata.json file."""
+    try:
+        with open("expense_metadata.json", "r") as f:
+            metadata = json.load(f)
+            logging.debug("Metadata loaded successfully for Reports.")
+            return metadata
+    except FileNotFoundError:
+        st.error("Error: expense_metadata.json not found.")
+        logging.error("expense_metadata.json not found.")
+        return None
+    except json.JSONDecodeError:
+        st.error("Error: Could not decode expense_metadata.json.")
+        logging.error("Could not decode expense_metadata.json.")
+        return None
 
-@st.cache_data # Cache the conversion to prevent re-running on every interaction
-def convert_df_to_csv(df):
-  # IMPORTANT: Cache the conversion to prevent computation on every rerun
-  return df.to_csv(index=False).encode('utf-8')
+@st.cache_data
+def convert_df_to_csv(df: pd.DataFrame) -> bytes:
+    """Converts a DataFrame to CSV bytes."""
+    try:
+        return df.to_csv(index=False).encode('utf-8')
+    except Exception as e:
+        logging.error(f"Error converting DataFrame to CSV: {e}")
+        return b""
 
+# --- Function to display the Edit Form ---
+def display_edit_form(expense_data: Dict[str, Any], metadata: Dict[str, Any]):
+    """Displays the form for editing an existing expense."""
+    # ... (Code inside this function is mostly okay, relies on db_utils logging) ...
+    st.subheader(f"Edit Expense (ID: {expense_data.get('id', 'N/A')[:8]}...)")
+    try: default_date = datetime.datetime.strptime(str(expense_data.get('date','')), '%Y-%m-%d').date()
+    except: default_date = datetime.date.today()
+    all_categories = sorted(list(metadata.get("categories", {}).keys()))
+    all_accounts = metadata.get("Account", [])
+    user_map = metadata.get("User", {})
+    category_map = metadata.get("categories", {})
+    default_category_index = 0
+    if expense_data.get('category') in all_categories: default_category_index = all_categories.index(expense_data['category'])
+    if 'edit_form_category' not in st.session_state: st.session_state.edit_form_category = all_categories[default_category_index] if all_categories else None
+    def update_edit_category_state(): st.session_state.edit_form_category = st.session_state.edit_cat_widget
+    selected_category = st.selectbox("Category", all_categories, index=default_category_index, key='edit_cat_widget', on_change=update_edit_category_state)
+    current_category_in_state = st.session_state.edit_form_category
+    available_subcategories = sorted(category_map.get(current_category_in_state, []))
+    default_sub_cat_index = 0
+    if expense_data.get('sub_category') in available_subcategories: default_sub_cat_index = available_subcategories.index(expense_data['sub_category'])
+    default_account_index = 0
+    if expense_data.get('account') in all_accounts: default_account_index = all_accounts.index(expense_data['account'])
+
+    with st.form("edit_expense_form"):
+        col1, col2 = st.columns(2)
+        with col1:
+            date_val = st.date_input("Date", value=default_date)
+            account_val = st.selectbox("Account", all_accounts, index=default_account_index)
+            sub_category_val = st.selectbox("Sub-category", available_subcategories, index=default_sub_cat_index, disabled=not available_subcategories)
+        with col2:
+            type_val = st.text_input("Type (Description)", value=expense_data.get('type',''), max_chars=60)
+            user_val = user_map.get(account_val, "Unknown")
+            st.text(f"User: {user_val}")
+            amount_val = st.number_input("Amount (INR)", min_value=0.01, value=float(expense_data.get('amount', 0.01)), format="%.2f", step=10.0)
+        submitted = st.form_submit_button("Save Changes")
+        cancelled = st.form_submit_button("Cancel")
+        if submitted:
+            is_valid = True
+            if not type_val: st.toast("⚠️ Type required.", icon="⚠️"); is_valid = False
+            if amount_val <= 0.0: st.toast("⚠️ Amount must be positive.", icon="⚠️"); is_valid = False
+            if available_subcategories and not sub_category_val: st.toast(f"⚠️ Sub-category required for {current_category_in_state}.", icon="⚠️"); is_valid = False
+            elif sub_category_val and sub_category_val not in available_subcategories: st.toast(f"❌ Invalid sub-category '{sub_category_val}'.", icon="❌"); is_valid = False
+            elif not available_subcategories and sub_category_val: st.toast(f"❌ No sub-categories exist for {current_category_in_state}.", icon="❌"); is_valid = False
+            if is_valid:
+                final_sub_category = sub_category_val if available_subcategories else ""
+                updated_data = {"date": date_val.strftime("%Y-%m-%d"), "account": account_val, "category": current_category_in_state, "sub_category": final_sub_category, "type": type_val, "user": user_val, "amount": amount_val}
+                try:
+                    success = update_expense(st.session_state.selected_expense_id, updated_data)
+                    if success:
+                        st.toast("✅ Expense updated!", icon="✅")
+                        st.session_state.edit_mode = False; st.session_state.pop('selected_expense_id', None); st.session_state.pop('edit_form_category', None); st.experimental_rerun()
+                    else: st.toast("❌ Failed to update expense.", icon="❌") # db_utils logs specifics
+                except Exception as e: st.toast(f"❌ Error: {e}", icon="❌"); logging.error(f"Update exception: {e}")
+        if cancelled: st.session_state.edit_mode = False; st.session_state.pop('selected_expense_id', None); st.session_state.pop('edit_form_category', None); st.experimental_rerun()
+
+# --- Function to display the Delete Confirmation ---
+def display_delete_confirmation(expense_data: Dict[str, Any]):
+    """Displays the confirmation dialog for deleting an expense."""
+    # ... (Code inside this function is mostly okay, relies on db_utils logging) ...
+    st.subheader("Confirm Deletion")
+    st.warning(f"Permanently delete this expense?", icon="⚠️")
+    col_details1, col_details2 = st.columns(2)
+    with col_details1: st.markdown(f"**ID:** `{expense_data.get('id', 'N/A')[:8]}...`"); st.markdown(f"**Date:** {expense_data.get('date', 'N/A')}"); st.markdown(f"**Account:** {expense_data.get('account', 'N/A')}"); st.markdown(f"**User:** {expense_data.get('user', 'N/A')}")
+    with col_details2: st.markdown(f"**Category:** {expense_data.get('category', 'N/A')}"); st.markdown(f"**Sub-Category:** {expense_data.get('sub_category', 'N/A')}"); st.markdown(f"**Type:** {expense_data.get('type', 'N/A')}"); st.markdown(f"**Amount:** ₹{float(expense_data.get('amount', 0)):.2f}")
+    st.markdown("---")
+    col_btn1, col_btn2, _ = st.columns([1, 1, 4])
+    with col_btn1:
+        if st.button("Yes, Delete", type="primary"):
+            try:
+                success = delete_expense(st.session_state.selected_expense_id)
+                if success: st.toast("🗑️ Expense deleted!", icon="🗑️"); st.session_state.delete_confirm = False; st.session_state.pop('selected_expense_id', None); st.experimental_rerun()
+                else: st.toast("❌ Failed to delete.", icon="❌") # db_utils logs specifics
+            except Exception as e: st.toast(f"❌ Error: {e}", icon="❌"); logging.error(f"Delete exception: {e}")
+    with col_btn2:
+        if st.button("No, Cancel"): st.session_state.delete_confirm = False; st.session_state.pop('selected_expense_id', None); st.experimental_rerun()
+
+# --- Main Render Function for Reports Tab ---
 def render():
+    """Renders the 'Reports' page, handling normal view, edit mode, and delete confirmation."""
+    # ... (Initialize session state) ...
+    st.session_state.setdefault('edit_mode', False)
+    st.session_state.setdefault('delete_confirm', False)
+    st.session_state.setdefault('selected_expense_id', None)
+
     metadata = load_metadata()
-    df_all = fetch_all_expenses()
-    if df_all.empty:
-        st.warning("No expense data available.")
-        return # Exit early if no data
+    if metadata is None:
+        return # Error shown in load_metadata
 
-    df_all['date'] = pd.to_datetime(df_all['date']) # Ensure date is datetime
-    df_all['month'] = df_all['date'].dt.strftime('%Y-%m')
+    # --- Conditional Rendering ---
+    if st.session_state.edit_mode:
+        if st.session_state.selected_expense_id:
+            expense_to_edit = fetch_expense_by_id(st.session_state.selected_expense_id) # db_utils logs error
+            if expense_to_edit: display_edit_form(expense_to_edit, metadata)
+            else: st.error("Failed to load expense for editing."); st.session_state.edit_mode = False; # Reset
+        else: st.error("No expense selected for edit."); st.session_state.edit_mode = False; # Reset
+        # Add Back button if needed
+        if st.session_state.edit_mode and st.button("Back to Report View##Edit"):
+             st.session_state.edit_mode = False; st.session_state.pop('selected_expense_id', None); st.session_state.pop('edit_form_category', None); st.experimental_rerun()
 
+    elif st.session_state.delete_confirm:
+        if st.session_state.selected_expense_id:
+            expense_to_delete = fetch_expense_by_id(st.session_state.selected_expense_id) # db_utils logs error
+            if expense_to_delete: display_delete_confirmation(expense_to_delete)
+            else: st.error("Failed to load expense for deletion."); st.session_state.delete_confirm = False; # Reset
+        else: st.error("No expense selected for deletion."); st.session_state.delete_confirm = False; # Reset
+        # Add Back button if needed
+        if st.session_state.delete_confirm and st.button("Back to Report View##Delete"):
+             st.session_state.delete_confirm = False; st.session_state.pop('selected_expense_id', None); st.experimental_rerun()
+
+    else:
+        # Render the normal report view if not editing or deleting
+        try:
+            render_report_view(metadata)
+        except Exception as e:
+            st.error(f"An error occurred while rendering the report: {e}")
+            logging.exception("Error rendering report view.") # Log full traceback
+
+
+# --- Helper Function for Normal Report View ---
+def render_report_view(metadata: Dict[str, Any]):
+    """Renders the standard report view with filters, stats, table, and actions."""
+    # ... (Code inside this function remains largely the same, relies on db_utils logging) ...
     st.subheader("Expense Report")
+    df_all = fetch_all_expenses()
+    if df_all.empty: st.info("No expense data."); return
+    df_all['month'] = df_all['date'].dt.strftime('%Y-%m')
+    all_accounts = metadata.get("Account", []); all_categories_map = metadata.get("categories", {}); all_categories_list = sorted(list(all_categories_map.keys())); all_users_list = sorted(list(set(metadata.get("User", {}).values())))
 
     with st.expander("Filter Options", expanded=True):
-        # ... (filtering widgets remain the same) ...
         col1, col2, col3 = st.columns(3)
-        with col1:
-            months = st.multiselect("Month", ["All"] + sorted(df_all['month'].unique(), reverse=True), default=["All"])
-            accounts = st.multiselect("Account", ["All"] + metadata["Account"], default=["All"])
-        with col2:
-            categories = st.multiselect("Category", ["All"] + sorted(list(metadata["categories"].keys())), default=["All"])
-            users = st.multiselect("User", ["All"] + sorted(list(set(metadata["User"].values()))), default=["All"])
+        with col1: months = st.multiselect("Month", ["All"] + sorted(df_all['month'].unique(), reverse=True), default=["All"], key="report_months"); accounts = st.multiselect("Account", ["All"] + all_accounts, default=["All"], key="report_accounts")
+        with col2: categories = st.multiselect("Category", ["All"] + all_categories_list, default=["All"], key="report_categories"); users = st.multiselect("User", ["All"] + all_users_list, default=["All"], key="report_users")
         with col3:
-            if "All" in categories:
-                sub_cats_options = sorted(list(set(sub for subs in metadata["categories"].values() for sub in subs)))
-            else:
-                sub_cats_options = sorted(list(set(sub for cat in categories for sub in metadata["categories"].get(cat, []))))
+            if "All" in categories: sub_cats_options = sorted(list(set(sub for subs in all_categories_map.values() for sub in subs)))
+            else: sub_cats_options = sorted(list(set(sub for cat in categories for sub in all_categories_map.get(cat, []))))
             subcategories = st.selectbox("Sub-category", ["All"] + sub_cats_options, key="report_subcat_select")
 
-    # Apply filters
     df_filtered = df_all.copy()
     if "All" not in months: df_filtered = df_filtered[df_filtered['month'].isin(months)]
     if "All" not in accounts: df_filtered = df_filtered[df_filtered['account'].isin(accounts)]
@@ -595,38 +773,45 @@ def render():
 
     total = df_filtered['amount'].sum()
     st.markdown(f"### Total Expense (Filtered): ₹{total:,.2f}")
-    st.markdown("---") # Add a separator before the table
+    if not df_filtered.empty:
+        st.markdown("---"); st.markdown("#### Summary Statistics (Filtered Data)")
+        num_transactions = len(df_filtered); avg_transaction = df_filtered['amount'].mean()
+        top_category_series = df_filtered.groupby('category')['amount'].sum().nlargest(1)
+        top_category_display = "N/A"
+        if not top_category_series.empty: top_category_name = top_category_series.index[0]; top_category_amount = top_category_series.iloc[0]; top_category_display = f"{top_category_name} (₹{top_category_amount:,.0f})"
+        stat_col1, stat_col2, stat_col3 = st.columns(3)
+        with stat_col1: st.metric(label="Transactions", value=f"{num_transactions:,}")
+        with stat_col2: st.metric(label="Avg. Transaction", value=f"₹{avg_transaction:,.2f}")
+        with stat_col3: st.metric(label="Top Category", value=top_category_display)
+    st.markdown("---")
 
-    # Prepare dataframe for display (sort before displaying)
-    display_df = df_filtered.drop(columns=["id", "month"], errors='ignore').rename(columns={
-        "date": "Date", "account": "Account", "category": "Category",
-        "sub_category": "Sub Category", "type": "Type", "user": "User", "amount": "Amount"
-    }).sort_values("Date", ascending=False)
+    display_df = pd.DataFrame()
+    if not df_filtered.empty:
+        display_df = df_filtered.drop(columns=["id", "month"], errors='ignore').rename(columns={"date": "Date", "account": "Account", "category": "Category","sub_category": "Sub Category", "type": "Type", "user": "User", "amount": "Amount"}).sort_values("Date", ascending=False)
+        st.markdown("#### Detailed Transactions")
+        st.dataframe(display_df.style.format({'Date': '{:%Y-%m-%d}', 'Amount': '₹{:.2f}'}), use_container_width=True, height=400, hide_index=True)
+    else: st.info("No transactions match the current filters.")
 
-    # Display the filtered data table
+    if not df_filtered.empty:
+        st.markdown("---"); st.markdown("#### Edit / Delete Expense")
+        options_limit = 500
+        df_display_options = df_filtered.sort_values('date', ascending=False).head(options_limit).copy()
+        df_display_options['display_str'] = df_display_options.apply(lambda row: f"{row['date'].strftime('%Y-%m-%d')} {row['account']} {row['category']} {row['sub_category'][:20]}.. ₹{row['amount']:.0f}", axis=1)
+        options_dict = pd.Series(df_display_options.id.values, index=df_display_options.display_str).to_dict()
+        options_dict = {"-- Select expense --": None, **options_dict}
+        selected_option = st.selectbox("Select Expense to Modify", options=list(options_dict.keys()), key="expense_action_select")
+        selected_id = options_dict.get(selected_option)
+        col_action1, col_action2, _ = st.columns([1, 1, 4])
+        edit_disabled = selected_id is None; delete_disabled = selected_id is None
+        with col_action1:
+            if st.button("Edit Selected", key="edit_btn", disabled=edit_disabled): st.session_state.selected_expense_id = selected_id; st.session_state.edit_mode = True; st.session_state.pop('edit_form_category', None); st.experimental_rerun()
+        with col_action2:
+             if st.button("Delete Selected", key="delete_btn", disabled=delete_disabled): st.session_state.selected_expense_id = selected_id; st.session_state.delete_confirm = True; st.experimental_rerun()
+
     if not display_df.empty:
-        st.dataframe(
-            display_df.style.format({'Date': '{:%Y-%m-%d}', 'Amount': '₹{:.2f}'}),
-            use_container_width=True,
-            height=400,
-            hide_index=True
-        )
-    else:
-        st.info("No data matches the current filters.") # Show info if table is empty
-
-    # --- Add Export Button BELOW table ---
-    if not display_df.empty:
-        st.markdown("---") # Optional separator above button
-        csv_data = convert_df_to_csv(display_df) # Use the cached function
-
-        st.download_button(
-            label="Export Filtered Data to CSV",
-            data=csv_data,
-            file_name='filtered_expenses.csv',
-            mime='text/csv',
-            help="Download the currently filtered expense report as a CSV file."
-        )
-    # --- End Export Button ---
+        st.markdown("---")
+        csv_data = convert_df_to_csv(display_df)
+        st.download_button("Export Filtered Data to CSV", csv_data, 'filtered_expenses.csv', 'text/csv', help="Download the currently displayed report as CSV.")
 
 # Contents of tabs/visuals.py
 # tabs/visuals.py
@@ -636,347 +821,196 @@ import plotly.express as px
 import plotly.graph_objects as go
 import json
 import datetime
-
-# Ensure fetch_all_expenses is imported
 from db_utils import fetch_all_expenses
+from typing import Dict, Any, Optional, List
+import logging # <<<--- ADD THIS IMPORT
 
-def load_metadata():
-    """Loads metadata from the JSON file."""
+@st.cache_data
+def load_metadata() -> Optional[Dict[str, Any]]:
+    """Loads metadata from the expense_metadata.json file."""
     try:
         with open("expense_metadata.json", "r") as f:
-            return json.load(f)
+            metadata = json.load(f)
+            logging.debug("Metadata loaded successfully for Visuals.")
+            return metadata
     except FileNotFoundError:
-        st.error("Error: expense_metadata.json not found. Please ensure the file exists.")
+        st.error("Error: expense_metadata.json not found.")
+        logging.error("expense_metadata.json not found.")
         return None
     except json.JSONDecodeError:
-        st.error("Error: Could not decode expense_metadata.json. Please check its format.")
+        st.error("Error: Could not decode expense_metadata.json.")
+        logging.error("Could not decode expense_metadata.json.")
         return None
 
+# --- Helper function for common Plotly layout args ---
+def get_common_layout_args(chart_title: str) -> Dict[str, Any]:
+    """Returns a dictionary of common Plotly layout arguments."""
+    # ... (function remains the same) ...
+    return {
+        "title_text": chart_title, "title_font_size": 16, "title_x": 0.5,
+        "margin": dict(l=10, r=10, t=40, b=20),
+        "legend": dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5),
+        "hovermode": "closest",
+    }
+
+
 def render():
-    """Renders the Visualizations tab."""
+    """Renders the 'Visualizations' page with a 2x2 grid of charts."""
     st.subheader("Expense Visualizations")
 
     metadata = load_metadata()
     if metadata is None:
-        st.error("Metadata could not be loaded. Cannot display visualizations.")
+        return # Error already shown
+
+    # Fetch all data (uncached)
+    df_all = fetch_all_expenses() # This function now logs internally on error
+    if df_all.empty:
+        st.info("No expense data available for visualizations.")
         return
 
-    df_all = fetch_all_expenses()
-    if df_all.empty:
-        st.warning("No expense data found to display visualizations.")
-        return
-
-    # --- Data Preprocessing ---
-    df_all['date'] = pd.to_datetime(df_all['date'])
-    df_all['YearMonth'] = df_all['date'].dt.strftime('%Y-%m') # For monthly grouping/filtering
-
-    # Prepare lists for filters, handle empty df case
-    if df_all.empty:
-         min_date_overall = datetime.date.today()
-         max_date_overall = datetime.date.today()
-         all_months = []
-         all_categories = []
-         all_users = list(set(metadata.get("User", {}).values())) if metadata.get("User") else []
-         all_accounts = metadata.get("Account", [])
-    else:
+    # --- Data Preprocessing & Filter List Setup ---
+    try:
+        # Ensure date conversion doesn't fail silently
+        df_all['date'] = pd.to_datetime(df_all['date'], errors='raise') # Raise error if conversion fails
+        df_all['YearMonth'] = df_all['date'].dt.strftime('%Y-%m')
         min_date_overall = df_all['date'].min().date()
         max_date_overall = df_all['date'].max().date()
-        all_months = sorted(df_all['YearMonth'].unique(), reverse=True)
-        all_categories = sorted(list(metadata.get("categories", {}).keys())) # Sort categories alphabetically
-        all_users = sorted(list(set(metadata.get("User", {}).values())))
-        all_accounts = metadata.get("Account", [])
+        all_months = ["All"] + sorted(df_all['YearMonth'].unique(), reverse=True)
+        all_categories = ["All"] + sorted(list(metadata.get("categories", {}).keys()))
+        all_users = ["All"] + sorted(list(set(metadata.get("User", {}).values())))
+        all_accounts = ["All"] + metadata.get("Account", [])
+        treemap_parent_categories = sorted(list(metadata.get("categories", {}).keys()))
+    except Exception as e:
+        st.error(f"Error processing initial data: {e}")
+        logging.exception("Data preprocessing error in visuals.") # Log full traceback
+        return
 
-    # --- Create 2x2 Grid ---
+    # --- Create 2x2 Grid Layout ---
     col1, col2 = st.columns(2)
     col3, col4 = st.columns(2)
 
-    # --- Chart 1: Pie Chart (Top-Left) ---
-    with col1:
-        st.markdown("#### By Category (Proportion)")
-        # FIXED Expander Label
-        with st.expander("Filters", expanded=False): # Label is just "Filters"
-            # Filters organized in grid within expander
-            f_col1, f_col2 = st.columns(2)
-            with f_col1:
-                pie_month = st.selectbox(
-                    "Month", ["All"] + all_months, index=0, key="pie_month_select",
-                    help="Filter expenses by month for this chart."
-                )
-                pie_categories = st.multiselect(
-                    "Category", ["All"] + all_categories, default=["All"], key="pie_category_select",
-                     help="Filter expenses by category for this chart."
-                )
-            with f_col2:
-                pie_accounts = st.multiselect(
-                    "Account", ["All"] + all_accounts, default=["All"], key="pie_account_select",
-                     help="Filter expenses by account for this chart."
-                )
-                pie_users = st.multiselect(
-                    "User", ["All"] + all_users, default=["All"], key="pie_user_select",
-                    help="Filter expenses by user for this chart."
-                )
-            # Removed the legend checkbox
-
-        # Filter data specifically for Pie Chart
-        pie_df = df_all.copy()
-        if pie_month != "All": pie_df = pie_df[pie_df['YearMonth'] == pie_month]
-        if "All" not in pie_accounts: pie_df = pie_df[pie_df['account'].isin(pie_accounts)]
-        if "All" not in pie_categories: pie_df = pie_df[pie_df['category'].isin(pie_categories)]
-        if "All" not in pie_users: pie_df = pie_df[pie_df['user'].isin(pie_users)]
-
-        if pie_df.empty:
-            st.info("No data for selected Pie Chart filters.", icon="ℹ️") # Changed to info
-        else:
-            pie_data = pie_df.groupby('category')['amount'].sum().reset_index()
-            # Filter out zero/negative amounts if any, as they break pie charts
-            pie_data = pie_data[pie_data['amount'] > 0]
-            if pie_data.empty:
-                st.info("No positive spending data for selected Pie Chart filters.", icon="ℹ️")
+    # Wrap each chart rendering in a try-except block for robustness
+    try:
+        # --- Chart 1: Pie Chart (Top-Left) ---
+        with col1:
+            st.markdown("#### By Category (Proportion)")
+            with st.expander("Filters", expanded=False):
+                f_col1, f_col2 = st.columns(2)
+                with f_col1: pie_month = st.selectbox("Month", all_months, 0, key="pie_month_select"); pie_categories = st.multiselect("Category", all_categories, ["All"], key="pie_category_select")
+                with f_col2: pie_accounts = st.multiselect("Account", all_accounts, ["All"], key="pie_account_select"); pie_users = st.multiselect("User", all_users, ["All"], key="pie_user_select")
+            # Filter logic...
+            pie_df = df_all.copy();
+            if pie_month != "All": pie_df = pie_df[pie_df['YearMonth'] == pie_month]
+            if "All" not in pie_accounts: pie_df = pie_df[pie_df['account'].isin(pie_accounts)]
+            if "All" not in pie_categories: pie_df = pie_df[pie_df['category'].isin(pie_categories)]
+            if "All" not in pie_users: pie_df = pie_df[pie_df['user'].isin(pie_users)]
+            if pie_df.empty: st.info("No data: Pie", icon="ℹ️")
             else:
-                fig1 = px.pie(
-                    pie_data, values='amount', names='category',
-                    title=f"Category Spend ({pie_month})", hole=0.4,
-                    labels={'amount': 'Total', 'category': 'Category'}
-                )
-                fig1.update_traces(
-                    textposition='inside',
-                    textinfo='percent+label', # Show label and percent inside
-                    hovertemplate="<b>%{label}</b><br>Amount: ₹%{value:,.0f}<br>(%{percent})<extra></extra>",
-                    insidetextorientation='radial' # Adjust text orientation
-                )
-                fig1.update_layout(
-                    showlegend=False, # REMOVED Legend
-                    margin=dict(l=10, r=10, t=40, b=10), # Adjusted top margin slightly
-                    title_font_size=16,
-                    title_x=0.5
-                )
-                st.plotly_chart(fig1, use_container_width=True)
+                pie_data = pie_df.groupby('category')['amount'].sum().reset_index(); pie_data = pie_data[pie_data['amount'] > 0]
+                if pie_data.empty: st.info("No positive data: Pie", icon="ℹ️")
+                else:
+                    chart_title = f"Category Spend ({pie_month})"; fig1 = px.pie(pie_data, values='amount', names='category', hole=0.4)
+                    fig1.update_traces(textposition='inside', textinfo='percent+label', hovertemplate="<b>%{label}</b><br>Amt: ₹%{value:,.0f}<br>(%{percent})<extra></extra>", insidetextorientation='radial')
+                    layout_args = get_common_layout_args(chart_title); layout_args["showlegend"] = False; fig1.update_layout(**layout_args)
+                    st.plotly_chart(fig1, use_container_width=True)
+    except Exception as e:
+        logging.exception("Error rendering Pie Chart.")
+        st.error("Error displaying Pie Chart.", icon="🔥")
 
-    # --- Chart 2: Category Bar Chart (Top-Right) ---
-    with col2:
-        st.markdown("#### By Category (Absolute)")
-        # FIXED Expander Label
-        with st.expander("Filters", expanded=False):
-             f_col1, f_col2 = st.columns(2)
-             with f_col1:
-                 cat_bar_start_date = st.date_input(
-                    "Start Date", value=min_date_overall, min_value=min_date_overall, max_value=max_date_overall,
-                    key="cat_bar_start_date"
-                 )
-                 cat_bar_accounts = st.multiselect(
-                    "Account", ["All"] + all_accounts, default=["All"], key="cat_bar_account_select"
-                 )
-             with f_col2:
-                 cat_bar_end_date = st.date_input(
-                    "End Date", value=max_date_overall, min_value=min_date_overall, max_value=max_date_overall,
-                    key="cat_bar_end_date"
-                 )
-                 cat_bar_users = st.multiselect(
-                    "User", ["All"] + all_users, default=["All"], key="cat_bar_user_select"
-                 )
 
-        # Filter data specifically for Category Bar Chart
-        cat_bar_df = df_all.copy()
-        if cat_bar_start_date <= cat_bar_end_date:
-            cat_bar_df = cat_bar_df[
-                (cat_bar_df['date'].dt.date >= cat_bar_start_date) &
-                (cat_bar_df['date'].dt.date <= cat_bar_end_date)
-            ]
-            if "All" not in cat_bar_accounts: cat_bar_df = cat_bar_df[cat_bar_df['account'].isin(cat_bar_accounts)]
-            if "All" not in cat_bar_users: cat_bar_df = cat_bar_df[cat_bar_df['user'].isin(cat_bar_users)]
-        else:
-            st.warning("Invalid date range selected for Category Bar Chart.", icon="⚠️")
-            cat_bar_df = pd.DataFrame()
-
-        if cat_bar_df.empty:
-            st.info("No data for selected Category Bar filters.", icon="ℹ️")
-        else:
-            cat_bar_data = cat_bar_df.groupby('category')['amount'].sum().reset_index()
-            # Filter out zero/negative amounts
-            cat_bar_data = cat_bar_data[cat_bar_data['amount'] > 0].sort_values('amount', ascending=False)
-            if cat_bar_data.empty:
-                st.info("No positive spending data for selected Category Bar filters.", icon="ℹ️")
+    try:
+        # --- Chart 2: Category Bar Chart (Top-Right) ---
+        with col2:
+            st.markdown("#### By Category (Absolute)")
+            with st.expander("Filters", expanded=False):
+                 f_col1, f_col2 = st.columns(2)
+                 with f_col1: cat_bar_start_date = st.date_input("Start Date", min_date_overall, min_date_overall, max_date_overall, key="cat_bar_start_date"); cat_bar_accounts = st.multiselect("Account", all_accounts, ["All"], key="cat_bar_account_select")
+                 with f_col2: cat_bar_end_date = st.date_input("End Date", max_date_overall, min_date_overall, max_date_overall, key="cat_bar_end_date"); cat_bar_users = st.multiselect("User", all_users, ["All"], key="cat_bar_user_select")
+            # Filter logic...
+            cat_bar_df = df_all.copy(); date_range_valid = cat_bar_start_date <= cat_bar_end_date
+            if date_range_valid:
+                cat_bar_df = cat_bar_df[(cat_bar_df['date'].dt.date >= cat_bar_start_date) & (cat_bar_df['date'].dt.date <= cat_bar_end_date)]
+                if "All" not in cat_bar_accounts: cat_bar_df = cat_bar_df[cat_bar_df['account'].isin(cat_bar_accounts)]
+                if "All" not in cat_bar_users: cat_bar_df = cat_bar_df[cat_bar_df['user'].isin(cat_bar_users)]
+            else: st.warning("Invalid date: Cat Bar", icon="⚠️"); cat_bar_df = pd.DataFrame()
+            if cat_bar_df.empty: st.info("No data: Cat Bar", icon="ℹ️")
             else:
-                fig2 = px.bar(
-                    cat_bar_data,
-                    x='category',
-                    y='amount',
-                    color='category', # ADDED Color mapping for multicolour
-                    title=f"Category Totals ({cat_bar_start_date.strftime('%d%b')} - {cat_bar_end_date.strftime('%d%b%y')})",
-                    labels={'amount': 'Total Amount (INR)', 'category': 'Category'}
-                )
-                fig2.update_layout(
-                    showlegend=False, # Hide legend as colors match x-axis labels
-                    xaxis_title=None, yaxis_title="Total (INR)",
-                    margin=dict(l=10, r=10, t=40, b=10),
-                    title_font_size=16, title_x=0.5,
-                    xaxis={'categoryorder':'total descending'}
-                )
-                fig2.update_traces(
-                    hovertemplate="<b>%{x}</b><br>Total: ₹%{y:,.0f}<extra></extra>"
-                )
-                st.plotly_chart(fig2, use_container_width=True)
+                cat_bar_data = cat_bar_df.groupby('category')['amount'].sum().reset_index(); cat_bar_data = cat_bar_data[cat_bar_data['amount'] > 0].sort_values('amount', ascending=False)
+                if cat_bar_data.empty: st.info("No positive data: Cat Bar", icon="ℹ️")
+                else:
+                    chart_title = f"Category Totals ({cat_bar_start_date.strftime('%d%b')}-{cat_bar_end_date.strftime('%d%b%y')})"; fig2 = px.bar(cat_bar_data, x='category', y='amount', color='category')
+                    fig2.update_traces(hovertemplate="<b>%{x}</b><br>Total: ₹%{y:,.0f}<extra></extra>")
+                    layout_args = get_common_layout_args(chart_title); layout_args["showlegend"] = False; layout_args["xaxis_title"] = None; layout_args["yaxis_title"] = "Total (INR)"; layout_args["xaxis"] = dict(categoryorder='total descending', tickangle=-90); layout_args["margin"]["b"] = 80
+                    fig2.update_layout(**layout_args)
+                    st.plotly_chart(fig2, use_container_width=True)
+    except Exception as e:
+        logging.exception("Error rendering Category Bar Chart.")
+        st.error("Error displaying Category Bar Chart.", icon="🔥")
 
-    # --- Chart 3: Line Chart (Bottom-Left) ---
-    with col3:
-        st.markdown("#### Trend Over Time")
-        # FIXED Expander Label
-        with st.expander("Filters", expanded=False):
-            f_col1, f_col2 = st.columns(2)
-            with f_col1:
-                line_start_date = st.date_input(
-                    "Start Date", value=min_date_overall, min_value=min_date_overall, max_value=max_date_overall,
-                    key="line_start_date"
-                )
-                line_categories = st.multiselect(
-                    "Category", ["All"] + all_categories, default=["All"], key="line_category_select"
-                )
-                line_chart_mode = st.radio(
-                     "View", ["Daily", "Cumulative"], index=0, key="line_chart_mode_select", horizontal=True
-                )
-            with f_col2:
-                line_end_date = st.date_input(
-                    "End Date", value=max_date_overall, min_value=min_date_overall, max_value=max_date_overall,
-                    key="line_end_date"
-                )
-                line_accounts = st.multiselect(
-                    "Account", ["All"] + all_accounts, default=["All"], key="line_account_select"
-                )
-                line_users = st.multiselect(
-                    "User", ["All"] + all_users, default=["All"], key="line_user_select"
-                )
 
-        # Filter data specifically for Line Chart
-        line_df_filtered = pd.DataFrame()
-        if line_start_date > line_end_date:
-            st.error("Error: Start date cannot be after end date for Line Chart.", icon="🚨")
-        else:
-            line_df_filtered = df_all[
-                (df_all['date'].dt.date >= line_start_date) &
-                (df_all['date'].dt.date <= line_end_date)
-            ].copy()
-
-            if not line_df_filtered.empty:
+    try:
+        # --- Chart 3: Line Chart (Bottom-Left) ---
+        with col3:
+            st.markdown("#### Trend Over Time")
+            with st.expander("Filters", expanded=False):
+                f_col1, f_col2 = st.columns(2)
+                with f_col1: line_start_date = st.date_input("Start Date", min_date_overall, min_date_overall, max_date_overall, key="line_start_date"); line_categories = st.multiselect("Category", all_categories, ["All"], key="line_category_select"); line_chart_mode = st.radio("View", ["Daily", "Cumulative"], 0, key="line_chart_mode_select", horizontal=True)
+                with f_col2: line_end_date = st.date_input("End Date", max_date_overall, min_date_overall, max_date_overall, key="line_end_date"); line_accounts = st.multiselect("Account", all_accounts, ["All"], key="line_account_select"); line_users = st.multiselect("User", all_users, ["All"], key="line_user_select")
+            # Filter logic...
+            line_df_filtered = pd.DataFrame(); date_range_valid = line_start_date <= line_end_date
+            if date_range_valid:
+                line_df_filtered = df_all[(df_all['date'].dt.date >= line_start_date) & (df_all['date'].dt.date <= line_end_date)].copy()
                 if "All" not in line_accounts: line_df_filtered = line_df_filtered[line_df_filtered['account'].isin(line_accounts)]
                 if "All" not in line_categories: line_df_filtered = line_df_filtered[line_df_filtered['category'].isin(line_categories)]
                 if "All" not in line_users: line_df_filtered = line_df_filtered[line_df_filtered['user'].isin(line_users)]
-
-        if line_df_filtered.empty:
-             if line_start_date <= line_end_date: # Only show warning if date range was valid
-                 st.info("No data for selected Line Chart filters.", icon="ℹ️")
-        else:
-            trend_data = line_df_filtered.groupby('date')['amount'].sum().reset_index().sort_values('date')
-            # Ensure no zero/negative days affect cumulative sum if needed (usually okay for line)
-            # trend_data = trend_data[trend_data['amount'] > 0] # Optional: only plot days with spending
-            if trend_data.empty:
-                 st.info("No spending data for selected Line Chart filters.", icon="ℹ️")
+            else: st.error("Invalid date: Line Chart", icon="🚨");
+            if line_df_filtered.empty:
+                if date_range_valid: st.info("No data: Line Chart", icon="ℹ️")
             else:
-                fig3 = go.Figure()
-                chart_title = f'{line_chart_mode} Trend ({line_start_date.strftime("%d%b")} - {line_end_date.strftime("%d%b%y")})'
-                yaxis_title = f'{line_chart_mode} Amount (INR)'
+                trend_data = line_df_filtered.groupby('date')['amount'].sum().reset_index().sort_values('date');
+                if trend_data.empty: st.info("No spending: Line Chart", icon="ℹ️")
+                else:
+                    fig3 = go.Figure(); chart_title = f'{line_chart_mode} Trend ({line_start_date.strftime("%d%b")}-{line_end_date.strftime("%d%b%y")})'; yaxis_title = f'{line_chart_mode} Amount (INR)'
+                    trace_args = {"x": trend_data['date'], "mode": 'lines+markers', "marker": dict(size=4)}
+                    if line_chart_mode == "Daily": fig3.add_trace(go.Scatter(**trace_args, y=trend_data['amount'], name='Daily', line=dict(width=2), hovertemplate="<b>%{x|%d %b %Y}</b><br>Daily: ₹%{y:,.0f}<extra></extra>"))
+                    elif line_chart_mode == "Cumulative": trend_data['cumulative_amount'] = trend_data['amount'].cumsum(); fig3.add_trace(go.Scatter(**trace_args, y=trend_data['cumulative_amount'], name='Cumulative', line=dict(width=2, dash='dot'), hovertemplate="<b>%{x|%d %b %Y}</b><br>Cumulative: ₹%{y:,.0f}<extra></extra>"))
+                    layout_args = get_common_layout_args(chart_title); layout_args["yaxis_title"] = yaxis_title; layout_args["xaxis_title"] = None; layout_args["showlegend"] = False; layout_args["hovermode"] = "x unified"; layout_args["xaxis"] = dict(rangeslider=dict(visible=True), type="date")
+                    fig3.update_layout(**layout_args)
+                    st.plotly_chart(fig3, use_container_width=True)
+    except Exception as e:
+        logging.exception("Error rendering Line Chart.")
+        st.error("Error displaying Line Chart.", icon="🔥")
 
-                if line_chart_mode == "Daily":
-                    fig3.add_trace(go.Scatter(
-                        x=trend_data['date'], y=trend_data['amount'], name='Daily', mode='lines+markers',
-                        line=dict(width=2), marker=dict(size=4),
-                        hovertemplate="<b>%{x|%d %b %Y}</b><br>Daily: ₹%{y:,.0f}<extra></extra>"
-                    ))
-                elif line_chart_mode == "Cumulative":
-                    trend_data['cumulative_amount'] = trend_data['amount'].cumsum()
-                    fig3.add_trace(go.Scatter(
-                        x=trend_data['date'], y=trend_data['cumulative_amount'], name='Cumulative', mode='lines+markers',
-                        line=dict(width=2, dash='dot'), marker=dict(size=4),
-                        hovertemplate="<b>%{x|%d %b %Y}</b><br>Cumulative: ₹%{y:,.0f}<extra></extra>"
-                    ))
 
-                fig3.update_layout(
-                    title=chart_title, title_font_size=16, title_x=0.5,
-                    xaxis_title=None, yaxis_title=yaxis_title,
-                    hovermode="x unified", showlegend=False,
-                    margin=dict(l=10, r=10, t=40, b=10),
-                    xaxis=dict(rangeslider=dict(visible=True), type="date")
-                )
-                st.plotly_chart(fig3, use_container_width=True)
-
-    # --- Chart 4: Sub-category Treemap (Bottom-Right) ---
-    with col4:
-        st.markdown("#### Sub-Category Breakdown")
-        # FIXED Expander Label
-        with st.expander("Filters", expanded=False):
-            # Filter for the parent category (REQUIRED for this chart)
-            treemap_parent_category = st.selectbox(
-                "Select Category to Break Down",
-                all_categories, # Must select one category
-                index=all_categories.index("Grocery") if "Grocery" in all_categories else 0, # Default to Grocery or first category
-                key="treemap_parent_select"
-            )
-            st.markdown("---") # Separator
-
-            # Other standard filters
-            f_col1, f_col2 = st.columns(2)
-            with f_col1:
-                treemap_start_date = st.date_input(
-                   "Start Date", value=min_date_overall, min_value=min_date_overall, max_value=max_date_overall,
-                   key="treemap_start_date"
-                )
-                treemap_accounts = st.multiselect(
-                   "Account", ["All"] + all_accounts, default=["All"], key="treemap_account_select"
-                )
-            with f_col2:
-                treemap_end_date = st.date_input(
-                   "End Date", value=max_date_overall, min_value=min_date_overall, max_value=max_date_overall,
-                   key="treemap_end_date"
-                )
-                treemap_users = st.multiselect(
-                   "User", ["All"] + all_users, default=["All"], key="treemap_user_select"
-                )
-
-        # Filter data specifically for Treemap
-        treemap_df = df_all.copy()
-        # Apply parent category filter first
-        treemap_df = treemap_df[treemap_df['category'] == treemap_parent_category]
-
-        # Apply other filters
-        if treemap_start_date <= treemap_end_date:
-            treemap_df = treemap_df[
-                (treemap_df['date'].dt.date >= treemap_start_date) &
-                (treemap_df['date'].dt.date <= treemap_end_date)
-            ]
-            if "All" not in treemap_accounts: treemap_df = treemap_df[treemap_df['account'].isin(treemap_accounts)]
-            if "All" not in treemap_users: treemap_df = treemap_df[treemap_df['user'].isin(treemap_users)]
-        else:
-            st.warning("Invalid date range selected for Treemap.", icon="⚠️")
-            treemap_df = pd.DataFrame()
-
-        if treemap_df.empty:
-            st.info(f"No '{treemap_parent_category}' data for selected Treemap filters.", icon="ℹ️")
-        else:
-            treemap_data = treemap_df.groupby('sub_category')['amount'].sum().reset_index()
-            treemap_data = treemap_data[treemap_data['amount'] > 0] # Filter out zero/negative amounts
-
-            if treemap_data.empty:
-                st.info(f"No positive spending data for '{treemap_parent_category}' sub-categories.", icon="ℹ️")
+    try:
+        # --- Chart 4: Sub-category Treemap (Bottom-Right) ---
+        with col4:
+            st.markdown("#### Sub-Category Breakdown")
+            with st.expander("Filters", expanded=False):
+                default_parent_index = treemap_parent_categories.index("Grocery") if "Grocery" in treemap_parent_categories else 0
+                treemap_parent_category = st.selectbox("Category to Break Down", treemap_parent_categories, index=default_parent_index, key="treemap_parent_select")
+                st.markdown("---")
+                f_col1, f_col2 = st.columns(2)
+                with f_col1: treemap_start_date = st.date_input("Start Date", min_date_overall, min_date_overall, max_date_overall, key="treemap_start_date"); treemap_accounts = st.multiselect("Account", all_accounts, ["All"], key="treemap_account_select")
+                with f_col2: treemap_end_date = st.date_input("End Date", max_date_overall, min_date_overall, max_date_overall, key="treemap_end_date"); treemap_users = st.multiselect("User", all_users, ["All"], key="treemap_user_select")
+            # Filter logic...
+            treemap_df = df_all.copy(); treemap_df = treemap_df[treemap_df['category'] == treemap_parent_category]
+            date_range_valid = treemap_start_date <= treemap_end_date
+            if date_range_valid:
+                treemap_df = treemap_df[(treemap_df['date'].dt.date >= treemap_start_date) & (treemap_df['date'].dt.date <= treemap_end_date)]
+                if "All" not in treemap_accounts: treemap_df = treemap_df[treemap_df['account'].isin(treemap_accounts)]
+                if "All" not in treemap_users: treemap_df = treemap_df[treemap_df['user'].isin(treemap_users)]
+            else: st.warning("Invalid date: Treemap", icon="⚠️"); treemap_df = pd.DataFrame()
+            if treemap_df.empty: st.info(f"No '{treemap_parent_category}' data: Treemap", icon="ℹ️")
             else:
-                fig4 = px.treemap(
-                    treemap_data,
-                    # Path defines hierarchy: show parent category then sub-categories within it
-                    path=[px.Constant(treemap_parent_category), 'sub_category'],
-                    values='amount',
-                    color='sub_category', # Color by sub-category for multicolour
-                    title=f"Breakdown for '{treemap_parent_category}' ({treemap_start_date.strftime('%d%b')} - {treemap_end_date.strftime('%d%b%y')})",
-                    # Custom data for hover template needs amount included explicitly if not in path/values/color
-                    custom_data=['amount']
-                )
-                fig4.update_traces(
-                     # Display sub-category label and its value/percentage on hover
-                    hovertemplate='<b>%{label}</b><br>Amount: ₹%{customdata[0]:,.0f}<br>Percentage of Parent: %{percentParent:.1%}<extra></extra>',
-                    # Display sub-category label and value inside the tile if space allows
-                    textinfo='label+value',
-                    insidetextfont=dict(size=12) # Adjust font size if needed
-                )
-                fig4.update_layout(
-                    margin=dict(l=10, r=10, t=40, b=10),
-                    title_font_size=16, title_x=0.5
-                )
-                st.plotly_chart(fig4, use_container_width=True)
+                treemap_data = treemap_df.groupby('sub_category')['amount'].sum().reset_index(); treemap_data = treemap_data[treemap_data['amount'] > 0]
+                if treemap_data.empty: st.info(f"No positive spending: '{treemap_parent_category}' sub-cats.", icon="ℹ️")
+                else:
+                    chart_title = f"'{treemap_parent_category}' Breakdown ({treemap_start_date.strftime('%d%b')}-{treemap_end_date.strftime('%d%b%y')})"; fig4 = px.treemap(treemap_data, path=[px.Constant(treemap_parent_category), 'sub_category'], values='amount', color='sub_category', custom_data=['amount'])
+                    fig4.update_traces(hovertemplate='<b>%{label}</b><br>Amt: ₹%{customdata[0]:,.0f}<br>% of Parent: %{percentParent:.1%}<extra></extra>', textinfo='label+value', insidetextfont=dict(size=12))
+                    layout_args = get_common_layout_args(chart_title); layout_args["showlegend"] = False; fig4.update_layout(**layout_args)
+                    st.plotly_chart(fig4, use_container_width=True)
+    except Exception as e:
+        logging.exception("Error rendering Treemap Chart.")
+        st.error("Error displaying Treemap Chart.", icon="🔥")
 
