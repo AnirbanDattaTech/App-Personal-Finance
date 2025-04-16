@@ -188,3 +188,29 @@ div[data-baseweb="popover"] ul li[aria-selected="true"] { background-color: var(
 [data-testid="stSidebar"] .stDownloadButton > button { background-color: var(--error-color); border-color: var(--error-color); color: #FFFFFF; }
 [data-testid="stSidebar"] .stDownloadButton > button:hover { background-color: #C82333; border-color: #BD2130; color: #FFFFFF; }
 [data-testid="stSidebar"] .stDownloadButton > button:focus { box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5); outline: none; }
+
+/* --- Application Header Banner Style --- */
+/* --- Application Header Banner Style --- */
+.main h1 {
+    background-color: #495057;
+    color: #FFFFFF;
+    padding: 0.8rem 2.5rem;
+    /* MODIFIED: Removed negative top margin, adjusted horizontal/bottom margin */
+    margin: 0 -2.5rem 1.5rem -2.5rem;
+    text-align: center;
+    border-radius: 0;
+    font-size: 1.75rem;
+    font-weight: 500;
+    border-bottom: none;
+}
+
+/* --- Main Content Area --- */
+.main .block-container {
+    /* MODIFIED: Increased top padding significantly */
+    padding-top: 5rem; /* Adjust this value as needed (e.g., 4rem, 5rem, 6rem) */
+    padding-bottom: 2rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+}
+
+/* ... (rest of styles) ... */

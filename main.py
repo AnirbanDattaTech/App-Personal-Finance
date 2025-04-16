@@ -7,6 +7,7 @@ import streamlit as st
 from tabs import add_expense, reports, visuals
 from style_utils import load_css
 import os # Import os for file path checking
+import logging # Ensure logging is imported if used within main
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -16,19 +17,22 @@ st.set_page_config(
 )
 
 # --- Load CSS ---
-# Ensure styles.css exists or handle the error gracefully in load_css
-load_css() # Assumes styles.css exists in the same directory
+load_css() # Load custom styles first
+
+# --- Add Application Header Banner ---
+st.title("My Personal Finance App")
+# --- End Application Header Banner ---
 
 # --- Sidebar Navigation ---
 st.sidebar.title("Navigation")
 page = st.sidebar.radio(
     "Go to",
     ["Add Expenses", "Reports", "Visualizations"],
-    label_visibility="collapsed", # Cleaner look without the label "Go to" repeating
-    key="main_nav" # Added a key for robustness
+    label_visibility="collapsed",
+    key="main_nav"
 )
 
-st.sidebar.markdown("---") # Visual separator
+st.sidebar.markdown("---")
 
 # --- Sidebar Data Management ---
 st.sidebar.header("Data Management")
@@ -40,11 +44,12 @@ if os.path.exists(DB_FILE):
                 label="Download Data Backup (.db)",
                 data=fp,
                 file_name="expenses_backup.db",
-                mime="application/octet-stream", # Standard mime type for binary files
+                mime="application/octet-stream",
                 help="Download the entire SQLite database file."
             )
     except OSError as e:
         st.sidebar.error(f"Error reading database file: {e}")
+        logging.error(f"Error reading DB for backup: {e}") # Log error
 else:
     st.sidebar.warning("Database file not found for backup.")
 
@@ -56,5 +61,4 @@ elif page == "Reports":
 elif page == "Visualizations":
     visuals.render()
 else:
-    # Fallback or error for unexpected page value
     st.error("Invalid page selected.")
