@@ -61,7 +61,7 @@ if __name__ == "__main__":
     output_file_path = os.path.join(script_dir, output_filename)
 
     # Define directories to exclude
-    folders_to_exclude = ["__pycache__"]
+    folders_to_exclude = ["__pycache__", ".git", ".idea", ".vscode", "venv"]
 
     # Generate the tree starting from the project root directory
     # and save the output in the reference/ folder
