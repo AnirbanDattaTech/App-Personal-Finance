@@ -1,0 +1,98 @@
+PHASE 2: This is the CURRENT REQUIREMENT.
+
+PUBLIC GIT REPO LINK: https://github.com/AnirbanDattaTech/App-Personal-Finance.git
+
+We will now start the development for a chatbot that can query the data and answer data insights, eda and data science related questions, to cover all areas a person might be interested in insight based on your understanding of the data, metadata and the project structure (what we are trying to do here). So we will keep all questions that require advanced statistical knowledge like probability and distributions, predictive modelling, and ML related questions (classification, regression, forecasting etc) in scope based on the data (expenses.db - sqlite3 file) and metadata.
+
+Here 
+
+REQUIREMENT-
+1. DATA STRUCTURE AND HISTORY REQUIREMENT-
+	1.1. The chatbot needs to remember the conversation history for a session for subsequent follow up questions, but no long term history needs to be saved. So each time the app is opened, a new conversation can be started where the context can be managed for the duraton of the session only.
+	1.2. Currently the project has only 1 data file, the sqlite db table. Consider, based on the requirment, if any additional database needs to be created (such as the metadata) where additional chatbot related data to be stored. Modularize the codebase, creating a new folder for storing all the data files if needed, accordingly. Remember, modularity and simplicity are key requirments. The existing code may need to change to update the location references.
+	1.3. I think a metada file with detailed description of all tables and all columns, including their data type, detailed description, unique values(where applicable), special constraints (like rent - once a month only, investment - once a month only) and other relevant information are required. If you agree, generate a metadata_detailed.json file with this info. Modularize the codebase, creating a new folder for storing all the metadata json files if needed, accordingly. Remember, modularity and simplicity are key requirments. The existing code may need to change to update the location references.
+	
+2. DESIGN REQUIREMENT-
+	2.1. The chatbot needs to be in a fourth tab called 'Assistant' after visualization.
+	2.2. In the assistant tab, there has to be 2 parts:
+		2.2.1. CHAT WINDOW / SECTION - This is where my wife and i will interact with the chat bot through a chat window. there needs to be a simple pre-generated system messge: 'Greetings! What can I help you with?' Followed by a text box where i or my wife (not at the same time) can ask a simple question like 'what is my total spend for april?' and after the chatbot answers, ask 'ok, out of this how much did i spend on resturants?'. The conversation needs to be multiturn so state and session management is important for a single session. For toy example: AI: 'Greetings! What can I help you with?' HUMAN: 'Hey! What was my total spend on the month of march?' AI: 'Sure! Your total spend was inr 25,000.' HUMAN: 'Great! How much of that i spent on household?' AI: 'Out of total spend of inr 25000, you have spent inr 5000 on household.'
+		
+		2.2.2. VISUALIZATION WINDOW / SECTION - this is a section where, based on the question asked, the ai bot needs to show a relevant visualization. So for example in the previous example sequence: {AI: 'Greetings! What can I help you with?' HUMAN: 'Hey! What was my total spend on the month of march?' AI: 'Sure! Your total spend was inr 25,000.' HUMAN: 'Great! How much of that i spent on household?' AI: 'Out of total spend of inr 25000, you have spent inr 5000 on household.'} - the visualization can be a bar chart showing the spend across each category (because the human asked for the spend for a specific category) for the requested month (march in this example). 
+	
+3. DEVELOPMENT REQUIREMENT - 
+	3.1. We will build a multi agent architecture using openai, langchain and langgraph and langsmith. I will upload the requirement file, pls ensure we have all the necessary dependencies to get started.
+	3.2. CRITICAL: The key idea here is to explore autonomous agents and how they collaborate intelligently with a superagent to generate the answer and relevant visualization. If it is a deterministic workflow going from one node to next using prebuilt set of rules, there is no point in building complex agent frameworks. Explore how autonomous agents can be used to fulfill the requirement. Details on the agents follow:
+	3.2. I think in the agent architecture, We need the following agents:
+		3.2.1 SUPER AGENT (SA) - This is the super agent that interacts with the user and coordinates with the sub-agents.
+			REQUIREMENTS - 
+				3.2.1.1 Greet the user and get the user question
+				3.2.1.2 Classify the question in one of 3 categories -  
+					{1. CATEGORY 1: SIMPLE - Ex. 1. Question: "What was my total spend last month across categories?" Ex 2. Question: "Who spent more on household last february - me or my wife?" Ex 3. Question: "Who bought that Mixer grinder last week? (refer to spend category-spend subcategory-spend type (free text description), refer data model, schema and metadata)" - simple query, hand over to the DATA ANALYST sub agent for answer
+					2. CATEGORY 2: ADVANCED (ML BASED) - 
+						Ex 1. Question: "What is the forecasted total combined spending (Anirban + Puspita) across all categories for the next calendar month?" - needs advanced (ml based) logic - hand over to DATA SCIENTIST sub agent after getting the required data from DATA ANALYST agent. 
+						Ex 2. Question: ""Estimate the Amount Anirban is likely to spend on a single 'Shopping' transaction at 'Amazon' or 'Flipkart', considering the platform (Sub-category), the month (for potential sales events), and the day of the week?" - needs advanced (ml based) logic - hand over to DATA SCIENTIST sub agent for answer.
+						
+					3. CATEGORY 3: NOT RELEVANT - Irrelevant for the context of the app (Ex. "How is the weather today?") or out of current scope of the application: (Ex. "what was my totay spend on 2015?" when the data is available only from 2024.) 
+				
+				A detailed prompt(s) with the best prompting techniques (few shot, CoT) needs to be developed for SUPER AGENT NODES in langgraph super agent graph.
+				3.2.1.3 Ask clarification questions to correctly identify the question into one of the 3 question categories (simple / advanced (ml based) / not relevant) to trigger the correct agent workflow (SIMPLE > DAA + DVA, ADVANCED > DAA + DSA + DVA, DVA is not necessary for each question - for questions with extremely simple single outputs (EX: "My total spend last month") a single number is sufficient.)
+				3.2.1.3 Coordinate with the 'DATA ANALYST' sub agent to get the response to the simple, data related questions in a tabular format
+				3.2.1.4 Coordinate with the 'DATA SCIENTIST' sub agent to get the response to advanced, ml based questions (classified as one of the 5 predefined ml question types by the DATA SCIENTIST sub agent) in tabular format, along with model performance summary in a tabular format
+				3.2.1.5 Coordinate with the 'DATA VISUALIZATION' agent to get the relevant graph /chart to the data related question - evaluate if chart response is needed for simple questions. If chart generation is not needed based on the DAA response, don't call the chart agent. For advanced (ml type) questions handled by the DSA, charts will always be needed, and DVA will always be called.
+				3.2.1.6 Show the answer and relevant chart in the streamlit frontend
+				3.2.1.7  Handle follow-up sequential questions based on previous questions
+				3.2.1.8 Gently guide the user to ask a relevant question if the user asks an questions irrelevant to the solution such as 'What is the capital of Vietnam?' (handle non-relevant question, terminate after 2 tries)
+				3.2.1.9 ADD ANY OTHER RELEVANT STEP HERE BASED ON YOUR UNDERSTANDING AND RECOMMENDATION
+				
+		3.2.2 DATA ANALYST SUB AGENT (DAA) - This sub-agent is in charge of getting the answer to the data-related user question. A detailed prompt(s) with the best prompting techniques (few shot, CoT) needs to be developed for this AGENT NODES. Do so.
+			REQUIREMENTS - 
+				3.2.2.1 Get the question from the SUPER AGENT or DATA SCIENTIST sub agent
+				3.2.2.2 Extract entities from the question (Date,Account,Category,Sub-category,Type,User,Amount)
+				3.2.2.3 Generate an sql query using langchain / sql tool etc - FLESH OUT THE DETAILS OF THIS STEP as to How exactly this will be handled
+				3.2.2.4 Execute the sql on the expenses.db to get the required results
+				3.2.1.5 ADD ANY OTHER RELEVANT STEP HERE BASED ON YOUR UNDERSTANDING AND RECOMMENDATION
+				3.2.2.6 update the agentstate and Pass the result to the SUPER AGENT and/or the DATA SCIENTIST sub agent 
+		
+		3.2.3 DATA SCIENTIST SUB AGENT (DSA) - This sub-agent is in charge of answering the more advanced data science related questions. A detailed prompt(s) with the best prompting techniques (few shot, CoT) needs to be developed for this AGENT NODES. Do so.
+			REQUIREMENTS - 
+				3.2.3.1 Get the question from the SUPER AGENT
+				
+				3.2.3.2 Classify the advanced question into one of 5 predefined categories: Regression, Forecasting, Classification, Segmentation, Unsupervised Clustering. See below examples of each advanced question type:
+					Ex 1. Question: "Can you predict my next week total spend? I have already paid rent, but investment ulip etc are pending (FORECASTING - based on weekly spend from expenses.db, consider fixed monthly payments like rent, investment. Predict future values (often numerical aggregates) of a variable that evolves sequentially over time. Focuses explicitly on the temporal dependencies – trend, seasonality, and autocorrelation (how past values influence future values) – inherent in the time series data itself. The primary input is the historical sequence.)" 
+					Ex 2. Question: "Can you tell me the high expense uber rides in the last month? (CLASSIFICATION - classify category: Travel,  subcategory: Cab, spend type: Uber - into high spend and low spend - return high spend rides for last month. Assign an instance (e.g., a transaction, a day) to one of several predefined, discrete classes based on its features.We are predicting membership in known, predefined categories (like Essential/Discretionary). We are not defining the segments themselves (Segmentation) or discovering unknown groups (Clustering).)" 
+					Ex 3. Question: "Estimate the Amount Anirban is likely to spend on a single 'Shopping' transaction at 'Amazon' or 'Flipkart', considering the platform (Sub-category), the month (for potential sales events), and the day of the week?" (REGRESSION - Predicts the value of one shopping instance. The platform (Amazon vs. Flipkart), time of year (sales), and whether it's a weekend might influence the basket size more directly than the amount spent on the previous online order. This models the characteristics-to-amount relationship for a specific event. Focuses on the relationship between features of a single instance and its numerical outcome, rather than predicting the next value in a sequence based primarily on past values and time patterns)
+					Ex 4. Question: "Analyze the 'High-Frequency Spending' segment (transactions under ₹300). What are the dominant categories, sub-categories, and users within this segment? Does its total monthly value change significantly?" (SEGMENTATION - Divide data into meaningful, predefined groups based on rules or shared characteristics, and then analyze and compare these segments. We define a segment based on a rule (Amount < 300). The analysis then describes the composition (categories, users) and tracks the aggregate behavior (total value over time) of this specific, predefined segment.)
+					Ex 5. Question: "Cluster our days based on the combination of total amount spent and the number of transactions that day. What kind of 'daily activity' clusters emerge (e.g., 'Low Spend/Low Activity', 'High Spend/Low Activity (single big purchase?)', 'Moderate Spend/High Activity (many small purchases?)')?" (UNSUPERVISED CLUSTERING - Allow an algorithm to automatically discover natural groupings (clusters) within the data based on similarity across features, without using predefined labels.We don't predefine what makes a 'type' of day. We feed features (total daily amount, total daily transaction count) into a clustering algorithm (like K-Means) and let it find groups of days that are mathematically similar based on these two dimensions. We then interpret the resulting clusters.)
+					
+				3.2.3.3 Frame a question in natural language along with specific mention of the columns, data slices and logic (JOIN, GROUP BY etc) and send it to the DAA to get the relevant data
+				3.2.3.4 Get the SQL query execution results from the DAA
+				3.2.3.5 Trigger a pre-defined ml workflow based on the advanced question classification: Regression, Forecasting, Classification, Segmentation, Unsupervised Clustering
+				3.2.3.6 Generate model output for the required data mentioned in user question in a tabular format based on advanced question classification
+				3.2.3.7 Generate model summary and other relevant information for the trained model based on the required data mentioned in user question in a tabular format, based on advanced question classification
+				3.2.3.8 ADD ANY OTHER RELEVANT STEP HERE BASED ON YOUR UNDERSTANDING AND RECOMMENDATION
+				3.2.3.9 update the agentstate and Pass the result to the SUPER AGENT
+				
+		3.2.5. DATA VISUALIZATION SUB AGENT (DVA) -  This sub-agent is responsible for creating a visualization in the 'Chart' section of the 'Assistant' tab in the streamlit UI based on the answer to the user queries generated by the DATA ANALYST SUB AGENT.A detailed prompt(s) with the best prompting techniques (few shot, CoT) needs to be developed for this AGENT NODES. Do so.
+			REQUIREMENTS -
+				3.2.5.1 Get the user query and the result of the sql query generated by the DATA ANALYST SUB AGENT.
+				3.2.5.2 Select one of the predefined set of visualizations based on the natural language user query and the sql generated response. The categories are: {Vertical bar chart, Horizontal bar chart, Scatter plot, Histogram, Line chart, Bubble chart, Pie chart}. One of these chart types MUST be selected. No chart types other than these are to be selected.
+				3.2.5.3 Get the x axis values, y axis values and other required values from the expenses.db and the sql generated response (basically get all the data required to generate the chart)
+				3.2.5.4 Generate the chart with all the bells and whistles (heading, axis names, legend ticks etc) in the 'Chart' section of the 'Assistant' tab in the streamlit UI
+				3.2.5.5 ADD ANY OTHER RELEVANT STEP HERE BASED ON YOUR UNDERSTANDING AND RECOMMENDATION
+				3.2.5.6 update the agentstate and Pass the result to the SUPER AGENT
+		
+		3.2.6. The above multi-agent architecture is a recommendation. CRITICAL: use your judgement to come up with the multi-agent architecture based on this recommendations. *CRITICAL IMPORTANT*:
+			3.2.6.1 Adhere to the business requirement: multi-turn conversation flow, chart generation for each question as appropriate, handling non-relevant or out of scope queries
+			3.2.6.2 Implement autonomous agents using above as a references
+			3.2.6.3 Refer to these specific online documents for multi-agent flow in Langgraph:
+				- https://langchain-ai.github.io/langgraph/how-tos/multi-agent-multi-turn-convo/
+				- https://github.com/langchain-ai/langgraph/tree/main/docs/docs/tutorials/multi_agent
+	
+	3.3. Only 1 user at a time, no need to worry about concurrent users.
+	3.4. focus on modularity and simplicity of the entire codebase based on this new requirement.
+	3.5 I want to learn the proper git development workflow with branches and everything, so pls include that in all your guidelines
+	3.6 I want to use langsmith for tracing and looking at agent workflows, so include that accordingly
+	3.5. carefully consider what impact it will have on the existing data/ code and modify accordingly. Existing functioalities and UI MUST remain as is.
+	3.6 These are just *INDICATIVE* steps, understand the requirement and ask as many clarification questions as needed. I will also share with you the updated code content so you are upto speed.
+	3.7 please carefully consider the requirment, focusing on error-free running, simlicity, robustness and scalability, and suggest changes to approach, additions, enhancements and recommedations.
+	3.8 Finally, suggest a detailed step by step approach to implement the agentic ai chatbot according to requirement. No code necessary, just discuss the approach with me before development.

@@ -1,3 +1,7 @@
+PHASE 1: This is the INITIAL REQUIREMENT. FOR UNDERSTANDING INITIAL SCOPE ONLY. CURRENT IMPLEMENTATION HAS CHANGED. REFER TO CODEBASE FOR CURRENT STATE.
+
+PUBLIC GIT REPO LINK: https://github.com/AnirbanDattaTech/App-Personal-Finance.git
+
 1. INITIAL PROMPT
 my wife and i are building a personal finance app for just the 2 of us with you. We live in bangalore and use a lot of online platforms. we will build the app using python, sqlite3, streamlit and necessary python packages. It will be for jus the 2 of us to use. Main objective is to track expenses for both of us. So we are thinking to first create a expense category, expense sub-category and expense type.
 
