@@ -1,0 +1,103 @@
+PHASED IMPLEMENTATION PLAN - PERSONAL FINANCE ASSISTANT (PHASE 2)
+
+----------------------------------
+PHASE 1: Basic LangGraph Setup (Hello World)
+----------------------------------
+1. Create `tabs/assistant.py` with two sections:
+   - Left: chat window (Streamlit messages)
+   - Right: chart window (conditionally displayed)
+
+2. Create a simple LangGraph workflow:
+   - Super Agent: accepts natural language question
+   - Data Analyst Agent (DAA): generates SQL query from user input
+   - Execute query on `expenses.db`
+   - Return result to user
+
+3. Optional: Add a basic chart using DVA (e.g., pie chart of spending)
+
+✅ GOAL: Answer simple question like "What’s my total spend last month?"
+
+
+----------------------------------
+PHASE 2: Add Question Classification & Routing
+----------------------------------
+1. Enhance Super Agent to classify the question into:
+   - Simple
+   - Advanced (ML)
+   - Irrelevant
+
+2. Use few-shot prompting + CoT with examples from `advanced_question_types.txt`
+
+3. Add routing logic:
+   - Simple → DAA → (optional) DVA
+   - Advanced → DSA → DAA → DSA → DVA
+   - Irrelevant → polite fallback (warn user, exit after 2 tries)
+
+✅ GOAL: Automatically route based on question type
+
+
+----------------------------------
+PHASE 3: Data Analyst Agent (DAA)
+----------------------------------
+1. Parse and extract entities: user, category, sub-category, date range, etc.
+
+2. Use LangChain SQL chain or hand-built prompt to generate valid SQL query
+
+3. Execute query on `expenses.db` and return data as pandas DataFrame
+
+4. Reusable by both SA and DSA
+
+✅ GOAL: DAA reliably answers any data retrieval request
+
+
+----------------------------------
+PHASE 4: Data Scientist Agent (DSA)
+----------------------------------
+1. Classify the question into ML type:
+   - Regression
+   - Forecasting
+   - Classification
+   - Segmentation
+   - Clustering
+
+2. Request relevant data slice from DAA (framed as a natural language question)
+
+3. Run modeling logic using `sklearn`, `statsmodels`, or similar
+
+4. Return:
+   - Model result
+   - Summary (R², accuracy, clusters, etc.)
+
+✅ GOAL: DSA can answer ML questions like "Forecast next month’s groceries"
+
+
+----------------------------------
+PHASE 5: Data Visualization Agent (DVA)
+----------------------------------
+1. Take:
+   - Original user question
+   - DataFrame (from DAA or DSA)
+   - Optional model summary
+
+2. Select a chart type from:
+   - Vertical bar, horizontal bar, pie, line, scatter, histogram, bubble
+
+3. Generate labeled Plotly chart with:
+   - Title, x/y axis, legend, tooltips
+
+4. Display in right-hand chart panel of Assistant tab
+
+✅ GOAL: Automatically render relevant chart for each query
+
+
+----------------------------------
+PHASE 6: Final Integration & Polish
+----------------------------------
+1. Track chat history with `st.session_state`
+2. Use LangGraph memory + state for multi-turn interactions
+3. Log agent runs using LangSmith for debugging
+4. Add error handling and polite fallbacks
+5. Clean and style the Streamlit Assistant tab
+6. Add loading indicators and user feedback
+
+✅ GOAL: Full working Assistant tab with multi-agent, multimodal intelligence

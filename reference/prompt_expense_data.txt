@@ -1,0 +1,114 @@
+You are to simulate realistic daily expense records for two users — Anirban and Puspita — living in Bangalore, India from 2021-01-01 to 2025-04-20.
+
+The CSV output must have the following columns:
+- date (YYYY-MM-DD)
+- year (YYYY)
+- month (YYYY-MM)
+- week (ISO format, e.g., 2024-W14)
+- day_of_week (Monday to Sunday)
+- account (choose from: Anirban-SBI, Anirban-ICICI, Puspita-SBI, Puspita-Bandhan)
+- category
+- sub_category
+- type (a specific free-text description that logically matches the sub_category, e.g., 'bangalore-mysore vande bharat' for 'Train')
+- user (either Anirban or Puspita)
+- amount (a realistic INR float value)
+
+Important generation rules:
+- Spend values and patterns must reflect real-world Bangalore pricing and frequency.
+- Stick to category-subcategory mappings given below — do not invent new ones.
+- Ensure at least 2 transactions per day, max 20. Every day must have at least 1 transaction from each user.
+- Introduce realistic variations: fixed, cyclical, and ad hoc spends
+- Examples:
+    - SIP: 3000/month from Anirban-ICICI
+    - Rent: 30000/month from Anirban-ICICI
+    - Maid: 2500/month from Puspita-SBI
+    - ULIP: 4000/month from Anirban-ICICI (between 20th-25th)
+    - Health Insurance: 1200/month from Anirban-ICICI
+    - Life Insurance: 55000 twice a year (20 March, 20 Sept)
+    - Groceries & Shopping: clustered around start of month
+    - Restaurant, Household, Health, Utilities, Beauty: evenly spread
+    - Alcohol: max once a month
+    - Train/Flight: only Puspita-Bandhan
+    - Parking fees: only Anirban-SBI or Anirban-ICICI
+
+Mimic realistic metadata and avoid invalid combinations (e.g., type: 'lab test' for sub_category: 'Flight').
+
+Here is the valid category-subcategory mapping (copy-pasted below):
+
+[categories = {
+  "Investment": ["SIP", "Mutual Funds", "Stocks", "FD/RD"],
+  "Rent": ["House Rent"],
+  "Travel": ["Day Trip", "Vacation", "Commute", "Cab", "Train", "Flight", "Hotel/Stay", "Parking Fee"],
+  "Restaurant": ["Dine-in", "Takeaway", "Food Delivery", "Snacks", "Cafe", "Drinks"],
+  "Insurance Premium": ["Life Insurance", "ULIP", "Health Insurance", "Vehicle Insurance"],
+  "Household": ["Electricity Bill", "Plumbing", "Electrical Repairs", "Appliance Repair", "Cleaning", "Pest Control", "Bike Maintenance", "Car Maintenance", "Furniture", "Kitchen Tools", "Ironing", "Maid"],
+  "Connectivity": ["Airtel WiFi", "Jio Recharge", "Airtel Mobile", "Netflix", "Prime Video", "Disney+ Hotstar"],
+  "Waste": ["Smoke", "Alcohol"],
+  "Grocery": ["BigBasket", "Amazon", "Flipkart Grocery", "Zepto", "Local Store", "Other"],
+  "Beauty": ["Nykaa", "Meesho", "Purplle", "Salon", "Makeup", "Skincare", "Salon"],
+  "Shopping": ["Amazon", "Flipkart", "Meesho", "Nykaa", "Purple", "Lifestyle", "Max", "Myntra"],
+  "Health": ["Doctor Visit", "Medicines", "Lab Test", "Health Checkup"],
+  "Utilities": ["Electricity", "Water", "Gas Cylinder", "Maintenance", "Garbage Collection"],
+  "Gifts & Donations": ["Family", "Friends", "Charity", "Temple"],
+  "Entertainment": ["Movies", "Concerts", "Games"],
+  "Education": ["Online Courses", "Books", "Workshops"]
+}]
+
+- IMPORTANT: Generate data accoording to day to day expenditure values in Bangalore, India for all categories to mimic real world scenario
+	- IMPORTANT: Spends MUST adhere to the category-subcategory mapping:
+		categories = {
+    "Investment": ["SIP", "Mutual Funds", "Stocks", "FD/RD"],
+    "Rent": ["House Rent"],
+    "Travel": ["Day Trip", "Vacation", "Commute", "Cab", "Train", "Flight", "Hotel/Stay", "Parking Fee"],
+    "Restaurant": ["Dine-in", "Takeaway", "Food Delivery", "Snacks", "Cafe", "Drinks"],
+    "Insurance Premium": ["Life Insurance", "ULIP", "Health Insurance", "Vehicle Insurance"],
+    "Household": [
+        "Electricity Bill", "Plumbing", "Electrical Repairs", "Appliance Repair", "Cleaning",
+        "Pest Control", "Bike Maintenance", "Car Maintenance", 
+        "Furniture", "Kitchen Tools", "Ironing", "Maid"
+    ],
+    "Connectivity": ["Airtel WiFi", "Jio Recharge", "Airtel Mobile", "Netflix", "Prime Video", "Disney+ Hotstar"],
+    "Waste": ["Smoke", "Alcohol"],
+    "Grocery": ["BigBasket", "Amazon", "Flipkart Grocery", "Zepto", "Local Store", "Other"],
+    "Beauty": ["Nykaa", "Meesho", "Purplle", "Salon", "Makeup", "Skincare", "Salon"],
+    "Shopping": ["Amazon", "Flipkart", "Meesho", "Nykaa", "Purple", "Lifestyle", "Max", "Myntra"],
+    "Health": ["Doctor Visit", "Medicines", "Lab Test", "Health Checkup"],
+    "Utilities": ["Electricity", "Water", "Gas Cylinder", "Maintenance", "Garbage Collection"],
+    "Gifts & Donations": ["Family", "Friends", "Charity", "Temple"],
+    "Entertainment": ["Movies", "Concerts", "Games"],
+    "Education": ["Online Courses", "Books", "Workshops"]
+}
+	- IMPORTANT: I have updated the categories and subcategories. Some additional information: there are only 2 users: 'Anirban' and 'Puspita'. Anirban has the following bank accouts: 'Anirban-SBI' and 'Anirban-ICICI'.  Puspita has the following bank accouts: 'Puspita-SBI' and 'Puspita-Bandhan'. I want to keep the app as simple as possible, so i am thinking of creating a database (sqlite3 / csv) with the following columns: 
+	'Date': Date of transaction, 
+	'Account': One of the 4 accounts for me and my wife mentioned above, 
+	'Category': from the categories dictionary mentioned above, 
+	'Sub-category': from the categories dictionary mentioned above, 
+	'Type': Free text, we need to be able to enter it in the steamlit frontend, 
+	'User': One of the 2 values: 'Anirban', "Puspita" 
+	'Amount': amount of transaction.
+	- IMPORTANT: "Currency Format: Just plain numbers, keep it simple!
+		Frequency of Transactions: minimum: 2(atleat 1 transaction per user), maximum: 20
+		Expense Bias: Should we simulate more transactions from a specific account or category (e.g., more grocery or restaurant spends)? - Grocery and household are the biggest ones, but they are less than rent. House rent: once a month, fixed, 30000 (Anirban-ICICI). Maid: once a month, fixed, 2500 (Puspita-SBI). I pay house rent, wife pays maid salary. Puspita uses Puspita-Bandhan only for Travel and beauty categories. For me, most of the daily expenses are from Anirban-ICICI, with some from Anirban-SBI.
+		Include recurring transactions? Like SIPs, rent, etc. on specific days?SIP: once a month, 3000, fixed. ULIP: once a month, 4000. fixed I pay both from Anirban-ICICI.
+		match the type to category and sub category. For example, if: Category - household, Subcategory - Ironing, then type has to be ironing. if the cat - Travel and subcat -train, the type has to be something like: bangalore-mysore vande bharat, type can't be 'lab test', In summary, the type has to make sense for category and subcategory. Also, Puspita uses her bandhan for travel and rarely something else. In travel also, she will mainly use it to book train / flight tickets, not pay  parking fees, I pay that. Please generate data accordingly.
+		
+	- IMPORTANT: Spend trends, fixed values and behaviour
+		- Fixed spends: "Investment": ["SIP" - 3000, "Mutual Funds" - 0 (None for now), "Stocks" - 0 (None for now), "FD/RD"0 (None for now)],
+        "Rent": ["House Rent" - inr 30000] - all once a month, with fixed values
+		"Insurance Premium": ["Life Insurance" - 55000 twice a year on 20th march and 20th september, "ULIP" - 4000 every month between 20th - 25th, "Health Insurance" - lets say 1200 every month between 20th - 25th, "Vehicle Insurance" - once a year, 0 for now]
+		"Household": [
+            "Electricity Bill", "Plumbing", "Electrical Repairs", "Appliance Repair", "Cleaning",
+            "Pest Control", "Bike Maintenance", "Car Maintenance",
+            "Furniture", "Kitchen Tools", "Ironing", "Maid"
+        ], - many have 2 month (Electricity bill) or 1 month (Maid) cycles or ad hoc costs (everything else in "Household") 
+        "Connectivity": ["Airtel WiFi", "Jio Recharge", "Airtel Mobile", "Netflix", "Prime Video", "Disney+ Hotstar"], - many have 6 month (Airtel WiFi) or 3 month ( "Jio Recharge", "Airtel Mobile") cycles or ad hoc costs (everything else in "Connectivity") 
+		- Category wise spends: 
+		"Waste": ["Smoke", "Alcohol"], - ad hoc, a small percentage of total, variable weekly and monthly, alcohol max once a month
+        "Grocery": ["BigBasket", "Amazon", "Flipkart Grocery", "Zepto", "Local Store", "Other"], - ad hoc, concentrated on the first week of the month (after salary, salary is not tracked in the data), smaller spends dotted throughout the month
+        "Beauty": ["Nykaa", "Meesho", "Purplle", "Salon", "Makeup", "Skincare", "Salon"],- ad hoc, spends dotted throughout the month
+        "Shopping": ["Amazon", "Flipkart", "Meesho", "Nykaa", "Purple", "Lifestyle", "Max", "Myntra"], - ad hoc, concentrated on the first week of the month (after salary, salary is not tracked in the data), smaller spends dotted throughout the month
+        "Health": ["Doctor Visit", "Medicines", "Lab Test", "Health Checkup"],- ad hoc, spends dotted throughout the month
+        "Utilities": ["Electricity", "Water", "Gas Cylinder", "Maintenance", "Garbage Collection"],- electricity bill - 2 month cycle, gas cylinder - 2 month cycle, rest ad hoc, spends dotted throughout the month
+        "Gifts & Donations": ["Family", "Friends", "Charity", "Temple"],ad hoc, small amounts, spends dotted throughout the month
+        "Entertainment": ["Movies", "Concerts", "Games"],ad hoc, small amounts, spends dotted throughout the month
+        "Education": ["Online Courses", "Books", "Workshops"] ad hoc, small amounts, spends dotted throughout the month

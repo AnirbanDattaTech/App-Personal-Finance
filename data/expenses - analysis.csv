@@ -1,0 +1,137 @@
+date,year,month,week,day_of_week,account,category,sub_category,type,user,amount
+01-01-2023,2023,2023-01,2022-W52,Sunday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - January,Anirban,30000
+01-01-2023,2023,2023-01,2022-W52,Sunday,Puspita-SBI,Household,Maid,Monthly Maid Salary - January,Puspita,2500
+04-01-2023,2023,2023-01,2023-W01,Wednesday,Puspita-Bandhan,Travel,Vacation,Vacation Expense,Puspita,34086
+05-01-2023,2023,2023-01,2023-W01,Thursday,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - January,Anirban,3000
+15-01-2023,2023,2023-01,2023-W02,Sunday,Puspita-SBI,Household,Furniture,Furniture related expense,Puspita,42492
+16-01-2023,2023,2023-01,2023-W03,Monday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - January,Anirban,2500
+20-01-2023,2023,2023-01,2023-W03,Friday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - January,Anirban,4000
+20-01-2023,2023,2023-01,2023-W03,Friday,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance Prem. - January-23,Anirban,1200
+01-02-2023,2023,2023-02,2023-W05,Wednesday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - February,Anirban,30000
+01-02-2023,2023,2023-02,2023-W05,Wednesday,Puspita-SBI,Household,Maid,Monthly Maid Salary - February,Puspita,2500
+04-02-2023,2023,2023-02,2023-W05,Saturday,Anirban-SBI,Household,Maid,Monthly Maid Salary - February,Anirban,2500
+05-02-2023,2023,2023-02,2023-W05,Sunday,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - February,Anirban,3000
+05-02-2023,2023,2023-02,2023-W05,Sunday,Puspita-Bandhan,Travel,Vacation,Vacation Expense,Puspita,44347
+13-02-2023,2023,2023-02,2023-W07,Monday,Puspita-SBI,Household,Maid,Monthly Maid Salary - February,Puspita,2500
+16-02-2023,2023,2023-02,2023-W07,Thursday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - February,Anirban,2500
+20-02-2023,2023,2023-02,2023-W08,Monday,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance Prem. - February-23,Anirban,1200
+20-02-2023,2023,2023-02,2023-W08,Monday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - February,Anirban,4000
+22-02-2023,2023,2023-02,2023-W08,Wednesday,Anirban-SBI,Household,Maid,Monthly Maid Salary - February,Anirban,2500
+01-03-2023,2023,2023-03,2023-W09,Wednesday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - March,Anirban,30000
+01-03-2023,2023,2023-03,2023-W09,Wednesday,Puspita-SBI,Household,Maid,Monthly Maid Salary - March,Puspita,2500
+01-03-2023,2023,2023-03,2023-W09,Wednesday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - March,Anirban,2500
+02-03-2023,2023,2023-03,2023-W09,Thursday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - March,Anirban,2500
+05-03-2023,2023,2023-03,2023-W09,Sunday,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - March,Anirban,3000
+17-03-2023,2023,2023-03,2023-W11,Friday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - March,Anirban,2500
+20-03-2023,2023,2023-03,2023-W12,Monday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - March,Anirban,4000
+20-03-2023,2023,2023-03,2023-W12,Monday,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance Prem. - March-23,Anirban,1200
+20-03-2023,2023,2023-03,2023-W12,Monday,Anirban-ICICI,Insurance Premium,Life Insurance,Life Insurance Premium - March-23,Anirban,55000
+26-03-2023,2023,2023-03,2023-W12,Sunday,Puspita-SBI,Household,Maid,Monthly Maid Salary - March,Puspita,2500
+28-03-2023,2023,2023-03,2023-W13,Tuesday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - March,Anirban,2500
+01-04-2023,2023,2023-04,2023-W13,Saturday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - April,Anirban,30000
+01-04-2023,2023,2023-04,2023-W13,Saturday,Puspita-SBI,Household,Maid,Monthly Maid Salary - April,Puspita,2500
+05-04-2023,2023,2023-04,2023-W14,Wednesday,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - April,Anirban,3000
+06-04-2023,2023,2023-04,2023-W14,Thursday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - April,Anirban,2500
+06-04-2023,2023,2023-04,2023-W14,Thursday,Anirban-SBI,Household,Maid,Monthly Maid Salary - April,Anirban,2500
+12-04-2023,2023,2023-04,2023-W15,Wednesday,Anirban-SBI,Household,Maid,Monthly Maid Salary - April,Anirban,2500
+20-04-2023,2023,2023-04,2023-W16,Thursday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - April,Anirban,4000
+20-04-2023,2023,2023-04,2023-W16,Thursday,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance Prem. - April-23,Anirban,1200
+25-04-2023,2023,2023-04,2023-W17,Tuesday,Anirban-ICICI,Travel,Vacation,Vacation Expense,Anirban,42499
+29-04-2023,2023,2023-04,2023-W17,Saturday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - April,Anirban,2500
+29-04-2023,2023,2023-04,2023-W17,Saturday,Puspita-SBI,Household,Furniture,Furniture related expense,Puspita,25626
+01-05-2023,2023,2023-05,2023-W18,Monday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - May,Anirban,30000
+01-05-2023,2023,2023-05,2023-W18,Monday,Puspita-SBI,Household,Maid,Monthly Maid Salary - May,Puspita,2500
+05-05-2023,2023,2023-05,2023-W18,Friday,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - May,Anirban,3000
+15-05-2023,2023,2023-05,2023-W20,Monday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - May,Anirban,2500
+20-05-2023,2023,2023-05,2023-W20,Saturday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - May,Anirban,4000
+20-05-2023,2023,2023-05,2023-W20,Saturday,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance Prem. - May-23,Anirban,1200
+25-05-2023,2023,2023-05,2023-W21,Thursday,Anirban-SBI,Travel,Vacation,Vacation Expense,Anirban,39844
+26-05-2023,2023,2023-05,2023-W21,Friday,Puspita-Bandhan,Travel,Vacation,Vacation Expense,Puspita,32700
+01-06-2023,2023,2023-06,2023-W22,Thursday,Puspita-SBI,Household,Maid,Monthly Maid Salary - June,Puspita,2500
+01-06-2023,2023,2023-06,2023-W22,Thursday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - June,Anirban,30000
+04-06-2023,2023,2023-06,2023-W22,Sunday,Puspita-SBI,Household,Maid,Monthly Maid Salary - June,Puspita,2500
+05-06-2023,2023,2023-06,2023-W23,Monday,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - June,Anirban,3000
+07-06-2023,2023,2023-06,2023-W23,Wednesday,Puspita-SBI,Household,Maid,Monthly Maid Salary - June,Puspita,2500
+09-06-2023,2023,2023-06,2023-W23,Friday,Puspita-SBI,Household,Furniture,Furniture related expense,Puspita,35895
+17-06-2023,2023,2023-06,2023-W24,Saturday,Puspita-SBI,Household,Maid,Monthly Maid Salary - June,Puspita,2500
+18-06-2023,2023,2023-06,2023-W24,Sunday,Anirban-SBI,Household,Maid,Monthly Maid Salary - June,Anirban,2500
+20-06-2023,2023,2023-06,2023-W25,Tuesday,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance Prem. - June-23,Anirban,1200
+20-06-2023,2023,2023-06,2023-W25,Tuesday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - June,Anirban,4000
+24-06-2023,2023,2023-06,2023-W25,Saturday,Puspita-SBI,Household,Maid,Monthly Maid Salary - June,Puspita,2500
+01-07-2023,2023,2023-07,2023-W26,Saturday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - July,Anirban,30000
+01-07-2023,2023,2023-07,2023-W26,Saturday,Puspita-SBI,Household,Maid,Monthly Maid Salary - July,Puspita,2500
+01-07-2023,2023,2023-07,2023-W26,Saturday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - July,Anirban,2500
+05-07-2023,2023,2023-07,2023-W27,Wednesday,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - July,Anirban,3000
+17-07-2023,2023,2023-07,2023-W29,Monday,Puspita-SBI,Insurance Premium,ULIP,Monthly ULIP Premium - July,Puspita,4000
+20-07-2023,2023,2023-07,2023-W29,Thursday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - July,Anirban,4000
+20-07-2023,2023,2023-07,2023-W29,Thursday,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance Prem. - July-23,Anirban,1200
+27-07-2023,2023,2023-07,2023-W30,Thursday,Puspita-SBI,Household,Furniture,Furniture related expense,Puspita,43963
+27-07-2023,2023,2023-07,2023-W30,Thursday,Puspita-SBI,Household,Maid,Monthly Maid Salary - July,Puspita,2500
+01-08-2023,2023,2023-08,2023-W31,Tuesday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - August,Anirban,30000
+01-08-2023,2023,2023-08,2023-W31,Tuesday,Puspita-SBI,Household,Maid,Monthly Maid Salary - August,Puspita,2500
+04-08-2023,2023,2023-08,2023-W31,Friday,Puspita-SBI,Household,Maid,Monthly Maid Salary - August,Puspita,2500
+05-08-2023,2023,2023-08,2023-W31,Saturday,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - August,Anirban,3000
+06-08-2023,2023,2023-08,2023-W31,Sunday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - August,Anirban,2500
+07-08-2023,2023,2023-08,2023-W32,Monday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - August,Anirban,2500
+08-08-2023,2023,2023-08,2023-W32,Tuesday,Puspita-SBI,Travel,Vacation,Vacation Expense,Puspita,41120
+11-08-2023,2023,2023-08,2023-W32,Friday,Puspita-SBI,Investment,SIP,Monthly SIP Investment - August,Puspita,3000
+20-08-2023,2023,2023-08,2023-W33,Sunday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - August,Anirban,4000
+20-08-2023,2023,2023-08,2023-W33,Sunday,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance Prem. - August-23,Anirban,1200
+20-08-2023,2023,2023-08,2023-W33,Sunday,Puspita-SBI,Household,Maid,Monthly Maid Salary - August,Puspita,2500
+20-08-2023,2023,2023-08,2023-W33,Sunday,Anirban-SBI,Household,Maid,Monthly Maid Salary - August,Anirban,2500
+01-09-2023,2023,2023-09,2023-W35,Friday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - September,Anirban,30000
+01-09-2023,2023,2023-09,2023-W35,Friday,Puspita-SBI,Household,Maid,Monthly Maid Salary - September,Puspita,2500
+05-09-2023,2023,2023-09,2023-W36,Tuesday,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - September,Anirban,3000
+06-09-2023,2023,2023-09,2023-W36,Wednesday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - September,Anirban,2500
+15-09-2023,2023,2023-09,2023-W37,Friday,Puspita-SBI,Household,Maid,Monthly Maid Salary - September,Puspita,2500
+20-09-2023,2023,2023-09,2023-W38,Wednesday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - September,Anirban,4000
+20-09-2023,2023,2023-09,2023-W38,Wednesday,Anirban-ICICI,Insurance Premium,Life Insurance,Life Insurance Premium - September-23,Anirban,55000
+20-09-2023,2023,2023-09,2023-W38,Wednesday,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance Prem. - September-23,Anirban,1200
+01-10-2023,2023,2023-10,2023-W39,Sunday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - October,Anirban,30000
+01-10-2023,2023,2023-10,2023-W39,Sunday,Puspita-SBI,Household,Maid,Monthly Maid Salary - October,Puspita,2500
+05-10-2023,2023,2023-10,2023-W40,Thursday,Anirban-ICICI,Investment,SIP,Monthly SIP Investment - October,Anirban,3000
+06-10-2023,2023,2023-10,2023-W40,Friday,Puspita-SBI,Household,Furniture,Furniture related expense,Puspita,43141
+15-10-2023,2023,2023-10,2023-W41,Sunday,Puspita-SBI,Household,Maid,Monthly Maid Salary - October,Puspita,2500
+20-10-2023,2023,2023-10,2023-W42,Friday,Anirban-ICICI,Insurance Premium,Health Insurance,Health Insurance Prem. - October-23,Anirban,1200
+20-10-2023,2023,2023-10,2023-W42,Friday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - October,Anirban,4000
+21-10-2023,2023,2023-10,2023-W42,Saturday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - October,Anirban,2500
+21-10-2023,2023,2023-10,2023-W42,Saturday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - October,Anirban,2500
+23-10-2023,2023,2023-10,2023-W43,Monday,Anirban-ICICI,Insurance Premium,ULIP,Monthly ULIP Premium - October,Anirban,4000
+30-10-2023,2023,2023-10,2023-W44,Monday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - October,Anirban,2500
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Puspita-SBI,Utilities,Maintenance,Apartment Monthly Maintenance - November,Puspita,3378
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-SBI,Gifts & Donations,Family,Family related expense,Anirban,411
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-SBI,Health,Lab Test,Test at Metropolis,Anirban,628
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-ICICI,Connectivity,Jio Recharge,Jio Recharge Mobile Recharge,Anirban,332
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-ICICI,Restaurant,Food Delivery,Zomato Order - Meghana Foods,Anirban,2127
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-ICICI,Household,Maid,Monthly Maid Salary - November,Anirban,2500
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Puspita-SBI,Connectivity,Netflix,Netflix Subscription - November,Puspita,384
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Cafe Coffee Day,Anirban,615
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Puspita-Bandhan,Travel,Commute,Bus Ticket - Mysore,Puspita,150
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-ICICI,Rent,House Rent,Monthly House Rent - November,Anirban,30000
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-SBI,Grocery,Local Store,Local Kirana Store - Quick Need,Anirban,2809
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Monthly Topup,Anirban,571
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Puspita-SBI,Grocery,Other,Other related expense,Puspita,781
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-ICICI,Grocery,Zepto,Zepto Quick Order - Quick Need,Anirban,481
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Puspita-SBI,Grocery,Other,Other related expense,Puspita,2928
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-ICICI,Restaurant,Cafe,Coffee/Snack at Cafe Coffee Day,Anirban,119
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Puspita-SBI,Household,Maid,Monthly Maid Salary - November,Puspita,2500
+01-11-2023,2023,2023-11,2023-W44,Wednesday,Anirban-ICICI,Utilities,Water,BWSSB Bill - November,Anirban,735
+02-11-2023,2023,2023-11,2023-W44,Thursday,Anirban-ICICI,Household,Electrical Repairs,Electrician Visit,Anirban,2414
+03-11-2023,2023,2023-11,2023-W44,Friday,Puspita-SBI,Shopping,Purple,Purplle Haul - Makeup,Puspita,5833
+03-11-2023,2023,2023-11,2023-W44,Friday,Anirban-ICICI,Utilities,Water,BWSSB Bill - November,Anirban,618
+03-11-2023,2023,2023-11,2023-W44,Friday,Anirban-ICICI,Grocery,Local Store,Local Kirana Store - Quick Need,Anirban,2826
+03-11-2023,2023,2023-11,2023-W44,Friday,Puspita-SBI,Grocery,Amazon,Amazon Pantry - Quick Need,Puspita,5253
+03-11-2023,2023,2023-11,2023-W44,Friday,Anirban-SBI,Restaurant,Dine-in,Dinner @ Starbucks,Anirban,1106
+03-11-2023,2023,2023-11,2023-W44,Friday,Puspita-SBI,Shopping,Myntra,Myntra Fashion - Home Needs,Puspita,7690
+03-11-2023,2023,2023-11,2023-W44,Friday,Anirban-ICICI,Grocery,Other,Other related expense,Anirban,3526
+03-11-2023,2023,2023-11,2023-W44,Friday,Puspita-SBI,Grocery,Zepto,Zepto Quick Order - Quick Need,Puspita,3651
+03-11-2023,2023,2023-11,2023-W44,Friday,Puspita-SBI,Restaurant,Snacks,Snacks from Meghana Foods,Puspita,364
+03-11-2023,2023,2023-11,2023-W44,Friday,Puspita-Bandhan,Travel,Commute,Bus Ticket - Mysore,Puspita,42
+03-11-2023,2023,2023-11,2023-W44,Friday,Anirban-ICICI,Travel,Train,Tatkal Ticket Booking - Vacation,Anirban,1428
+03-11-2023,2023,2023-11,2023-W44,Friday,Puspita-SBI,Utilities,Maintenance,Apartment Monthly Maintenance - November,Puspita,2023
+04-11-2023,2023,2023-11,2023-W44,Saturday,Anirban-SBI,Grocery,Other,Other related expense,Anirban,2112
+04-11-2023,2023,2023-11,2023-W44,Saturday,Anirban-ICICI,Restaurant,Dine-in,Snacks @ Meghana Foods,Anirban,1977
+04-11-2023,2023,2023-11,2023-W44,Saturday,Puspita-SBI,Restaurant,Drinks,Drinks from Truffles,Puspita,741
+04-11-2023,2023,2023-11,2023-W44,Saturday,Anirban-ICICI,Restaurant,Food Delivery,Swiggy Order - Empire,Anirban,629
+04-11-2023,2023,2023-11,2023-W44,Saturday,Puspita-SBI,Grocery,BigBasket,BB Order - Monthly Topup,Puspita,3130
+04-11-2023,2023,2023-11,2023-W44,Saturday,Anirban-ICICI,Shopping,Max,Max Fashion - Skincare,Anirban,4149
