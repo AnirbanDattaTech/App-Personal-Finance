@@ -1,0 +1,36 @@
+app-personal-finance/
+    .env
+    .gitignore
+    create_db.py
+    db_utils.py
+    dummy_expenses.csv
+    dummy_expenses_generated.csv
+    expenses.db
+    expense_metadata.json
+    main.py
+    requirements-v2.0.txt
+    requirements.txt
+    sample_data_generation.csv
+    styles.css
+    style_utils.py
+    test_openai.py
+    data/
+        expenses - analysis.csv
+        expenses.csv
+    reference/
+        data_analysis.ipynb
+        generate_data.py
+        generate_tree.py
+        git_workflow_guide.md
+        instruction_advanced_question_types.txt
+        instruction_agentic_ds_app_prep.txt
+        instruction_combined_files.txt
+        instruction_folder_tree.txt
+        requirement_v1_streamlit_app.txt
+        requirement_v2_ds_assistant.txt
+        test_llm_gemini.py
+        img/
+    tabs/
+        add_expense.py
+        reports.py
+        visuals.py

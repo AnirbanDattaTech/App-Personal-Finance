@@ -55,7 +55,7 @@ if __name__ == "__main__":
     project_root_dir = os.path.dirname(script_dir)
 
     # Define the name for the output file
-    output_filename = "folder_tree.txt"
+    output_filename = "instruction_folder_tree.txt"
 
     # Construct the full path for the output file within the reference/ folder
     output_file_path = os.path.join(script_dir, output_filename)
