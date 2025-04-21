@@ -24,9 +24,7 @@ app-personal-finance/
         generate_tree.py
         git_workflow_guide.md
         instruction_advanced_question_types.txt
-        instruction_agentic_ds_app_prep.txt
         instruction_code_details.txt
-        instruction_combined_files.txt
         instruction_folder_tree.txt
         requirement_v1_streamlit_app.txt
         requirement_v2_ds_assistant.txt

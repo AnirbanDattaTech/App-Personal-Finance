@@ -1,0 +1,11 @@
+date,year,month,week,day_of_week,account,category,sub_category,type,user,amount
+01-01-2023,2023,2023-01,2023-W52,Sunday,Anirban-ICICI,Rent,House Rent,Monthly House Rent Payment,Anirban,30000.0
+01-01-2023,2023,2023-01,2023-W52,Sunday,Puspita-SBI,Household,Maid,Monthly Maid Salary,Puspita,2500.0
+01-01-2023,2023,2023-01,2023-W52,Sunday,Anirban-ICICI,Grocery,Other,Meat/Fish Purchase,Anirban,534.04
+01-01-2023,2023,2023-01,2023-W52,Sunday,Puspita-SBI,Grocery,Flipkart Grocery,FK Quick Groceries,Puspita,2921.1
+01-01-2023,2023,2023-01,2023-W52,Sunday,Anirban-ICICI,Restaurant,Takeaway,Lunch Parcel,Anirban,848.85
+02-01-2023,2023,2023-01,2023-W01,Monday,Puspita-SBI,Travel,Train,IRCTC Booking - Home,Puspita,1409.08
+02-01-2023,2023,2023-01,2023-W01,Monday,Anirban-ICICI,Grocery,Local Store,Local Kirana - Daily Need,Anirban,1749.74
+02-01-2023,2023,2023-01,2023-W01,Monday,Anirban-ICICI,Travel,Parking Fee,Parking @ Office,Anirban,67.58
+02-01-2023,2023,2023-01,2023-W01,Monday,Anirban-ICICI,Household,Cleaning,Urban Company Cleaning - Kitchen,Anirban,650.55
+03-01-2023,2023,2023-01,2023-W01,Tuesday,Puspita-SBI,Grocery,Other,Specialty Food Item,Puspita,842.19
