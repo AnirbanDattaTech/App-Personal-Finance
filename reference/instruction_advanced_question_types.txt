@@ -1,4 +1,4 @@
-These are sample user questions. They have detailed reasoning for 5 example question across each of the 5 ML types (Regression, Forecasting, Classification, Segmentation, Unsupervised Clustering), specifically tailored for my 2-person personal finance advisor app.
+These are sample user questions.These are the questions which the DATA SCIENCE SUB AGENT (DSA) needs to answer. The DSA will categorize questions in one of the 5 advanced question types:Regression, Forecasting, Classification, Segmentation, Unsupervised Clustering. Here we have detailed reasoning for 5 example question across each of the 5 ML types (Regression, Forecasting, Classification, Segmentation, Unsupervised Clustering), specifically tailored for my 2-person personal finance advisor app.
 
 1. Regression Questions (Predicting Specific Numerical Values)
 

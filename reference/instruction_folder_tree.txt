@@ -15,15 +15,17 @@ app-personal-finance/
     style_utils.py
     test_openai.py
     data/
-        expenses - analysis.csv
         expenses.csv
     reference/
+        agentic_ds_app_prep.txt
         data_analysis.ipynb
+        generate_code_details.py
         generate_data.py
         generate_tree.py
         git_workflow_guide.md
         instruction_advanced_question_types.txt
         instruction_agentic_ds_app_prep.txt
+        instruction_code_details.txt
         instruction_combined_files.txt
         instruction_folder_tree.txt
         requirement_v1_streamlit_app.txt
