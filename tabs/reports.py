@@ -154,65 +154,136 @@ def render():
 # --- Helper Function for Normal Report View ---
 def render_report_view(metadata: Dict[str, Any]):
     """Renders the standard report view with filters, stats, table, and actions."""
-    # ... (Code inside this function remains largely the same, relies on db_utils logging) ...
     st.subheader("Expense Report")
-    df_all = fetch_all_expenses()
-    if df_all.empty: st.info("No expense data."); return
-    df_all['month'] = df_all['date'].dt.strftime('%Y-%m')
-    all_accounts = metadata.get("Account", []); all_categories_map = metadata.get("categories", {}); all_categories_list = sorted(list(all_categories_map.keys())); all_users_list = sorted(list(set(metadata.get("User", {}).values())))
 
+    df_all = fetch_all_expenses()
+    if df_all.empty:
+        st.info("No expense data.")
+        return
+
+    df_all['month'] = df_all['date'].dt.strftime('%Y-%m')
+    all_accounts = metadata.get("Account", [])
+    all_categories_map = metadata.get("categories", {})
+    all_categories_list = sorted(list(all_categories_map.keys()))
+    all_users_list = sorted(list(set(metadata.get("User", {}).values())))
+
+    # --- Filter Section ---
     with st.expander("Filter Options", expanded=True):
         col1, col2, col3 = st.columns(3)
-        with col1: months = st.multiselect("Month", ["All"] + sorted(df_all['month'].unique(), reverse=True), default=["All"], key="report_months"); accounts = st.multiselect("Account", ["All"] + all_accounts, default=["All"], key="report_accounts")
-        with col2: categories = st.multiselect("Category", ["All"] + all_categories_list, default=["All"], key="report_categories"); users = st.multiselect("User", ["All"] + all_users_list, default=["All"], key="report_users")
+        with col1:
+            months = st.multiselect("Month", ["All"] + sorted(df_all['month'].unique(), reverse=True), default=["All"], key="report_months")
+            accounts = st.multiselect("Account", ["All"] + all_accounts, default=["All"], key="report_accounts")
+        with col2:
+            categories = st.multiselect("Category", ["All"] + all_categories_list, default=["All"], key="report_categories")
+            users = st.multiselect("User", ["All"] + all_users_list, default=["All"], key="report_users")
         with col3:
-            if "All" in categories: sub_cats_options = sorted(list(set(sub for subs in all_categories_map.values() for sub in subs)))
-            else: sub_cats_options = sorted(list(set(sub for cat in categories for sub in all_categories_map.get(cat, []))))
+            if "All" in categories:
+                sub_cats_options = sorted(list(set(sub for subs in all_categories_map.values() for sub in subs)))
+            else:
+                sub_cats_options = sorted(list(set(sub for cat in categories for sub in all_categories_map.get(cat, []))))
             subcategories = st.selectbox("Sub-category", ["All"] + sub_cats_options, key="report_subcat_select")
 
+    # --- Apply Filters ---
     df_filtered = df_all.copy()
-    if "All" not in months: df_filtered = df_filtered[df_filtered['month'].isin(months)]
-    if "All" not in accounts: df_filtered = df_filtered[df_filtered['account'].isin(accounts)]
-    if "All" not in categories: df_filtered = df_filtered[df_filtered['category'].isin(categories)]
-    if subcategories != "All": df_filtered = df_filtered[df_filtered['sub_category'] == subcategories]
-    if "All" not in users: df_filtered = df_filtered[df_filtered['user'].isin(users)]
+    if "All" not in months:
+        df_filtered = df_filtered[df_filtered['month'].isin(months)]
+    if "All" not in accounts:
+        df_filtered = df_filtered[df_filtered['account'].isin(accounts)]
+    if "All" not in categories:
+        df_filtered = df_filtered[df_filtered['category'].isin(categories)]
+    if subcategories != "All":
+        df_filtered = df_filtered[df_filtered['sub_category'] == subcategories]
+    if "All" not in users:
+        df_filtered = df_filtered[df_filtered['user'].isin(users)]
 
+    # --- Summary Stats ---
     total = df_filtered['amount'].sum()
     st.markdown(f"### Total Expense (Filtered): ₹{total:,.2f}")
     if not df_filtered.empty:
-        st.markdown("---"); st.markdown("#### Summary Statistics (Filtered Data)")
-        num_transactions = len(df_filtered); avg_transaction = df_filtered['amount'].mean()
+        st.markdown("---")
+        st.markdown("#### Summary Statistics (Filtered Data)")
+        num_transactions = len(df_filtered)
+        avg_transaction = df_filtered['amount'].mean()
         top_category_series = df_filtered.groupby('category')['amount'].sum().nlargest(1)
         top_category_display = "N/A"
-        if not top_category_series.empty: top_category_name = top_category_series.index[0]; top_category_amount = top_category_series.iloc[0]; top_category_display = f"{top_category_name} (₹{top_category_amount:,.0f})"
+        if not top_category_series.empty:
+            top_category_name = top_category_series.index[0]
+            top_category_amount = top_category_series.iloc[0]
+            top_category_display = f"{top_category_name} (₹{top_category_amount:,.0f})"
         stat_col1, stat_col2, stat_col3 = st.columns(3)
-        with stat_col1: st.metric(label="Transactions", value=f"{num_transactions:,}")
-        with stat_col2: st.metric(label="Avg. Transaction", value=f"₹{avg_transaction:,.2f}")
-        with stat_col3: st.metric(label="Top Category", value=top_category_display)
+        with stat_col1:
+            st.metric(label="Transactions", value=f"{num_transactions:,}")
+        with stat_col2:
+            st.metric(label="Avg. Transaction", value=f"₹{avg_transaction:,.2f}")
+        with stat_col3:
+            st.metric(label="Top Category", value=top_category_display)
+
     st.markdown("---")
+
+    # --- Section Title + Right-Aligned Refresh Button ---
+    col_left, col_spacer, col_right = st.columns([5, 1, 1])
+    with col_left:
+        st.markdown("#### Detailed Transactions")
+    with col_right:
+        if st.button("🔄 Refresh Data", help="Click to reload data from database"):
+            st.session_state["force_refresh"] = True
+
+    # ✅ Trigger hard rerun if refresh clicked
+    if st.session_state.get("force_refresh", False):
+        st.session_state["force_refresh"] = False
+        st.rerun()
 
     display_df = pd.DataFrame()
     if not df_filtered.empty:
-        display_df = df_filtered.drop(columns=["id", "month"], errors='ignore').rename(columns={"date": "Date", "account": "Account", "category": "Category","sub_category": "Sub Category", "type": "Type", "user": "User", "amount": "Amount"}).sort_values("Date", ascending=False)
-        st.markdown("#### Detailed Transactions")
-        st.dataframe(display_df.style.format({'Date': '{:%Y-%m-%d}', 'Amount': '₹{:.2f}'}), use_container_width=True, height=400, hide_index=True)
-    else: st.info("No transactions match the current filters.")
+        display_df = df_filtered.drop(columns=["id", "month"], errors='ignore').rename(columns={
+            "date": "Date",
+            "account": "Account",
+            "category": "Category",
+            "sub_category": "Sub Category",
+            "type": "Type",
+            "user": "User",
+            "amount": "Amount"
+        }).sort_values("Date", ascending=False)
 
+        st.dataframe(
+            display_df.style.format({'Date': '{:%Y-%m-%d}', 'Amount': '₹{:.2f}'}),
+            use_container_width=True,
+            height=400,
+            hide_index=True
+        )
+    else:
+        st.info("No transactions match the current filters.")
+
+    # --- Edit/Delete Panel ---
     if not df_filtered.empty:
-        st.markdown("---"); st.markdown("#### Edit / Delete Expense")
+        st.markdown("---")
+        st.markdown("#### Edit / Delete Expense")
         options_limit = 500
         df_display_options = df_filtered.sort_values('date', ascending=False).head(options_limit).copy()
-        df_display_options['display_str'] = df_display_options.apply(lambda row: f"{row['date'].strftime('%Y-%m-%d')} {row['account']} {row['category']} {row['sub_category'][:20]}.. ₹{row['amount']:.0f}", axis=1)
+        df_display_options['display_str'] = df_display_options.apply(
+            lambda row: f"{row['date'].strftime('%Y-%m-%d')} {row['account']} {row['category']} {row['sub_category'][:20]}.. ₹{row['amount']:.0f}", axis=1
+        )
         options_dict = pd.Series(df_display_options.id.values, index=df_display_options.display_str).to_dict()
         options_dict = {"-- Select expense --": None, **options_dict}
         selected_option = st.selectbox("Select Expense to Modify", options=list(options_dict.keys()), key="expense_action_select")
         selected_id = options_dict.get(selected_option)
+
         col_action1, col_action2, _ = st.columns([1, 1, 4])
-        edit_disabled = selected_id is None; delete_disabled = selected_id is None
+        edit_disabled = selected_id is None
+        delete_disabled = selected_id is None
+
         with col_action1:
-            if st.button("Edit Selected", key="edit_btn", disabled=edit_disabled): st.session_state.selected_expense_id = selected_id; st.session_state.edit_mode = True; st.session_state.pop('edit_form_category', None); st.experimental_rerun()
+            if st.button("Edit Selected", key="edit_btn", disabled=edit_disabled):
+                st.session_state.selected_expense_id = selected_id
+                st.session_state.edit_mode = True
+                st.session_state.pop('edit_form_category', None)
+                st.experimental_rerun()
+
         with col_action2:
-             if st.button("Delete Selected", key="delete_btn", disabled=delete_disabled): st.session_state.selected_expense_id = selected_id; st.session_state.delete_confirm = True; st.experimental_rerun()
+            if st.button("Delete Selected", key="delete_btn", disabled=delete_disabled):
+                st.session_state.selected_expense_id = selected_id
+                st.session_state.delete_confirm = True
+                st.experimental_rerun()
 
     if not display_df.empty:
         st.markdown("---")

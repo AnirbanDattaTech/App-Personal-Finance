@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 # ✅ Updated database path to ROOT/data/expenses.db
 DB_PATH = Path(__file__).parent / "data" / "expenses.db"
+print(">>> Using DB at:", DB_PATH.resolve())
 
 def get_connection() -> Optional[sqlite3.Connection]:
     """

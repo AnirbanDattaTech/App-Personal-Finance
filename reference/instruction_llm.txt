@@ -3,7 +3,7 @@ Uploading the necessary files and reference links for context, read and understa
 INSTRUCTION_LLM: Specific instructions for you to follow: instruction_llm.txt, *THIS FILE*
 INITIAL_REQUIREMENT (PHASE 1: DONE): requirement_v1_streamlit_app.txt - PHASE 1: This is the INITIAL REQUIREMENT. FOR UNDERSTANDING INITIAL SCOPE ONLY. CURRENT IMPLEMENTATION HAS CHANGED. REFER TO CODEBASE FOR CURRENT STATE.
 CURRENT_REQUIREMENT (PHASE 2: ONGOING): reference/requirement_v2_ds_assistant.txt - PHASE 2: This is the CURRENT REQUIREMENT.
-PROJECT_STRUCTURE: reference/instruction_folder_tree.txt
+PROJECT_STRUCTURE: reference/instruction_file_tree.txt
 PROJECT_CODE_FILE_CONTENT: reference/instruction_code_details_compressed.txt
 SAMPLE_DATA: expenses_sample.csv
 SAMPLE_METADATA: expense_metadata.json

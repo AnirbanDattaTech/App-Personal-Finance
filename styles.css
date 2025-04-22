@@ -212,5 +212,17 @@ div[data-baseweb="popover"] ul li[aria-selected="true"] { background-color: var(
     padding-left: 2.5rem;
     padding-right: 2.5rem;
 }
+/* --- Legend Toggle Alignment Fix --- */
+div[data-testid="stExpander"] div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] {
+    align-items: center;
+    margin: -0.5rem 0;
+}
 
-/* ... (rest of styles) ... */
+div[data-testid="stExpander"] div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div:first-child {
+    padding-right: 0.5rem;
+}
+
+div[data-testid="stExpander"] div[data-testid="stVerticalBlock"] > div[data-testid="stHorizontalBlock"] > div:last-child {
+    padding-left: 0;
+    margin-top: -0.2rem;
+}

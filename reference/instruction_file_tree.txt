@@ -1,11 +1,11 @@
 app-personal-finance/
-    .env
-    .gitignore
+    create_clean_csv.py
     create_db.py
     db_utils.py
     dummy_expenses.csv
-    dummy_expenses_generated.csv
+    expenses.csv
     expenses.db
+    expenses_sample.csv
     expense_metadata.json
     main.py
     requirements-v2.0.txt
@@ -16,16 +16,21 @@ app-personal-finance/
     test_openai.py
     data/
         expenses.csv
+        expenses.db
     reference/
         agentic_ds_app_prep.txt
         data_analysis.ipynb
         generate_code_details.py
+        generate_code_details_compressed.py
         generate_data.py
+        generate_summary.py
         generate_tree.py
         git_workflow_guide.md
         instruction_advanced_question_types.txt
         instruction_code_details.txt
-        instruction_folder_tree.txt
+        instruction_code_details_compressed.txt
+        instruction_file_tree.txt
+        instruction_llm.txt
         requirement_v1_streamlit_app.txt
         requirement_v2_ds_assistant.txt
         test_llm_gemini.py

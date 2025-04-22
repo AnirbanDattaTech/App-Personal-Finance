@@ -6,8 +6,9 @@ Handles page navigation and calls rendering functions for each tab.
 import streamlit as st
 from tabs import add_expense, reports, visuals
 from style_utils import load_css
-import os # Import os for file path checking
-import logging # Ensure logging is imported if used within main
+from db_utils import fetch_all_expenses  # ✅ To generate the CSV
+import pandas as pd
+import logging
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -17,11 +18,10 @@ st.set_page_config(
 )
 
 # --- Load CSS ---
-load_css() # Load custom styles first
+load_css()
 
 # --- Add Application Header Banner ---
 st.title("My Personal Finance App")
-# --- End Application Header Banner ---
 
 # --- Sidebar Navigation ---
 st.sidebar.title("Navigation")
@@ -36,22 +36,25 @@ st.sidebar.markdown("---")
 
 # --- Sidebar Data Management ---
 st.sidebar.header("Data Management")
-DB_FILE = "expenses.db"
-if os.path.exists(DB_FILE):
-    try:
-        with open(DB_FILE, "rb") as fp:
-            st.sidebar.download_button(
-                label="Download Data Backup (.db)",
-                data=fp,
-                file_name="expenses_backup.db",
-                mime="application/octet-stream",
-                help="Download the entire SQLite database file."
-            )
-    except OSError as e:
-        st.sidebar.error(f"Error reading database file: {e}")
-        logging.error(f"Error reading DB for backup: {e}") # Log error
-else:
-    st.sidebar.warning("Database file not found for backup.")
+try:
+    df_all = fetch_all_expenses()
+    if not df_all.empty:
+        # Optional: drop UUID if not needed
+        df_export = df_all.drop(columns=["id"], errors="ignore")
+        csv_bytes = df_export.to_csv(index=False).encode("utf-8")
+
+        st.sidebar.download_button(
+            label="Download Data Backup (.csv)",
+            data=csv_bytes,
+            file_name="expenses_backup.csv",
+            mime="text/csv",
+            help="Download the full dataset as a CSV file"
+        )
+    else:
+        st.sidebar.info("No expense data available to download.")
+except Exception as e:
+    st.sidebar.error("Error loading data for CSV backup.")
+    logging.exception("Sidebar CSV export error: %s", e)
 
 # --- Page Rendering ---
 if page == "Add Expenses":
