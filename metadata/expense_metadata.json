@@ -1,0 +1,39 @@
+{
+    "Date": "Date of the transaction (format: YYYY-MM-DD)",
+    "Account": [
+        "Anirban-SBI",
+        "Anirban-ICICI",
+        "Puspita-SBI",
+        "Puspita-Bandhan"
+    ],
+	"categories": {
+        "Investment": ["SIP", "Mutual Funds", "Stocks", "FD/RD"],
+        "Rent": ["House Rent"],
+        "Travel": ["Day Trip", "Vacation", "Commute", "Cab", "Train", "Flight", "Hotel/Stay", "Parking Fee"],
+        "Restaurant": ["Dine-in", "Takeaway", "Food Delivery", "Snacks", "Cafe", "Drinks"],
+        "Insurance Premium": ["Life Insurance", "ULIP", "Health Insurance", "Vehicle Insurance"],
+        "Household": [
+            "Electricity Bill", "Plumbing", "Electrical Repairs", "Appliance Repair", "Cleaning",
+            "Pest Control", "Bike Maintenance", "Car Maintenance",
+            "Furniture", "Kitchen Tools", "Ironing", "Maid"
+        ],
+        "Connectivity": ["Airtel WiFi", "Jio Recharge", "Airtel Mobile", "Netflix", "Prime Video", "Disney+ Hotstar"],
+        "Waste": ["Smoke", "Alcohol"],
+        "Grocery": ["BigBasket", "Amazon", "Flipkart Grocery", "Zepto", "Local Store", "Other"],
+        "Beauty": ["Nykaa", "Meesho", "Purple", "Salon", "Makeup", "Skincare", "Salon"],
+        "Shopping": ["Amazon", "Flipkart", "Meesho", "Nykaa", "Purple", "Lifestyle", "Max", "Myntra"],
+        "Health": ["Doctor Visit", "Medicines", "Lab Test", "Health Checkup"],
+        "Utilities": ["Electricity", "Water", "Gas Cylinder", "Maintenance", "Garbage Collection"],
+        "Gifts & Donations": ["Family", "Friends", "Charity", "Temple"],
+        "Entertainment": ["Movies", "Concerts", "Games"],
+        "Education": ["Online Courses", "Books", "Workshops"]
+	},
+    "User": {
+        "Anirban-SBI": "Anirban",
+        "Anirban-ICICI": "Anirban",
+        "Puspita-SBI": "Puspita",
+        "Puspita-Bandhan": "Puspita"
+    },
+    "Type": "Free text input describing the nature or name of the transaction (e.g., 'Family dinner', 'Cab to airport')",
+    "Amount": "INR value of the transaction"
+}

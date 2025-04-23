@@ -1,14 +1,6 @@
 # reference/test_llm_gemini.py
 """
-Basic test script using LangGraph and Gemini to answer simple questions
-based on a small sample (head) of the expense data.
-
-Demonstrates:
-- Loading environment variables (API key).
-- Loading CSV data with Pandas.
-- Setting up a simple LangGraph state and graph.
-- Using LangChain's ChatGoogleGenerativeAI model.
-- Passing data sample within the prompt (NOTE: Not scalable for large data).
+Basic test script using LangGraph and Gemini. Includes model listing.
 """
 
 import pandas as pd
@@ -19,98 +11,115 @@ from dotenv import load_dotenv
 from typing import Dict, TypedDict, Annotated
 import operator
 
+# --- ✅ Import Google SDK ---
+import google.generativeai as genai
+
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import StateGraph, END
-# from langgraph.checkpoint.sqlite import SqliteSaver # If you want to add memory later
 
 # --- Configuration ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # --- Load Environment Variables (API Key) ---
-# Load from .env file in the project root directory
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 ENV_PATH = PROJECT_ROOT / ".env"
 
-if ENV_PATH.exists():
-    load_dotenv(dotenv_path=ENV_PATH)
-    logging.info(".env file loaded.")
-else:
-    logging.warning(f".env file not found at {ENV_PATH}. Make sure GOOGLE_API_KEY is set elsewhere if needed.")
+if ENV_PATH.exists(): load_dotenv(dotenv_path=ENV_PATH); logging.info(".env file loaded.")
+else: logging.warning(f".env file not found at {ENV_PATH}.")
 
-# Check if API key is available
+# --- Configure API Key and Check ---
 api_key = os.getenv("GOOGLE_API_KEY")
 if not api_key:
-    logging.error("GOOGLE_API_KEY not found in environment variables. Please set it in the .env file.")
-    exit() # Stop execution if key is missing
+    logging.error("GOOGLE_API_KEY not found. Exiting.")
+    exit()
 else:
-    logging.info("GOOGLE_API_KEY found.")
+    try:
+        # --- ✅ Configure the SDK directly ---
+        genai.configure(api_key=api_key)
+        logging.info("GOOGLE_API_KEY found and Google AI SDK configured.")
+    except Exception as e:
+        logging.error(f"Failed to configure Google AI SDK: {e}", exc_info=True)
+        exit()
+
+# --- ✅ List Available Models ---
+print("\n--- Available Google Generative AI Models (for generateContent) ---")
+print("-" * 60)
+models_available_for_chat = []
+try:
+    models_listed = False
+    for model in genai.list_models():
+        if 'generateContent' in model.supported_generation_methods:
+            models_listed = True
+            print(f"- {model.name} ({model.display_name})")
+            models_available_for_chat.append(model.name) # Store usable model names
+
+    if not models_listed:
+        print("No models supporting 'generateContent' found for your API key.")
+except Exception as e:
+    logging.error(f"Failed to list models: {e}", exc_info=True)
+    print(f"\nError: Could not retrieve model list.")
+print("-" * 60)
+# --- End Model Listing ---
 
 
 # --- Load Sample Data ---
-DATA_FILE = PROJECT_ROOT / "dummy_expenses_generated.csv"
-df = pd.DataFrame() # Initialize empty dataframe
+DATA_FILE = PROJECT_ROOT / "data/expenses.csv"
+df = pd.DataFrame()
+df_sample = "" # Initialize
 
 try:
     if DATA_FILE.exists():
         df = pd.read_csv(DATA_FILE)
-        # Keep only essential columns for the small prompt sample
         df_sample = df[['date', 'category', 'sub_category', 'user', 'amount']].head().to_markdown(index=False)
         logging.info(f"Loaded data sample from {DATA_FILE}")
-        # print("\n--- Data Sample Sent to LLM ---")
-        # print(df_sample)
-        # print("-----------------------------\n")
     else:
-        logging.error(f"Data file not found at {DATA_FILE}. Cannot proceed.")
-        exit()
+        logging.error(f"Data file not found at {DATA_FILE}. Cannot proceed with LLM test.")
+        # Don't exit immediately, maybe user just wanted to list models
 except Exception as e:
-    logging.error(f"Error loading or processing data file {DATA_FILE}: {e}", exc_info=True)
-    exit()
-
+    logging.error(f"Error loading data file {DATA_FILE}: {e}", exc_info=True)
+    # Don't exit immediately
 
 # --- Define LangGraph State ---
 class SimpleAgentState(TypedDict):
-    """Defines the state passed between nodes in the graph."""
-    question: str # The user's question
-    data_summary: str # A small summary/sample of the data
-    llm_response: str # The final response from the LLM
+    question: str
+    data_summary: str
+    llm_response: str
 
 # --- Define Graph Nodes ---
-
 def get_user_question(state: SimpleAgentState) -> Dict:
-    """Node to simply retrieve the question from the initial state."""
     logging.info("Node: get_user_question")
-    question = state.get('question', '')
-    if not question:
-        logging.error("No question provided in initial state.")
-        # Handle error appropriately, maybe raise exception or return error state
-        return {"llm_response": "Error: No question was provided."}
-    # In this simple example, we just pass it along implicitly
-    # The 'data_summary' is also assumed to be in the initial state
-    return {} # No state change needed here as question is already present
+    # ... (node logic remains the same) ...
+    return {}
 
 def call_gemini(state: SimpleAgentState) -> Dict:
-    """Node to format the prompt and call the Gemini LLM."""
     logging.info("Node: call_gemini")
     question = state.get('question', '')
-    data_summary = state.get('data_summary', '') # Get the data sample
+    data_summary = state.get('data_summary', '')
 
-    if not question:
-        return {"llm_response": "Error: Question missing."}
-    if not data_summary:
-        logging.warning("Data summary is missing, LLM will have limited context.")
+    if not question: return {"llm_response": "Error: Question missing."}
+    if not data_summary: logging.warning("Data summary is missing.")
 
-    # Initialize the Gemini LLM
-    # Ensure API key is used automatically from environment by LangChain
+    # --- ✅ Select a model (using the one user specified or default) ---
+    # model_to_use = "models/gemini-1.5-flash-latest" # Or use the name from .env / config
+    # model_to_use = "models/gemini-pro" # Example alternative
+    # Let's stick to the user's current choice for the test run:
+    model_to_use = "gemini-1.5-flash" # LangChain often handles the 'models/' prefix
+    # model_to_use = "gemini-2.0-flash-thinking-exp"
+
+    # Check if the chosen model is in the list of available ones (optional sanity check)
+    full_model_name_check = f"models/{model_to_use}" # Check with prefix
+    if models_available_for_chat and full_model_name_check not in models_available_for_chat:
+         logging.warning(f"Model '{model_to_use}' (as {full_model_name_check}) was not found in the list of models supporting 'generateContent'. LangChain might still work or might default.")
+
     try:
-        # Use gemini-1.5-flash for speed and cost-effectiveness in testing
-        llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
-        logging.info(f"Initialized Gemini model: {llm.model}")
+        # Use the specific model chosen for the test
+        llm = ChatGoogleGenerativeAI(model=model_to_use)
+        logging.info(f"Initialized LangChain Gemini model: {llm.model}")
     except Exception as e:
-        logging.error(f"Failed to initialize Gemini model: {e}", exc_info=True)
-        return {"llm_response": f"Error: Could not initialize LLM - {e}"}
+        logging.error(f"Failed to initialize ChatGoogleGenerativeAI model: {e}", exc_info=True)
+        return {"llm_response": f"Error: Could not initialize LangChain LLM - {e}"}
 
-    # Simple Prompt Engineering: Combine question and data sample
     prompt = f"""
 You are a helpful assistant analyzing personal expense data.
 Answer the following question based *only* on the provided data summary.
@@ -122,66 +131,50 @@ Question: {question}
 
 Answer:
 """
-    logging.info("Sending prompt to Gemini...")
-    # print(f"DEBUG Prompt:\n{prompt}") # Uncomment for debugging
-
+    logging.info(f"Sending prompt to {model_to_use}...")
     try:
-        # Invoke the LLM
         response = llm.invoke(prompt)
-        logging.info("Received response from Gemini.")
-        # Extract the text content from the response object
+        logging.info(f"Received response from {model_to_use}.")
         llm_response_content = response.content if hasattr(response, 'content') else str(response)
         return {"llm_response": llm_response_content}
     except Exception as e:
-        logging.error(f"Error during LLM call: {e}", exc_info=True)
+        logging.error(f"Error during LLM call with {model_to_use}: {e}", exc_info=True)
         return {"llm_response": f"Error: Failed to get response from LLM - {e}"}
 
 # --- Define Graph ---
 workflow = StateGraph(SimpleAgentState)
-
-# Add nodes
-workflow.add_node("fetch_question", get_user_question) # Simple node, might not be strictly necessary here
+workflow.add_node("fetch_question", get_user_question)
 workflow.add_node("generate_answer", call_gemini)
-
-# Define edges
 workflow.set_entry_point("fetch_question")
 workflow.add_edge("fetch_question", "generate_answer")
-workflow.add_edge("generate_answer", END) # End after getting the answer
-
-# Compile the graph
+workflow.add_edge("generate_answer", END)
 app = workflow.compile()
 logging.info("LangGraph compiled.")
 
 # --- Run the Test ---
 if __name__ == "__main__":
-    print("-" * 30)
+    print("\n" + "-" * 30)
     print("--- Basic LangGraph Gemini Test ---")
     print("-" * 30)
 
-    # Example Question
-    # test_question = "What is the total amount spent in the first few transactions shown?" # Tests reasoning on sample
-    test_question = "List the categories present in the sample data." # Tests extraction from sample
-    # test_question = "Who spent money in this sample?"
+    # Only proceed if data was loaded successfully for the test part
+    if df_sample:
+        test_question = "List the categories present in the sample data."
+        print(f"Test Question: {test_question}")
+        initial_state: SimpleAgentState = {
+            "question": test_question,
+            "data_summary": df_sample,
+            "llm_response": ""
+        }
+        print("\nInvoking LangGraph...")
+        try:
+            final_state = app.invoke(initial_state)
+            print("\n--- Final LLM Response ---")
+            print(final_state.get("llm_response", "No response generated."))
+        except Exception as e:
+            print(f"\nError invoking LangGraph: {e}")
+            logging.error("Error during graph invocation", exc_info=True)
+    else:
+        print("\nSkipping LangGraph invocation as data sample failed to load.")
 
-    print(f"Test Question: {test_question}")
-
-    # Prepare the initial state for the graph
-    initial_state: SimpleAgentState = {
-        "question": test_question,
-        "data_summary": df_sample, # Pass the pre-loaded data sample
-        "llm_response": "" # Initialize response field
-    }
-
-    print("\nInvoking LangGraph...")
-
-    # Run the graph
-    # Stream events for more detailed output (optional)
-    # for event in app.stream(initial_state):
-    #     print(event)
-
-    # Or just get the final state
-    final_state = app.invoke(initial_state)
-
-    print("\n--- Final LLM Response ---")
-    print(final_state.get("llm_response", "No response generated."))
     print("-" * 30)
