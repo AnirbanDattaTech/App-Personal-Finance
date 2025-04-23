@@ -1,19 +1,19 @@
 
 #PY create_clean_csv.py
 @path: create_clean_csv.py
-@summary: The script processes 'expenses.csv' by normalizing column names and reconstructing missing 'date' entries using 'year', 'month', and 'day_of_week'. It applies a function to fill in missing dates, drops unreconstructed entries, formats dates, and saves the cleaned data back to the CSV file.
+@summary: The script processes 'data/expenses.csv' by reconstructing missing 'date' entries using 'year', 'month', and 'day_of_week'. It normalizes column names, applies a function to fill missing dates, drops unreconstructable entries, and writes the cleaned data back to the CSV file.
 @code:
 #PY clean_expenses_csv.py
 
 #PY create_db.py
 @path: create_db.py
-@summary: The script processes 'data/expenses.csv' by reconstructing missing 'date' entries using 'year', 'month', and 'day_of_week', adds UUIDs, and saves the data to 'data/expenses.db'. It ensures necessary columns exist, handles missing data, and writes the processed data to an SQLite database.
+@summary: The script processes 'data/expenses.csv' to reconstruct missing 'date' entries using 'year', 'month', and 'day_of_week', adds UUIDs, and saves the data into 'data/expenses.db'. It ensures necessary columns are present, formats dates, and writes the processed data to an SQLite database.
 @code:
 #PY create_db.py
 
 #PY db_utils.py
 @path: db_utils.py
-@summary: The `db_utils.py` file provides utility functions for managing an SQLite database of expenses. It includes functions to establish a database connection, fetch all expenses, fetch expenses by ID, insert new expenses, update existing expenses, delete expenses, and fetch the last N expenses. Logging is used for error and info reporting.
+@summary: The `db_utils.py` file provides utility functions for managing an SQLite database of expenses. It includes functions to establish a connection, fetch all expenses, fetch by ID, insert, update, and delete expenses, and fetch the last N expenses. It uses logging for error handling and status updates.
 @code:
 #PY db_utils.py
 import sqlite3
@@ -28,12 +28,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 #PY ✅ Updated database path to ROOT/data/expenses.db
 DB_PATH = Path(__file__).parent / "data" / "expenses.db"
+print(">>> Using DB at:", DB_PATH.resolve())
 
 def get_connection() -> Optional[sqlite3.Connection]:
 
 #FILE dummy_expenses.csv
 @path: dummy_expenses.csv
-@summary: The file logs financial transactions for Anirban on January 1, 2025, detailing expenses on rent, shopping, household, and groceries, with amounts ranging from ₹230 to ₹30,000 across different accounts (ICICI and SBI).
+@summary: The file is a financial record for January 1, 2025, detailing expenses by Anirban across various categories: rent, shopping, household, and grocery, with specific sub-categories and amounts spent from different accounts (ICICI and SBI). Total expenses include house rent, clothing, books, electricity, and groceries.
 @code:
 Date       Account  Category     Sub-category                             Type    User  Amount
 2025-01-01 Anirban-ICICI      Rent       House Rent     Monthly House Rent - January Anirban   30000
@@ -42,7 +43,7 @@ Date       Account  Category     Sub-category                             Type  
 
 #FILE expenses.csv
 @path: expenses.csv
-@summary: The file is a financial transaction log detailing expenses on January 1, 2023, by Anirban and Puspita. It includes categories like rent, household, grocery, and restaurant, with specific sub-categories, payment types, and amounts for each transaction.
+@summary: The file contains a financial transaction log for January 1, 2023, detailing expenses by Anirban and Puspita. Categories include rent, household, grocery, and restaurant, with amounts ranging from ₹534.04 to ₹30,000. Transactions are linked to specific accounts and sub-categories, such as house rent and maid salary.
 @code:
 date  year   month     week day_of_week       account   category     sub_category                       type    user   amount
 01-01-2023  2023 2023-01 2023-W52      Sunday Anirban-ICICI       Rent       House Rent Monthly House Rent Payment Anirban 30000.00
@@ -50,7 +51,7 @@ date  year   month     week day_of_week       account   category     sub_categor
 
 #FILE expenses_sample.csv
 @path: expenses_sample.csv
-@summary: The file is a financial transaction record detailing expenses on January 1, 2023. It includes payments for house rent, maid salary, groceries, and a restaurant takeaway, categorized by account, type, user, and amount, involving Anirban and Puspita.
+@summary: The file is a financial transaction record detailing expenses on January 1, 2023. It includes information on date, account, category, sub-category, type, user, and amount for various expenses like house rent, maid salary, groceries, and restaurant takeaways by Anirban and Puspita.
 @code:
 date  year   month     week day_of_week       account   category     sub_category                       type    user   amount
 01-01-2023  2023 2023-01 2023-W52      Sunday Anirban-ICICI       Rent       House Rent Monthly House Rent Payment Anirban 30000.00
@@ -58,7 +59,7 @@ date  year   month     week day_of_week       account   category     sub_categor
 
 #FILE expense_metadata.json
 @path: expense_metadata.json
-@summary: The file outlines a transaction record structure, including a date format and account names for Anirban and Puspita. It categorizes expenses into Investment, Rent, Travel, Restaurant, Insurance Premium, Household, Connectivity, and Waste, listing specific items under each category.
+@summary: The file outlines a financial transaction structure, including a date format, account names, and categorized expenses. Categories cover areas such as Investment, Rent, Travel, Restaurant, Insurance Premium, Household, Connectivity, and Waste, each with specific subcategories for detailed financial tracking.
 @code:
 {
 "Date": "Date of the transaction (format: YYYY-MM-DD)",
@@ -75,13 +76,13 @@ date  year   month     week day_of_week       account   category     sub_categor
 
 #PY main.py
 @path: main.py
-@summary: The `main.py` file is a Streamlit application for a Personal Expense Tracker. It configures the page, loads custom CSS, and sets up a sidebar for navigation between "Add Expenses," "Reports," and "Visualizations" tabs. It also manages data backup for the SQLite database and handles page rendering based on user selection.
+@summary: The `main.py` file is a Streamlit application for a Personal Expense Tracker. It configures the page, loads CSS, and manages navigation between tabs: "Add Expenses," "Reports," and "Visualizations." It also handles data management, allowing users to download expense data as a CSV file. The file imports necessary modules and handles exceptions for data loading.
 @code:
 #PY main.py
 
 #FILE requirements-v2.0.txt
 @path: requirements-v2.0.txt
-@summary: The file lists various Python packages organized by categories: Core Application, Database, GenAI & Embeddings, LangChain & LangGraph, Data Science, ML and DL, Data Visualization, Python, and Utilities & Helpers. It includes specific versions for some packages, such as numpy, SQLAlchemy, and openai, among others.
+@summary: The file lists dependencies for a project, including libraries for core application functionality (e.g., Streamlit, Pandas, NumPy), database support (e.g., SQLAlchemy, aiosqlite), GenAI and embeddings (e.g., OpenAI, Cohere), LangChain and LangGraph, data science and machine learning (e.g., Scikit-learn, Keras), data visualization (e.g., Matplotlib, Plotly), Python utilities, and helper tools.
 @code:
 #FILE Core Application
 streamlit
@@ -104,20 +105,20 @@ sentence-tra[...]
 
 #FILE requirements.txt
 @path: requirements.txt
-@summary: I'm sorry, I can't access the file. Please provide the code or a description of its contents for a summary.
+@summary: I'm sorry, I can't access or summarize the contents of the file without being able to read it. If you can provide the text or main points from the file, I'd be happy to help summarize it for you.
 @code:
 Unable to read file.
 
 #FILE sample_data_generation.csv
 @path: sample_data_generation.csv
-@summary: The file outlines Anirban's investment categories, sub-categories, accounts, and expense details. It includes SIP, Mutual Funds, Stocks, and FD/RD with specified monthly expense frequencies, minimum and maximum expense amounts, and valid expense types, such as SIP investments, MF purchases, and stock trades.
+@summary: The file outlines Anirban's investment categories and sub-categories, detailing accounts, expense frequencies, minimum and maximum expense amounts, and valid expense types. Categories include SIP, Mutual Funds, Stocks, and FD/RD, with specified monthly limits and types of investments or trades allowed.
 @code:
 Category Sub-category    User       Account Expense-Frequency  Min-expenses-amount  Max-expenses-amount  Max-times-per-month                                                                              Valid-expense-types
 Investment          SIP Anirban Anirban-ICICI           monthly               [...]
 
 #FILE styles.css
 @path: styles.css
-@summary: The "styles.css" file defines a reverted light theme using CSS variables. It imports the "Roboto" font and sets colors for backgrounds, text, accents, borders, and success messages. The theme features a white primary background, dark text, blue accents, and subtle rounded corners, maintaining a clean and modern aesthetic.
+@summary: The file "styles.css" defines a reverted light theme using CSS variables. It imports the 'Roboto' font and sets color variables for backgrounds, text, accents, borders, and success messages. The theme emphasizes a white and light grey palette with blue accents and includes subtle rounded corners for UI elements.
 @code:
 /* styles.css - Reverted Light Theme */
 
@@ -131,7 +132,7 @@ Investment          SIP Anirban Anirban-ICICI           monthly               [.
 
 #PY style_utils.py
 @path: style_utils.py
-@summary: The `style_utils.py` file defines a function `load_css` that loads and injects CSS into a Streamlit app from a specified file path, defaulting to "styles.css". It checks for the file's existence and logs warnings or errors if the file is missing or cannot be read.
+@summary: The `style_utils.py` file defines a function `load_css` that loads CSS from a specified file and injects it into a Streamlit app. It checks for the file's existence, logs warnings if not found, and handles errors during file reading, logging them appropriately.
 @code:
 #PY style_utils.py
 import streamlit as st
@@ -142,7 +143,7 @@ def load_css(file_path: str = "styles.css"):
 
 #PY test_openai.py
 @path: test_openai.py
-@summary: The file initializes an OpenAI client using an API key from the environment, creates a chat completion using the "gpt-3.5-turbo" model, and prints the assistant's reply to a user's "Hello!" message.
+@summary: The code initializes an OpenAI client using an API key from environment variables, creates a chat completion using the GPT-3.5-turbo model, and prints the assistant's reply to a user message.
 @code:
 import os
 from openai import OpenAI
@@ -165,7 +166,7 @@ print(response.choices[0].message.content)
 
 #FILE expenses.csv
 @path: data\expenses.csv
-@summary: The file is a financial transaction record detailing expenses on January 1, 2023. It includes transactions for rent, household, grocery, and restaurant categories, with amounts ranging from ₹534.04 to ₹30,000. The users involved are Anirban and Puspita, with payments made from ICICI and SBI accounts.
+@summary: The file is a financial transaction log detailing expenses on January 1, 2023. It includes information such as date, account, category, sub-category, type, user, and amount. Transactions cover rent, household, grocery, and restaurant expenses, with users Anirban and Puspita making payments from their respective accounts.
 @code:
 date  year   month     week day_of_week       account   category     sub_category                       type    user   amount
 2023-01-01  2023 2023-01 2023-W52      Sunday Anirban-ICICI       Rent       House Rent Monthly House Rent Payment Anirban 30000.00
@@ -173,7 +174,7 @@ date  year   month     week day_of_week       account   category     sub_categor
 
 #FILE agentic_ds_app_prep.txt
 @path: reference\agentic_ds_app_prep.txt
-@summary: The file outlines a step for implementing agentic AI, focusing on generating additional data similar to a sample CSV from January 1, 2023, to April 20, 2025. It specifies important data columns such as date, account, category, transaction type, user, and amount, with detailed guidelines for each.
+@summary: The file outlines the first step in implementing agentic AI: generating additional data similar to a sample CSV file. The data should cover the period from January 1, 2023, to April 20, 2025, and include specific columns like date, account, category, transaction type, user, and amount, with detailed formatting and content requirements.
 @code:
 ##FILE THINGS TO DO BEFORE AGENTIC AI IMPLEMENTATION
 
@@ -186,7 +187,7 @@ STEP 1: GENERATE MORE DATA
 
 #FILE data_analysis.ipynb
 @path: reference\data_analysis.ipynb
-@summary: The file outlines an Exploratory Data Analysis (EDA) process for personal finance data, specifically analyzing a CSV file (`dummy_expenses_generated.csv`) to assess its structure, realism, and suitability for AI/ML tasks. It references additional files for rules and metadata and uses libraries like pandas and plotly for analysis.
+@summary: The file outlines an Exploratory Data Analysis (EDA) process for personal finance data, focusing on validating the structure and realism of generated expense data for AI/ML tasks. It uses `dummy_expenses_generated.csv` as the data source and references ruleset and metadata files. Libraries like pandas and plotly are imported for analysis and visualization.
 @code:
 {
 "cells": [
@@ -198,42 +199,21 @@ STEP 1: GENERATE MORE DATA
 "\n",
 "**Objective:** Analyze the generated expense data (`dummy_expenses_generated.csv`) to validate its structure, adherence to generation rules, realism, and s[...]
 
-#PY generate_code_details.py
-@path: reference\generate_code_details.py
-@summary: The script `generate_code_details.py` summarizes files in the 'app-personal-finance' project using GPT-4o, writing results to 'reference/instruction_code_details.txt'. It processes `.py` files fully, `.csv` files' top 5 rows, and the first 1000 characters of other files, excluding certain directories and file types.
-@code:
-#!/usr/bin/env python3
-
-#PY generate_code_details_compressed.py
-@path: reference\generate_code_details_compressed.py
-@summary: This Python script compresses `instruction_code_details.txt` by removing redundant labels, truncating non-Python code to 300 characters, using compact Markdown-style headers, and reducing whitespace. It processes sections based on file, location, and summary headers, and writes the compressed content to an output file.
-@code:
-#!/usr/bin/env python3
-
 #PY generate_data.py
 @path: reference\generate_data.py
-@summary: The script generates realistic expense data based on rules from 'sample_data_generation.csv' and outputs transactions to 'dummy_expenses_generated.csv' for dates between 2023-01-01 and 2025-04-20. It handles fixed and ad-hoc transactions, ensuring monthly constraints on totals and transaction counts, with detailed logging throughout the process.
+@summary: The script generates realistic expense data from 2023-01-01 to 2025-04-20 based on rules from 'sample_data_generation.csv'. It outputs transactions to 'dummy_expenses_generated.csv', adhering to monthly constraints. It includes functions for loading rules, generating fixed and ad-hoc transactions, and checking conditions.
 @code:
 #PY reference/create_file_data.py
 
 #PY generate_summary.py
 @path: reference\generate_summary.py
-@summary: The script `generate_summary.py` is a documentation generator for the `app-personal-finance` project. It combines functionalities from three scripts to generate code summaries, compress code details, and create a folder tree. It uses OpenAI for summarization, handles file exclusions, and outputs results to a reference directory.
+@summary: The `generate_summary.py` script is a documentation generator for the `app-personal-finance` project. It integrates functionalities from three scripts to generate code details, compress them, and create a folder tree. It uses OpenAI for summarization, handles file exclusions, and outputs results to specified paths.
 @code:
 #!/usr/bin/env python3
 
-#PY generate_tree.py
-@path: reference\generate_tree.py
-@summary: The `generate_tree.py` script generates a text file representing the folder tree structure starting from a specified root directory. It allows excluding certain directories and saves the output to a specified file path. The script is configured to exclude common directories like `__pycache__` and `.git`.
-@code:
-#PY reference/generate_tree.py
-import os
-
-def generate_folder_tree(start_path, output_path, exclude_dirs=None):
-
 #FILE git_workflow_guide.md
 @path: reference\git_workflow_guide.md
-@summary: This guide outlines managing Git history for a personal expense tracker project. It covers reverting to a specific milestone (`v1.0.0`), which involves discarding later commits and using `git push --force`, and emphasizes caution due to potential collaboration issues. It also advises using branches for safe feature development.
+@summary: This guide outlines managing Git history for a personal expense tracker project. It covers reverting to a specific milestone (`v1.0.0`) by discarding later commits, which involves rewriting history on the remote repository. It also advises using branches for safely developing new features.
 @code:
 #FILE Git Workflow Guide for Personal Expense Tracker
 
@@ -245,31 +225,31 @@ This guide explains how to manage Git history for this project, specifically foc
 
 #FILE instruction_advanced_question_types.txt
 @path: reference\instruction_advanced_question_types.txt
-@summary: The file outlines how a Data Science Sub Agent (DSA) categorizes user questions into five advanced machine learning types: Regression, Forecasting, Classification, Segmentation, and Unsupervised Clustering. It provides detailed reasoning and examples for each type, tailored for a personal finance advisor app.
+@summary: The file outlines a framework for categorizing user questions for a data science sub-agent (DSA) into five advanced machine learning types: Regression, Forecasting, Classification, Segmentation, and Unsupervised Clustering. It provides detailed reasoning and examples for each type, specifically for a personal finance advisor app.
 @code:
 These are sample user questions.These are the questions which the DATA SCIENCE SUB AGENT (DSA) needs to answer. The DSA will categorize questions in one of the 5 advanced question types:Regression, Forecasting, Classification, Segmentation, Unsupervised Clustering. Here we have detailed reasoning fo[...]
 
 #FILE instruction_code_details.txt
 @path: reference\instruction_code_details.txt
-@summary: The script `create_clean_csv.py` processes 'expenses.csv' by normalizing column names, reconstructing missing 'date' entries using 'year', 'month', and 'day_of_week', and formatting dates. It fills in missing dates, drops unreconstructed entries, and saves the cleaned data back to the CSV file.
+@summary: The script `create_clean_csv.py` processes 'data/expenses.csv' by reconstructing missing 'date' entries using 'year', 'month', and 'day_of_week', normalizes column names, fills missing dates, drops unreconstructable entries, and writes the cleaned data back to the CSV file.
 @code:
 #FILE instruction_code_details.txt
 
 #PY create_clean_csv.py
 @path: create_clean_csv.py
-@summary: The script processes 'expenses.csv' by normalizing column names and reconstructing missing 'date' entries using 'year', 'month', and 'day_of_week'. It applies a function to fill in missing dates, drops unreconstructed entries, formats dates, and saves the cleaned data back to the CSV file.
+@summary: The script processes 'data/expenses.csv' by reconstructing missing 'date' entries using 'year', 'month', and 'day_of_week'. It normalizes column names, applies a function to fill missing dates, drops unreconstructable entries, and writes the cleaned data back to the CSV file.
 @code:
 #PY clean_expenses_csv.py
 
 #PY create_db.py
 @path: create_db.py
-@summary: The script processes 'data/expenses.csv' by reconstructing missing 'date' entries using 'year', 'month', and 'day_of_week', adds UUIDs, and saves the data to 'data/expenses.db'. It ensures necessary columns exist, handles missing data, and writes the processed data to an SQLite database.
+@summary: The script processes 'data/expenses.csv' to reconstruct missing 'date' entries using 'year', 'month', and 'day_of_week', adds UUIDs, and saves the data into 'data/expenses.db'. It ensures necessary columns are present, formats dates, and writes the processed data to an SQLite database.
 @code:
 #PY create_db.py
 
 #PY db_utils.py
 @path: db_utils.py
-@summary: The `db_utils.py` file provides utility functions for managing an SQLite database of expenses. It includes functions to establish a database connection, fetch all expenses, fetch expenses by ID, insert new expenses, update existing expenses, delete expenses, and fetch the last N expenses. Logging is used for error and info reporting.
+@summary: The `db_utils.py` file provides utility functions for managing an SQLite database of expenses. It includes functions to establish a connection, fetch all expenses, fetch by ID, insert, update, and delete expenses, and fetch the last N expenses. It uses logging for error handling and status updates.
 @code:
 #PY db_utils.py
 import sqlite3
@@ -284,12 +264,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 #PY ✅ Updated database path to ROOT/data/expenses.db
 DB_PATH = Path(__file__).parent / "data" / "expenses.db"
+print(">>> Using DB at:", DB_PATH.resolve())
 
 def get_connection() -> Optional[sqlite3.Connection]:
 
 #FILE dummy_expenses.csv
 @path: dummy_expenses.csv
-@summary: The file logs financial transactions for Anirban on January 1, 2025, detailing expenses on rent, shopping, household, and groceries, with amounts ranging from ₹230 to ₹30,000 across different accounts (ICICI and SBI).
+@summary: The file is a financial record for January 1, 2025, detailing expenses by Anirban across various categories: rent, shopping, household, and grocery, with specific sub-categories and amounts spent from different accounts (ICICI and SBI). Total expenses include house rent, clothing, books, electricity, and groceries.
 @code:
 Date       Account  Category     Sub-category                             Type    User  Amount
 2025-01-01 Anirban-ICICI      Rent       House Rent     Monthly House Rent - January Anirban   30000
@@ -298,7 +279,7 @@ Date       Account  Category     Sub-category                             Type  
 
 #FILE expenses.csv
 @path: expenses.csv
-@summary: The file is a financial transaction log detailing expenses on January 1, 2023, by Anirban and Puspita. It includes categories like rent, household, grocery, and restaurant, with specific sub-categories, payment types, and amounts for each transaction.
+@summary: The file contains a financial transaction log for January 1, 2023, detailing expenses by Anirban and Puspita. Categories include rent, household, grocery, and restaurant, with amounts ranging from ₹534.04 to ₹30,000. Transactions are linked to specific accounts and sub-categories, such as house rent and maid salary.
 @code:
 date  year   month     week day_of_week       account   category     sub_category                       type    user   amount
 01-01-2023  2023 2023-01 2023-W52      Sunday Anirban-ICICI       Rent       House Rent Monthly House Rent Payment Anirban 30000.00
@@ -306,7 +287,7 @@ date  year   month     week day_of_week       account   category     sub_categor
 
 #FILE expenses_sample.csv
 @path: expenses_sample.csv
-@summary: The file is a financial transaction record detailing expenses on January 1, 2023. It includes payments for house rent, maid salary, groceries, and a restaurant takeaway, categorized by account, type, user, and amount, involving Anirban and Puspita.
+@summary: The file is a financial transaction record detailing expenses on January 1, 2023. It includes information on date, account, category, sub-category, type, user, and amount for various expenses like house rent, maid salary, groceries, and restaurant takeaways by Anirban and Puspita.
 @code:
 date  year   month     week day_of_week       account   category     sub_category                       type    user   amount
 01-01-2023  2023 2023-01 2023-W52      Sunday Anirban-ICICI       Rent       House Rent Monthly House Rent Payment Anirban 30000.00
@@ -314,7 +295,7 @@ date  year   month     week day_of_week       account   category     sub_categor
 
 #FILE expense_metadata.json
 @path: expense_metadata.json
-@summary: The file outlines a transaction record structure, including a date format and account names for Anirban and Puspita. It categorizes expenses into Investment, Rent, Travel, Restaurant, Insurance Premium, Household, Connectivity, and Waste, listing specific items under each category.
+@summary: The file outlines a financial transaction structure, including a date format, account names, and categorized expenses. Categories cover areas such as Investment, Rent, Travel, Restaurant, Insurance Premium, Household, Connectivity, and Waste, each with specific subcategories for detailed financial tracking.
 @code:
 {
 "Date": "Date of the transaction (format: YYYY-MM-DD)",
@@ -331,13 +312,13 @@ date  year   month     week day_of_week       account   category     sub_categor
 
 #PY main.py
 @path: main.py
-@summary: The `main.py` file is a Streamlit application for a Personal Expense Tracker. It configures the page, loads custom CSS, and sets up a sidebar for navigation between "Add Expenses," "Reports," and "Visualizations" tabs. It also manages data backup for the SQLite database and handles page rendering based on user selection.
+@summary: The `main.py` file is a Streamlit application for a Personal Expense Tracker. It configures the page, loads CSS, and manages navigation between tabs: "Add Expenses," "Reports," and "Visualizations." It also handles data management, allowing users to download expense data as a CSV file. The file imports necessary modules and handles exceptions for data loading.
 @code:
 #PY main.py
 
 #FILE requirements-v2.0.txt
 @path: requirements-v2.0.txt
-@summary: The file lists various Python packages organized by categories: Core Application, Database, GenAI & Embeddings, LangChain & LangGraph, Data Science, ML and DL, Data Visualization, Python, and Utilities & Helpers. It includes specific versions for some packages, such as numpy, SQLAlchemy, and openai, among others.
+@summary: The file lists dependencies for a project, including libraries for core application functionality (e.g., Streamlit, Pandas, NumPy), database support (e.g., SQLAlchemy, aiosqlite), GenAI and embeddings (e.g., OpenAI, Cohere), LangChain and LangGraph, data science and machine learning (e.g., Scikit-learn, Keras), data visualization (e.g., Matplotlib, Plotly), Python utilities, and helper tools.
 @code:
 #FILE Core Application
 streamlit
@@ -360,20 +341,20 @@ sentence-tra[...]
 
 #FILE requirements.txt
 @path: requirements.txt
-@summary: I'm sorry, I can't access the file. Please provide the code or a description of its contents for a summary.
+@summary: I'm sorry, I can't access or summarize the contents of the file without being able to read it. If you can provide the text or main points from the file, I'd be happy to help summarize it for you.
 @code:
 Unable to read file.
 
 #FILE sample_data_generation.csv
 @path: sample_data_generation.csv
-@summary: The file outlines Anirban's investment categories, sub-categories, accounts, and expense details. It includes SIP, Mutual Funds, Stocks, and FD/RD with specified monthly expense frequencies, minimum and maximum expense amounts, and valid expense types, such as SIP investments, MF purchases, and stock trades.
+@summary: The file outlines Anirban's investment categories and sub-categories, detailing accounts, expense frequencies, minimum and maximum expense amounts, and valid expense types. Categories include SIP, Mutual Funds, Stocks, and FD/RD, with specified monthly limits and types of investments or trades allowed.
 @code:
 Category Sub-category    User       Account Expense-Frequency  Min-expenses-amount  Max-expenses-amount  Max-times-per-month                                                                              Valid-expense-types
 Investment          SIP Anirban Anirban-ICICI           monthly               [...]
 
 #FILE styles.css
 @path: styles.css
-@summary: The "styles.css" file defines a reverted light theme using CSS variables. It imports the "Roboto" font and sets colors for backgrounds, text, accents, borders, and success messages. The theme features a white primary background, dark text, blue accents, and subtle rounded corners, maintaining a clean and modern aesthetic.
+@summary: The file "styles.css" defines a reverted light theme using CSS variables. It imports the 'Roboto' font and sets color variables for backgrounds, text, accents, borders, and success messages. The theme emphasizes a white and light grey palette with blue accents and includes subtle rounded corners for UI elements.
 @code:
 /* styles.css - Reverted Light Theme */
 
@@ -387,7 +368,7 @@ Investment          SIP Anirban Anirban-ICICI           monthly               [.
 
 #PY style_utils.py
 @path: style_utils.py
-@summary: The `style_utils.py` file defines a function `load_css` that loads and injects CSS into a Streamlit app from a specified file path, defaulting to "styles.css". It checks for the file's existence and logs warnings or errors if the file is missing or cannot be read.
+@summary: The `style_utils.py` file defines a function `load_css` that loads CSS from a specified file and injects it into a Streamlit app. It checks for the file's existence, logs warnings if not found, and handles errors during file reading, logging them appropriately.
 @code:
 #PY style_utils.py
 import streamlit as st
@@ -398,7 +379,7 @@ def load_css(file_path: str = "styles.css"):
 
 #PY test_openai.py
 @path: test_openai.py
-@summary: The file initializes an OpenAI client using an API key from the environment, creates a chat completion using the "gpt-3.5-turbo" model, and prints the assistant's reply to a user's "Hello!" message.
+@summary: The code initializes an OpenAI client using an API key from environment variables, creates a chat completion using the GPT-3.5-turbo model, and prints the assistant's reply to a user message.
 @code:
 import os
 from openai import OpenAI
@@ -421,7 +402,7 @@ print(response.choices[0].message.content)
 
 #FILE expenses.csv
 @path: data\expenses.csv
-@summary: The file is a financial transaction record detailing expenses on January 1, 2023. It includes transactions for rent, household, grocery, and restaurant categories, with amounts ranging from ₹534.04 to ₹30,000. The users involved are Anirban and Puspita, with payments made from ICICI and SBI accounts.
+@summary: The file is a financial transaction log detailing expenses on January 1, 2023. It includes information such as date, account, category, sub-category, type, user, and amount. Transactions cover rent, household, grocery, and restaurant expenses, with users Anirban and Puspita making payments from their respective accounts.
 @code:
 date  year   month     week day_of_week       account   category     sub_category                       type    user   amount
 2023-01-01  2023 2023-01 2023-W52      Sunday Anirban-ICICI       Rent       House Rent Monthly House Rent Payment Anirban 30000.00
@@ -429,7 +410,7 @@ date  year   month     week day_of_week       account   category     sub_categor
 
 #FILE agentic_ds_app_prep.txt
 @path: reference\agentic_ds_app_prep.txt
-@summary: The file outlines a step for implementing agentic AI, focusing on generating additional data similar to a sample CSV from January 1, 2023, to April 20, 2025. It specifies important data columns such as date, account, category, transaction type, user, and amount, with detailed guidelines for each.
+@summary: The file outlines the first step in implementing agentic AI: generating additional data similar to a sample CSV file. The data should cover the period from January 1, 2023, to April 20, 2025, and include specific columns like date, account, category, transaction type, user, and amount, with detailed formatting and content requirements.
 @code:
 ##FILE THINGS TO DO BEFORE AGENTIC AI IMPLEMENTATION
 
@@ -442,7 +423,7 @@ STEP 1: GENERATE MORE DATA
 
 #FILE data_analysis.ipynb
 @path: reference\data_analysis.ipynb
-@summary: The file outlines an Exploratory Data Analysis (EDA) process for personal finance data, specifically analyzing a CSV file (`dummy_expenses_generated.csv`) to assess its structure, realism, and suitability for AI/ML tasks. It references additional files for rules and metadata and uses libraries like pandas and plotly for analysis.
+@summary: The file outlines an Exploratory Data Analysis (EDA) process for personal finance data, focusing on validating the structure and realism of generated expense data for AI/ML tasks. It uses `dummy_expenses_generated.csv` as the data source and references ruleset and metadata files. Libraries like pandas and plotly are imported for analysis and visualization.
 @code:
 {
 "cells": [
@@ -454,42 +435,21 @@ STEP 1: GENERATE MORE DATA
 "\n",
 "**Objective:** Analyze the generated expense data (`dummy_expenses_generated.csv`) to validate its structure, adherence to generation rules, realism, and s[...]
 
-#PY generate_code_details.py
-@path: reference\generate_code_details.py
-@summary: The script `generate_code_details.py` summarizes files in the 'app-personal-finance' project using GPT-4o, writing results to 'reference/instruction_code_details.txt'. It processes `.py` files fully, `.csv` files' top 5 rows, and the first 1000 characters of other files, excluding certain directories and file types.
-@code:
-#!/usr/bin/env python3
-
-#PY generate_code_details_compressed.py
-@path: reference\generate_code_details_compressed.py
-@summary: This Python script compresses `instruction_code_details.txt` by removing redundant labels, truncating non-Python code to 300 characters, using compact Markdown-style headers, and reducing whitespace. It processes sections based on file, location, and summary headers, and writes the compressed content to an output file.
-@code:
-#!/usr/bin/env python3
-
 #PY generate_data.py
 @path: reference\generate_data.py
-@summary: The script generates realistic expense data based on rules from 'sample_data_generation.csv' and outputs transactions to 'dummy_expenses_generated.csv' for dates between 2023-01-01 and 2025-04-20. It handles fixed and ad-hoc transactions, ensuring monthly constraints on totals and transaction counts, with detailed logging throughout the process.
+@summary: The script generates realistic expense data from 2023-01-01 to 2025-04-20 based on rules from 'sample_data_generation.csv'. It outputs transactions to 'dummy_expenses_generated.csv', adhering to monthly constraints. It includes functions for loading rules, generating fixed and ad-hoc transactions, and checking conditions.
 @code:
 #PY reference/create_file_data.py
 
 #PY generate_summary.py
 @path: reference\generate_summary.py
-@summary: The script `generate_summary.py` is a documentation generator for the `app-personal-finance` project. It combines functionalities from three scripts to generate code summaries, compress code details, and create a folder tree. It uses OpenAI for summarization, handles file exclusions, and outputs results to a reference directory.
+@summary: The `generate_summary.py` script is a documentation generator for the `app-personal-finance` project. It integrates functionalities from three scripts to generate code details, compress them, and create a folder tree. It uses OpenAI for summarization, handles file exclusions, and outputs results to specified paths.
 @code:
 #!/usr/bin/env python3
 
-#PY generate_tree.py
-@path: reference\generate_tree.py
-@summary: The `generate_tree.py` script generates a text file representing the folder tree structure starting from a specified root directory. It allows excluding certain directories and saves the output to a specified file path. The script is configured to exclude common directories like `__pycache__` and `.git`.
-@code:
-#PY reference/generate_tree.py
-import os
-
-def generate_folder_tree(start_path, output_path, exclude_dirs=None):
-
 #FILE git_workflow_guide.md
 @path: reference\git_workflow_guide.md
-@summary: This guide outlines managing Git history for a personal expense tracker project. It covers reverting to a specific milestone (`v1.0.0`), which involves discarding later commits and using `git push --force`, and emphasizes caution due to potential collaboration issues. It also advises using branches for safe feature development.
+@summary: This guide outlines managing Git history for a personal expense tracker project. It covers reverting to a specific milestone (`v1.0.0`) by discarding later commits, which involves rewriting history on the remote repository. It also advises using branches for safely developing new features.
 @code:
 #FILE Git Workflow Guide for Personal Expense Tracker
 
@@ -501,34 +461,31 @@ This guide explains how to manage Git history for this project, specifically foc
 
 #FILE instruction_advanced_question_types.txt
 @path: reference\instruction_advanced_question_types.txt
-@summary: The file outlines how a Data Science Sub Agent (DSA) categorizes user questions into five advanced machine learning types: Regression, Forecasting, Classification, Segmentation, and Unsupervised Clustering. It provides detailed reasoning and examples for each type, tailored for a personal finance advisor app.
+@summary: The file outlines a framework for categorizing user questions for a data science sub-agent (DSA) into five advanced machine learning types: Regression, Forecasting, Classification, Segmentation, and Unsupervised Clustering. It provides detailed reasoning and examples for each type, specifically for a personal finance advisor app.
 @code:
 These are sample user questions.These are the questions which the DATA SCIENCE SUB AGENT (DSA) needs to answer. The DSA will categorize questions in one of the 5 advanced question types:Regression, Forecasting, Classification, Segmentation, Unsupervised Clustering. Here we have detailed reasoning fo[...]
 
 #FILE instruction_code_details_compressed.txt
 @path: reference\instruction_code_details_compressed.txt
-@summary: The `create_db.py` script reads "dummy_expenses.csv" into a pandas DataFrame, normalizes column names, formats the 'date' column, adds a UUID to each row, and saves the DataFrame to an SQLite database "expenses.db". It ensures data consistency and uniqueness with formatted dates and unique identifiers.
+@summary: The `create_clean_csv.py` script processes 'expenses.csv' by normalizing column names, reconstructing missing 'date' entries, and saving the cleaned data back to the CSV. The `create_db.py` script reconstructs missing dates, adds UUIDs, and saves the data to an SQLite database. `db_utils.py` offers utility functions for managing the database.
 @code:
 
-#PY create_db.py
-@path: create_db.py
-@summary: The code reads a CSV file named "dummy_expenses.csv" into a pandas DataFrame, normalizes column names, formats the 'date' column, adds a UUID to each row, and saves the DataFrame to an SQLite database named "expenses.db".
-@code:
-import sqlite3
-import p[...]
+#PY create_clean_csv.py
+@path: create_clean_csv.py
+@summary: The script processes 'expenses.csv' by normalizing column names and reconstructing missing 'date' entries using 'year', 'month', and 'day_of_week'. It applies a function to fill in missing dates, drops unreconstructed entries, formats dat[...]
 
 #FILE instruction_file_tree.txt
 @path: reference\instruction_file_tree.txt
-@summary: The "app-personal-finance" project includes scripts for database creation and utilities, expense data management, and data generation. It features Python scripts for adding expenses, generating reports, and creating visuals. The project uses CSV files for sample data and includes configuration, styling, and testing files, along with reference documentation.
+@summary: The `app-personal-finance` directory contains scripts and resources for managing personal finance data, including CSV and database files, metadata, and style sheets. It features utilities for creating and cleaning data, database operations, and generating sample data. The `reference` and `tabs` folders provide additional scripts and documentation for data analysis and application functionality.
 @code:
 app-personal-finance/
-.env
-.gitignore
+create_clean_csv.py
 create_db.py
 db_utils.py
 dummy_expenses.csv
-dummy_expenses_generated.csv
+expenses.csv
 expenses.db
+expenses_sample.csv
 expense_metadata.json
 main.py
 requirements-v2.0.txt
@@ -539,12 +496,12 @@ style_utils.py
 test_openai.py
 data/
 expenses.csv
-reference/
-agentic_ds[...]
+expenses.db
+r[...]
 
 #FILE instruction_llm.txt
 @path: reference\instruction_llm.txt
-@summary: The file outlines the development of an autonomous, multi-agent data science assistant for a personal finance app. It references initial and current requirements, project structure, and code details. The goal is to enhance the app through code generation and brainstorming, with ongoing work detailed in the current requirement document.
+@summary: The file outlines the task of developing an autonomous, multi-agent data science assistant for a personal finance app. It emphasizes following the current requirements detailed in "requirement_v2_ds_assistant.txt" and refers to the project's GitHub repository for the latest codebase and project structure.
 @code:
 Uploading the necessary files and reference links for context, read and understand:
 
@@ -553,7 +510,7 @@ INITIAL_REQUIREMENT (PHASE 1: DONE): requirement_v1_streamlit_app.txt - PHASE 1:
 
 #FILE requirement_v1_streamlit_app.txt
 @path: reference\requirement_v1_streamlit_app.txt
-@summary: The file outlines an initial requirement for a personal finance app intended for private use by a couple in Bangalore. It mentions using Python, SQLite3, and Streamlit for development. The app's primary goal is expense tracking, with a focus on categorizing expenses into investment, rent, travel, restaurant, and insurance premium categories.
+@summary: The file outlines an initial requirement for a personal finance app designed for two users. The app, built using Python, SQLite3, and Streamlit, aims to track expenses by categorizing them into investment, rent, travel, restaurant, and insurance premium. The implementation details have since evolved.
 @code:
 PHASE 1: This is the INITIAL REQUIREMENT. FOR UNDERSTANDING INITIAL SCOPE ONLY. CURRENT IMPLEMENTATION HAS CHANGED. REFER TO CODEBASE FOR CURRENT STATE.
 
@@ -564,7 +521,7 @@ my wife and i are building a personal financ[...]
 
 #FILE requirement_v2_ds_assistant.txt
 @path: reference\requirement_v2_ds_assistant.txt
-@summary: The file outlines the development of a chatbot for querying data and providing insights, focusing on data science topics like EDA, probability, and predictive modeling. It will use an SQLite database and remember conversation history within a session, but not beyond. The project is hosted on GitHub.
+@summary: The file outlines the development of a chatbot for a personal finance app. The chatbot will answer questions related to data insights, exploratory data analysis, and data science, including advanced statistical topics and machine learning. It will use a session-based conversation history without saving long-term data.
 @code:
 PHASE 2: This is the CURRENT REQUIREMENT.
 
@@ -574,13 +531,13 @@ We will now start the development for a chatbot that can query the data and answ
 
 #PY test_llm_gemini.py
 @path: reference\test_llm_gemini.py
-@summary: The script tests LangGraph and Gemini for answering questions using a small expense data sample. It loads environment variables, reads CSV data with Pandas, sets up a LangGraph state and graph, and utilizes LangChain's ChatGoogleGenerativeAI model to generate responses. It demonstrates basic prompt engineering and error handling.
+@summary: The script tests LangGraph and Gemini for answering questions using a small expense data sample. It loads environment variables, reads CSV data with Pandas, sets up a LangGraph state and graph, and uses LangChain's ChatGoogleGenerativeAI model. It demonstrates prompt engineering and error handling for API key and data loading.
 @code:
 #PY reference/test_llm_gemini.py
 
 #PY add_expense.py
 @path: tabs\add_expense.py
-@summary: This Streamlit application manages expense tracking. It loads metadata from a JSON file, allows users to input new expenses, and displays the last 10 expenses. It includes form validation, highlights newly added entries, and handles errors with logging and user notifications.
+@summary: This Streamlit application manages expenses by allowing users to add new expenses and view the last 10 recorded expenses. It loads metadata from a JSON file, validates user input, and saves data to a database. The app highlights the most recently added expense and handles errors with logging and user notifications.
 @code:
 import streamlit as st
 import pandas as pd
@@ -724,111 +681,193 @@ st.error(f"Error loading recent expenses: {e}")
 
 #PY reports.py
 @path: tabs\reports.py
-@summary: This Python file, `reports.py`, is a Streamlit application for managing and displaying expense reports. It imports necessary modules, including logging, and defines functions for loading metadata, converting DataFrames to CSV, and rendering the report view. It provides functionalities for editing and deleting expenses, with error handling and logging for debugging.
+@summary: The file `tabs/reports.py` is a Streamlit application for managing and displaying expense reports. It loads metadata, fetches expenses from a database, and allows users to filter, edit, or delete expenses. It supports CSV export and uses caching for performance. The app includes forms for editing and confirming deletions.
 @code:
 #PY tabs/reports.py
 import streamlit as st
 import pandas as pd
-from db_utils import fetch_all_expenses, fetch_expense_by_id, update_expense, delete_expense
-import json
 import datetime
-from typing import Dict, Any, Optional, List
-import logging #PY <<<--- ADD THIS IMPORT
+import json
+import logging
+from typing import Dict, Any, Optional
+from db_utils import fetch_all_expenses, fetch_expense_by_id, update_expense, delete_expense
 
 @st.cache_data
 def load_metadata() -> Optional[Dict[str, Any]]:
-"""Loads metadata from the expense_metadata.json file."""
 try:
 with open("expense_metadata.json", "r") as f:
-metadata = json.load(f)
-logging.debug("Metadata loaded successfully for Reports.")
-return metadata
-except FileNotFoundError:
-st.error("Error: expense_metadata.json not found.")
-logging.error("expense_metadata.json not found.")
-return None
-except json.JSONDecodeError:
-st.error("Error: Could not decode expense_metadata.json.")
-logging.error("Could not decode expense_metadata.json.")
+return json.load(f)
+except Exception as e:
+st.error("Could not load metadata.")
+logging.error(f"Metadata load error: {e}")
 return None
 
 @st.cache_data
 def convert_df_to_csv(df: pd.DataFrame) -> bytes:
-"""Converts a DataFrame to CSV bytes."""
 try:
-return df.to_csv(index=False).encode('utf-8')
+return df.to_csv(index=False).encode("utf-8")
 except Exception as e:
-logging.error(f"Error converting DataFrame to CSV: {e}")
+logging.error(f"CSV conversion failed: {e}")
 return b""
 
-#PY --- Function to display the Edit Form ---
-def display_edit_form(expense_data: Dict[str, Any], metadata: Dict[str, Any]):
-"""Displays the form for editing an existing expense."""
-#PY ... (Code inside this function is mostly okay, relies on db_utils logging) ...
-st.subheader(f"Edit Expense (ID: {expense_data.get('id', 'N/A')[:8]}...)")
-try: default_date = datetime.datetime.strptime(str(expense_data.get('date','')), '%Y-%m-%d').date()
-except: default_date = datetime.date.today()
-all_categories = sorted(list(metadata.get("categories", {}).keys()))
-all_accounts = metadata.get("Account", [])
-user_map = metadata.get("User", {})
-category_map = metadata.get("categories", {})
-default_category_index = 0
-if expense_data.get('category') in all_categories: default_category_index = all_categories.index(expense_data['category'])
-if 'edit_form_category' not in st.session_state: st.session_state.edit_form_category = all_categories[default_category_index] if all_categories else None
-def update_edit_category_state(): st.session_state.edit_form_category = st.session_state.edit_cat_widget
-selected_category = st.selectbox("Category", all_categories, index=default_category_index, key='edit_cat_widget', on_change=update_edit_category_state)
-current_category_in_state = st.session_state.edit_form_category
-available_subcategories = sorted(category_map.get(current_category_in_state, []))
-default_sub_cat_index = 0
-if expense_data.get('sub_category') in available_subcategories: default_sub_cat_index = available_subcategories.index(expense_data['sub_category'])
-default_account_index = 0
-if expense_data.get('account') in all_accounts: default_account_index = all_accounts.index(expense_data['account'])
+def render():
+st.session_state.setdefault("edit_mode", False)
+st.session_state.setdefault("delete_confirm", False)
+st.session_state.setdefault("selected_expense_id", None)
 
-with st.form("edit_expense_form"):
+metadata = load_metadata()
+if metadata is None:
+return
+
+if st.session_state.edit_mode:
+if st.session_state.selected_expense_id:
+expense = fetch_expense_by_id(st.session_state.selected_expense_id)
+if expense:
+display_edit_form(expense, metadata)
+else:
+st.error("Could not load expense to edit.")
+return
+elif st.session_state.delete_confirm:
+if st.session_state.selected_expense_id:
+expense = fetch_expense_by_id(st.session_state.selected_expense_id)
+if expense:
+display_delete_confirmation(expense)
+else:
+st.error("Could not load expense to delete.")
+return
+
+render_report_view(metadata)
+
+def render_report_view(metadata: Dict[str, Any]):
+st.subheader("Expense Report")
+
+df_all = fetch_all_expenses()
+if df_all.empty:
+st.info("No expense data available.")
+return
+
+df_all["month"] = df_all["date"].dt.strftime("%Y-%m")
+all_accounts = metadata["Account"]
+all_categories = sorted(metadata["categories"].keys())
+all_users = sorted(set(metadata["User"].values()))
+
+#PY --- Filter Layout ---
+month_selected = st.selectbox("Select Month", ["All"] + sorted(df_all["month"].unique(), reverse=True))
+
 col1, col2 = st.columns(2)
 with col1:
-date_val = st.date_input("Date", value=default_date)
-account_val = st.selectbox("Account", all_accounts, index=default_account_index)
-sub_category_val = st.selectbox("Sub-category", available_subcategories, index=default_sub_cat_index, disabled=not available_subcategories)
+accounts = st.multiselect("Account", ["All"] + all_accounts, default=["All"])
+categories = st.multiselect("Category", ["All"] + all_categories, default=["All"])
 with col2:
-type_val = st.text_input("Type (Description)", value=expense_data.get('type',''), max_chars=60)
-user_val = user_map.get(account_val, "Unknown")
-st.text(f"User: {user_val}")
-amount_val = st.number_input("Amount (INR)", min_value=0.01, value=float(expense_data.get('amount', 0.01)), format="%.2f", step=10.0)
-submitted = st.form_submit_button("Save Changes")
-cancelled = st.form_submit_button("Cancel")
-if submitted:
-is_valid = True
-if not type_val: st.toast("⚠️ Type required.", icon="⚠️"); is_valid = False
-if amount_val <= 0.0: st.toast("⚠️ Amount must be positive.", icon="⚠️"); is_valid = False
-if available_subcategories and not sub_category_val: st.toast(f"⚠️ Sub-category required for {current_category_in_state}.", icon="⚠️"); is_valid = False
-elif sub_category_val and sub_category_val not in available_subcategories: st.toast(f"❌ Invalid sub-category '{sub_category_val}'.", icon="❌"); is_valid = False
-elif not available_subcategories and sub_category_val: st.toast(f"❌ No sub-categories exist for {current_category_in_state}.", icon="❌"); is_valid = False
-if is_valid:
-final_sub_category = sub_category_val if available_subcategories else ""
-updated_data = {"date": date_val.strftime("%Y-%m-%d"), "account": account_val, "category": current_category_in_state, "sub_category": final_sub_category, "type": type_val, "user": user_val, "amount": amount_val}
-try:
-success = update_expense(st.session_state.selected_expense_id, updated_data)
-if success:
-st.toast("✅ Expense updated!", icon="✅")
-st.session_state.edit_mode = False; st.session_state.pop('selected_expense_id', None); st.session_state.pop('edit_form_category', None); st.experimental_rerun()
-else: st.toast("❌ Failed to update expense.", icon="❌") #PY db_utils logs specifics
-except Exception as e: st.toast(f"❌ Error: {e}", icon="❌"); logging.error(f"Update exception: {e}")
-if cancelled: st.session_state.edit_mode = False; st.session_state.pop('selected_expense_id', None); st.session_state.pop('edit_form_category', None); st.experimental_rerun()
+users = st.multiselect("User", ["All"] + all_users, default=["All"])
+selected_categories = categories if "All" not in categories else all_categories
+available_subcats = sorted({sub for cat in selected_categories for sub in metadata["categories"][cat]})
+subcategory = st.selectbox("Sub-category", ["All"] + available_subcats)
 
-#PY --- Function to display the Delete Confirmation ---
-def display_delete_confirmation(expense_data: Dict[str, Any]):
-"""Displays the confirmation dialog for deleting an expense."""
-#PY ... (Code inside this function is mostly okay, relies on db_utils logging) ...
-st.subheader("Confirm Deletion")
-st.warning(f"Permanently delete this expense?", icon="⚠️")
-col_details1, col_details2 = st.columns(2)
-with col_details1: st.markdown(f"**ID:** `{expense_data.get('id', 'N/A')[:8]}...`"); st.markdown(f"**Date:** {expense_data.get('date', 'N/A')}"); st.markdown(f"**Account:** {expense_data.get('account', 'N/A')}"); st.markdown(f"**User:** {expense_data.get('user', 'N/A')}")
-with col_details2: st.markdown(f"**Category:** {expense_data.get('category', 'N/A')}"); st.markdown(f"**Sub-Category:** {expense_data.get('sub_category', 'N/A')}"); st[...]
+#PY --- Apply Filters ---
+df = df_all.copy()
+if month_selected != "All":
+df = df[df["month"] == month_selected]
+if "All" not in accounts:
+df = df[df["account"].isin(accounts)]
+if "All" not in categories:
+df = df[df["category"].isin(categories)]
+if subcategory != "All":
+df = df[df["sub_category"] == subcategory]
+if "All" not in users:
+df = df[df["user"].isin(users)]
+
+#PY --- Summary Stats ---
+total = df["amount"].sum()
+st.markdown(f"###PY Total Expense (Filtered): ₹{total:,.2f}")
+
+if not df.empty:
+st.markdown("####PY Summary Statistics")
+txns = len(df)
+avg_amt = df["amount"].mean()
+top_cat = df.groupby("category")["amount"].sum().nlargest(1)
+top_cat_display = f"{top_cat.index[0]} (₹{top_cat.values[0]:,.0f})" if not top_cat.empty else "N/A"
+
+col1, col2, col3 = st.columns(3)
+col1.metric("Transactions", f"{txns:,}")
+col2.metric("Avg. Transaction", f"₹{avg_amt:,.2f}")
+col3.metric("Top Category", top_cat_display)
+
+#PY --- Section Title + Refresh Button ---
+col_left, col_spacer, col_right = st.columns([5, 1, 1])
+with col_left:
+st.markdown("###PY Detailed Transactions")
+with col_right:
+if st.button("🔄 Refresh Data", help="Click to reload data from database"):
+st.session_state["force_refresh"] = True
+
+if st.session_state.get("force_refresh", False):
+st.session_state["force_refresh"] = False
+st.rerun()
+
+#PY --- Table Display ---
+display_df = df.drop(columns=["id", "year", "week", "day_of_week", "month"], errors="ignore").rename(columns={
+"date": "Date",
+"account": "Account",
+"category": "Category",
+"sub_category": "Sub Category",
+"type": "Type",
+"user": "User",
+"amount": "Amount"
+}).sort_values("Date", ascending=False)
+
+st.dataframe(
+display_df.style.format({"Date": "{:%Y-%m-%d}", "Amount": "₹{:.2f}"}),
+use_container_width=True,
+height=400,
+hide_index=True
+)
+
+#PY --- Edit / Delete Controls ---
+if not df.empty:
+st.markdown("####PY Edit / Delete Expense")
+df = df.sort_values("date", ascending=False).head(500)
+df["display"] = df.apply(lambda row: f"{row['date'].strftime('%Y-%m-%d')} {row['account']} {row['category']} {row['sub_category'][:15]} ₹{row['amount']:.0f}", axis=1)
+selector_map = {row["display"]: row["id"] for row in df[["display", "id"]].to_dict("records")}
+selector_map = {"-- Select expense --": None, **selector_map}
+
+selected_label = st.selectbox("Select Expense to Modify", list(selector_map.keys()))
+selected_id = selector_map[selected_label]
+
+col1, col2 = st.columns([1, 1])
+if col1.button("Edit Selected", disabled=not selected_id):
+st.session_state.selected_expense_id = selected_id
+st.session_state.edit_mode = True
+st.rerun()
+if col2.button("Delete Selected", disabled=not selected_id):
+st.session_state.selected_expense_id = selected_id
+st.session_state.delete_confirm = True
+st.rerun()
+
+csv = convert_df_to_csv(display_df)
+st.download_button("📥 Export to CSV", csv, "filtered_expenses.csv", "text/csv")
+
+def display_edit_form(expense_data: Dict[str, Any], metadata: Dict[str, Any]):
+st.subheader("Edit Expense")
+all_categories = sorted(metadata["categories"].keys())
+all_accounts = metadata["Account"]
+user_map = metadata["User"]
+category_map = metadata["categories"]
+
+default_date = pd.to_datetime(expense_data["date"]).date()
+default_category = expense_data["category"]
+subcats = sorted(category_map.get(default_category, []))
+
+with st.form("edit_form"):
+col1, col2 = st.columns(2)
+with col1:
+date = st.date_input("Date", value=default_date)
+account = st.selectbox("Account", all_accounts, index=all_accounts.index(expense_data["account"]))
+category = st.selectbox("Category", all_catego[...]
 
 #PY visuals.py
 @path: tabs\visuals.py
-@summary: The `visuals.py` file is a Streamlit application for visualizing expense data. It imports necessary libraries and defines functions to load metadata, configure Plotly layout, and render a page with a 2x2 grid of charts: a pie chart, category bar chart, line chart, and sub-category treemap. It includes error handling and logging.
+@summary: The `visuals.py` file uses Streamlit and Plotly to render an expense visualization page with a 2x2 grid of charts: pie, bar, line, and top 10 expenses. It includes metadata loading, data filtering, and session state management for toggling legends. Charts display spending by category, trends over time, and top expenses.
 @code:
 #PY tabs/visuals.py
 import streamlit as st
@@ -838,120 +877,164 @@ import plotly.graph_objects as go
 import json
 import datetime
 from db_utils import fetch_all_expenses
-from typing import Dict, Any, Optional, List
-import logging #PY <<<--- ADD THIS IMPORT
+from typing import Dict, Any, Optional
+import logging
 
 @st.cache_data
 def load_metadata() -> Optional[Dict[str, Any]]:
 """Loads metadata from the expense_metadata.json file."""
 try:
 with open("expense_metadata.json", "r") as f:
-metadata = json.load(f)
-logging.debug("Metadata loaded successfully for Visuals.")
-return metadata
-except FileNotFoundError:
-st.error("Error: expense_metadata.json not found.")
-logging.error("expense_metadata.json not found.")
-return None
-except json.JSONDecodeError:
-st.error("Error: Could not decode expense_metadata.json.")
-logging.error("Could not decode expense_metadata.json.")
+return json.load(f)
+except Exception as e:
+st.error("Error loading metadata.")
+logging.exception(e)
 return None
 
-#PY --- Helper function for common Plotly layout args ---
-def get_common_layout_args(chart_title: str) -> Dict[str, Any]:
-"""Returns a dictionary of common Plotly layout arguments."""
-#PY ... (function remains the same) ...
+def get_common_layout_args(chart_title: str, show_legend: bool = False) -> Dict[str, Any]:
 return {
-"title_text": chart_title, "title_font_size": 16, "title_x": 0.5,
-"margin": dict(l=10, r=10, t=40, b=20),
-"legend": dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5),
+"title_text": chart_title,
+"title_font_size": 16,
+"title_x": 0.5,
+"margin": dict(l=10, r=10, t=40, b=100 if show_legend else 60),
+"legend": dict(
+orientation="h",
+yanchor="top",
+y=-0.3,
+xanchor="center",
+x=0.5
+),
 "hovermode": "closest",
+"showlegend": show_legend
 }
 
 
 def render():
 """Renders the 'Visualizations' page with a 2x2 grid of charts."""
 st.subheader("Expense Visualizations")
-
 metadata = load_metadata()
 if metadata is None:
-return #PY Error already shown
-
-#PY Fetch all data (uncached)
-df_all = fetch_all_expenses() #PY This function now logs internally on error
-if df_all.empty:
-st.info("No expense data available for visualizations.")
 return
 
-#PY --- Data Preprocessing & Filter List Setup ---
-try:
-#PY Ensure date conversion doesn't fail silently
-df_all['date'] = pd.to_datetime(df_all['date'], errors='raise') #PY Raise error if conversion fails
+df_all = fetch_all_expenses()
+if df_all.empty:
+st.info("No expense data available.")
+return
+
+df_all['date'] = pd.to_datetime(df_all['date'], errors='raise')
 df_all['YearMonth'] = df_all['date'].dt.strftime('%Y-%m')
-min_date_overall = df_all['date'].min().date()
-max_date_overall = df_all['date'].max().date()
+min_date = df_all['date'].min().date()
+max_date = df_all['date'].max().date()
 all_months = ["All"] + sorted(df_all['YearMonth'].unique(), reverse=True)
 all_categories = ["All"] + sorted(list(metadata.get("categories", {}).keys()))
 all_users = ["All"] + sorted(list(set(metadata.get("User", {}).values())))
 all_accounts = ["All"] + metadata.get("Account", [])
-treemap_parent_categories = sorted(list(metadata.get("categories", {}).keys()))
-except Exception as e:
-st.error(f"Error processing initial data: {e}")
-logging.exception("Data preprocessing error in visuals.") #PY Log full traceback
-return
 
-#PY --- Create 2x2 Grid Layout ---
+#PY Initialize session state for legend visibility
+if 'legends' not in st.session_state:
+st.session_state.legends = {
+'pie': False,
+'bar': False,
+'line': False,
+'top': False
+}
+
 col1, col2 = st.columns(2)
 col3, col4 = st.columns(2)
 
-#PY Wrap each chart rendering in a try-except block for robustness
-try:
-#PY --- Chart 1: Pie Chart (Top-Left) ---
+#PY PIE CHART
 with col1:
 st.markdown("####PY By Category (Proportion)")
 with st.expander("Filters", expanded=False):
-f_col1, f_col2 = st.columns(2)
-with f_col1: pie_month = st.selectbox("Month", all_months, 0, key="pie_month_select"); pie_categories = st.multiselect("Category", all_categories, ["All"], key="pie_category_select")
-with f_col2: pie_accounts = st.multiselect("Account", all_accounts, ["All"], key="pie_account_select"); pie_users = st.multiselect("User", all_users, ["All"], key="pie_user_select")
-#PY Filter logic...
-pie_df = df_all.copy();
-if pie_month != "All": pie_df = pie_df[pie_df['YearMonth'] == pie_month]
-if "All" not in pie_accounts: pie_df = pie_df[pie_df['account'].isin(pie_accounts)]
-if "All" not in pie_categories: pie_df = pie_df[pie_df['category'].isin(pie_categories)]
-if "All" not in pie_users: pie_df = pie_df[pie_df['user'].isin(pie_users)]
-if pie_df.empty: st.info("No data: Pie", icon="ℹ️")
-else:
-pie_data = pie_df.groupby('category')['amount'].sum().reset_index(); pie_data = pie_data[pie_data['amount'] > 0]
-if pie_data.empty: st.info("No positive data: Pie", icon="ℹ️")
-else:
-chart_title = f"Category Spend ({pie_month})"; fig1 = px.pie(pie_data, values='amount', names='category', hole=0.4)
-fig1.update_traces(textposition='inside', textinfo='percent+label', hovertemplate="<b>%{label}</b><br>Amt: ₹%{value:,.0f}<br>(%{percent})<extra></extra>", insidetextorientation='radial')
-layout_args = get_common_layout_args(chart_title); layout_args["showlegend"] = False; fig1.update_layout(**layout_args)
-st.plotly_chart(fig1, use_container_width=True)
-except Exception as e:
-logging.exception("Error rendering Pie Chart.")
-st.error("Error displaying Pie Chart.", icon="🔥")
+pie_month = st.selectbox("Month", all_months, 0, key="pie_month")
+pie_cats = st.multiselect("Category", all_categories, ["All"], key="pie_cat")
+pie_accounts = st.multiselect("Account", all_accounts, ["All"], key="pie_account")
+pie_users = st.multiselect("User", all_users, ["All"], key="pie_user")
 
+#PY Compact toggle button
+cols = st.columns([1,4])
+with cols[0]:
+if st.button("Toggle Legend", key="pie_legend_btn"):
+st.session_state.legends['pie'] = not st.session_state.legends['pie']
 
-try:
-#PY --- Chart 2: Category Bar Chart (Top-Right) ---
+pie_df = df_all.copy()
+if pie_month != "All":
+pie_df = pie_df[pie_df['YearMonth'] == pie_month]
+if "All" not in pie_cats:
+pie_df = pie_df[pie_df['category'].isin(pie_cats)]
+if "All" not in pie_accounts:
+pie_df = pie_df[pie_df['account'].isin(pie_accounts)]
+if "All" not in pie_users:
+pie_df = pie_df[pie_df['user'].isin(pie_users)]
+
+pie_data = pie_df.groupby('category')['amount'].sum().reset_index()
+if not pie_data.empty:
+fig = px.pie(pie_data, values='amount', names='category', hole=0.4)
+fig.update_traces(textposition='inside', textinfo='percent+label')
+fig.update_layout(**get_common_layout_args("Spending by Category", st.session_state.legends['pie']))
+st.plotly_chart(fig, use_container_width=True)
+
+#PY BAR CHART
 with col2:
 st.markdown("####PY By Category (Absolute)")
 with st.expander("Filters", expanded=False):
-f_col1, f_col2 = st.columns(2)
-with f_col1: cat_bar_start_date = st.date_input("Start Date", min_date_overall, min_date_overall, max_date_overall, key="cat_bar_start_date"); cat_bar_accounts = st.multiselect("Account", all_accounts, ["All"], key="cat_bar_account_select")
-with f_col2: cat_bar_end_date = st.date_input("End Date", max_date_overall, min_date_overall, max_date_overall, key="cat_bar_end_date"); cat_bar_users = st.multiselect("User", all_users, ["All"], key="cat_bar_user_select")
-#PY Filter logic...
-cat_bar_df = df_all.copy(); date_range_valid = cat_bar_start_date <= cat_bar_end_date
-if date_range_valid:
-cat_bar_df = cat_bar_df[(cat_bar_df['date'].dt.date >= cat_bar_start_date) & (cat_bar_df['date'].dt.date <= cat_bar_end_date)]
-if "All" not in cat_bar_accounts: cat_bar_df = cat_bar_df[cat_bar_df['account'].isin(cat_bar_accounts)]
-if "All" not in cat_bar_users: cat_bar_df = cat_bar_df[cat_bar_df['user'].isin(cat_bar_users)]
-else: st.warning("Invalid date: Cat Bar", icon="⚠️"); cat_bar_df = pd.DataFrame()
-if cat_bar_df.empty: st.info("No data: Cat Bar", icon="ℹ️")
+bar_start = st.date_input("Start Date", min_date, key="bar_start")
+bar_end = st.date_input("End Date", max_date, key="bar_end")
+bar_accounts = st.multiselect("Account", all_accounts, ["All"], key="bar_account")
+bar_users = st.multiselect("User", all_users, ["All"], key="bar_user")
+
+cols = st.columns([1,4])
+with cols[0]:
+if st.button("Toggle Legend", key="bar_legend_btn"):
+st.session_state.legends['bar'] = not st.session_state.legends['bar']
+
+bar_df = df_all[(df_all['date'].dt.date >= bar_start) & (df_all['date'].dt.date <= bar_end)]
+if "All" not in bar_accounts:
+bar_df = bar_df[bar_df['account'].isin(bar_accounts)]
+if "All" not in bar_users:
+bar_df = bar_df[bar_df['user'].isin(bar_users)]
+
+bar_data = bar_df.groupby('category')['amount'].sum().reset_index()
+if not bar_data.empty:
+fig = px.bar(bar_data, x='category', y='amount', color='category')
+layout = get_common_layout_args("Total Spending by Category", st.session_state.legends['bar'])
+layout["yaxis_title"] = "Amount (INR)"
+layout["xaxis"] = dict(categoryorder='total descending')
+fig.update_layout(**layout)
+st.plotly_chart(fig, use_container_width=True)
+
+#PY LINE CHART
+with col3:
+st.markdown("####PY Trend Over Time")
+with st.expander("Filters", expanded=False):
+line_start = st.date_input("Start Date", min_date, key="line_start")
+line_end = st.date_input("End Date", max_date, key="line_end")
+line_cats = st.multiselect("Category", all_categories, ["All"], key="line_cat")
+line_accounts = st.multiselect("Account", all_accounts, ["All"], key="line_account")
+line_users = st.multiselect("User", all_users, ["All"], key="line_user")
+line_mode = st.radio("View", ["Daily", "Cumulative"], 0, horizontal=True, key="line_mode")
+
+cols = st.columns([1,4])
+with cols[0]:
+if st.button("Toggle Legend", key="line_legend_btn"):
+st.session_state.legends['line'] = not st.session_state.legends['line']
+
+line_df = df_all[(df_all['date'].dt.date >= line_start) & (df_all['date'].dt.date <= line_end)]
+if "All" not in line_cats:
+line_df = line_df[line_df['category'].isin(line_cats)]
+if "All" not in line_accounts:
+line_df = line_df[line_df['account'].isin(line_accounts)]
+if "All" not in line_users:
+line_df = line_df[line_df['user'].isin(line_users)]
+
+trend = line_df.groupby('date')['amount'].sum().reset_index()
+fig = go.Figure()
+if not trend.empty:
+if line_mode == "Daily":
+fig.add_trace(go.Scatter(x=trend['date'], y=trend['amount'], mode='lines+markers'))
 else:
-cat_bar_data = cat_bar_df.groupby('category')['amount'].sum().reset_index(); cat_bar_data = cat_bar_data[cat_bar_data['amount'] > 0].sort_values('amount', ascending=False)
-if cat_bar_data.empty: st.info("No positive data: Cat Bar", icon="ℹ️")
-else:
-chart_title = f"Category Totals ({cat_bar_start_date.strftime('[...]
+trend['cumulative'] = trend['amount'].cumsum()
+fig.add_trace(go.Scatter(x=trend['date'], y=trend['cumulative'], mode='lines+markers', line=dict(dash='dot')))
+layout = get_common_layout_args("Spending Trend", st.session_state.legends['line'])
+layout["yaxis_title"] = "Amount (INR)"
+l[...]

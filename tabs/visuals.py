@@ -4,12 +4,14 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import json
+import datetime
 from db_utils import fetch_all_expenses
 from typing import Dict, Any, Optional
 import logging
 
 @st.cache_data
 def load_metadata() -> Optional[Dict[str, Any]]:
+    """Loads metadata from the expense_metadata.json file."""
     try:
         with open("expense_metadata.json", "r") as f:
             return json.load(f)
@@ -35,7 +37,9 @@ def get_common_layout_args(chart_title: str, show_legend: bool = False) -> Dict[
         "showlegend": show_legend
     }
 
+
 def render():
+    """Renders the 'Visualizations' page with a 2x2 grid of charts."""
     st.subheader("Expense Visualizations")
     metadata = load_metadata()
     if metadata is None:
@@ -55,9 +59,6 @@ def render():
     all_users = ["All"] + sorted(list(set(metadata.get("User", {}).values())))
     all_accounts = ["All"] + metadata.get("Account", [])
 
-    col1, col2 = st.columns(2)
-    col3, col4 = st.columns(2)
-
     # Initialize session state for legend visibility
     if 'legends' not in st.session_state:
         st.session_state.legends = {
@@ -67,6 +68,9 @@ def render():
             'top': False
         }
 
+    col1, col2 = st.columns(2)
+    col3, col4 = st.columns(2)
+
     # PIE CHART
     with col1:
         st.markdown("#### By Category (Proportion)")
@@ -75,9 +79,11 @@ def render():
             pie_cats = st.multiselect("Category", all_categories, ["All"], key="pie_cat")
             pie_accounts = st.multiselect("Account", all_accounts, ["All"], key="pie_account")
             pie_users = st.multiselect("User", all_users, ["All"], key="pie_user")
-            
-            # Toggle button
-            if st.button("Toggle Legend", key="pie_legend_btn", use_container_width=True):
+        
+        # Compact toggle button
+        cols = st.columns([1,4])
+        with cols[0]:
+            if st.button("Toggle Legend", key="pie_legend_btn"):
                 st.session_state.legends['pie'] = not st.session_state.legends['pie']
 
         pie_df = df_all.copy()
@@ -105,8 +111,10 @@ def render():
             bar_end = st.date_input("End Date", max_date, key="bar_end")
             bar_accounts = st.multiselect("Account", all_accounts, ["All"], key="bar_account")
             bar_users = st.multiselect("User", all_users, ["All"], key="bar_user")
-            
-            if st.button("Toggle Legend", key="bar_legend_btn", use_container_width=True):
+        
+        cols = st.columns([1,4])
+        with cols[0]:
+            if st.button("Toggle Legend", key="bar_legend_btn"):
                 st.session_state.legends['bar'] = not st.session_state.legends['bar']
 
         bar_df = df_all[(df_all['date'].dt.date >= bar_start) & (df_all['date'].dt.date <= bar_end)]
@@ -134,8 +142,10 @@ def render():
             line_accounts = st.multiselect("Account", all_accounts, ["All"], key="line_account")
             line_users = st.multiselect("User", all_users, ["All"], key="line_user")
             line_mode = st.radio("View", ["Daily", "Cumulative"], 0, horizontal=True, key="line_mode")
-            
-            if st.button("Toggle Legend", key="line_legend_btn", use_container_width=True):
+        
+        cols = st.columns([1,4])
+        with cols[0]:
+            if st.button("Toggle Legend", key="line_legend_btn"):
                 st.session_state.legends['line'] = not st.session_state.legends['line']
 
         line_df = df_all[(df_all['date'].dt.date >= line_start) & (df_all['date'].dt.date <= line_end)]
@@ -169,15 +179,17 @@ def render():
             top_end = st.date_input("End Date", max_date, key="top_end")
             top_accounts = st.multiselect("Account", all_accounts, ["All"], key="top_account")
             top_users = st.multiselect("User", all_users, ["All"], key="top_user")
-            
-            if st.button("Toggle Legend", key="top_legend_btn", use_container_width=True):
+        
+        cols = st.columns([1,4])
+        with cols[0]:
+            if st.button("Toggle Legend", key="top_legend_btn"):
                 st.session_state.legends['top'] = not st.session_state.legends['top']
 
         top_df = df_all[(df_all['date'].dt.date >= top_start) & (df_all['date'].dt.date <= top_end)]
         if "All" not in top_accounts:
             top_df = top_df[top_df['account'].isin(top_accounts)]
         if "All" not in top_users:
-            top_df = top_df[top_df['user'].isin(top_users)]
+            top_df = top_df[top_df[top_users]]
 
         top_data = top_df.groupby('type')['amount'].sum().reset_index().sort_values('amount', ascending=False).head(10)
         if not top_data.empty:

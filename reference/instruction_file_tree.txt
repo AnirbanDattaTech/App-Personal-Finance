@@ -4,7 +4,6 @@ app-personal-finance/
     db_utils.py
     dummy_expenses.csv
     expenses.csv
-    expenses.db
     expenses_sample.csv
     expense_metadata.json
     main.py
@@ -20,11 +19,8 @@ app-personal-finance/
     reference/
         agentic_ds_app_prep.txt
         data_analysis.ipynb
-        generate_code_details.py
-        generate_code_details_compressed.py
         generate_data.py
         generate_summary.py
-        generate_tree.py
         git_workflow_guide.md
         instruction_advanced_question_types.txt
         instruction_code_details.txt

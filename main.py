@@ -20,8 +20,10 @@ st.set_page_config(
 # --- Load CSS ---
 load_css()
 
-# --- Add Application Header Banner ---
-st.title("My Personal Finance App")
+st.markdown(
+    '<div class="app-banner">My Personal Finance App</div>',
+    unsafe_allow_html=True
+)
 
 # --- Sidebar Navigation ---
 st.sidebar.title("Navigation")

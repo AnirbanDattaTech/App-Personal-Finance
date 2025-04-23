@@ -20,7 +20,7 @@
         "Connectivity": ["Airtel WiFi", "Jio Recharge", "Airtel Mobile", "Netflix", "Prime Video", "Disney+ Hotstar"],
         "Waste": ["Smoke", "Alcohol"],
         "Grocery": ["BigBasket", "Amazon", "Flipkart Grocery", "Zepto", "Local Store", "Other"],
-        "Beauty": ["Nykaa", "Meesho", "Purplle", "Salon", "Makeup", "Skincare", "Salon"],
+        "Beauty": ["Nykaa", "Meesho", "Purple", "Salon", "Makeup", "Skincare", "Salon"],
         "Shopping": ["Amazon", "Flipkart", "Meesho", "Nykaa", "Purple", "Lifestyle", "Max", "Myntra"],
         "Health": ["Doctor Visit", "Medicines", "Lab Test", "Health Checkup"],
         "Utilities": ["Electricity", "Water", "Gas Cylinder", "Maintenance", "Garbage Collection"],
