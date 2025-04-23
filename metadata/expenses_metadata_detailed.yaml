@@ -1,0 +1,157 @@
+table_name: expenses
+description: "Stores all recorded financial transactions for users Anirban and Puspita. Each row represents a single expense event. Used to track spending patterns, budget adherence, and answer financial queries."
+primary_key: id # Assuming 'id' is a UUID added during DB creation
+
+# Explicit relationship mapping derived from expense_metadata.json
+relationships:
+  - type: derived
+    from_column: account
+    to_column: user
+    mapping:
+      "Anirban-SBI": "Anirban"
+      "Anirban-ICICI": "Anirban"
+      "Puspita-SBI": "Puspita"
+      "Puspita-Bandhan": "Puspita"
+    description: "The 'user' is strictly determined by the 'account' used in the transaction according to this fixed mapping."
+
+columns:
+  - name: id
+    data_type: TEXT # Or UUID if supported natively
+    description: "Unique identifier for each transaction record. Auto-generated, not typically used in user queries."
+    constraints: "Primary Key, Not Null, Unique"
+    purpose_for_llm: "Internal database identifier. Avoid using in filters unless a specific transaction ID is provided."
+
+  - name: date
+    data_type: DATE # Store as ISO 8601 string 'YYYY-MM-DD' or DATE type
+    description: "The exact date the transaction occurred (format: YYYY-MM-DD)."
+    example_values: ["2023-10-26", "2024-01-15"]
+    constraints: "Not Null"
+    purpose_for_llm: "Primary column for filtering by time. Use for specific dates, date ranges (e.g., 'last month', 'this year', 'between Jan 1 2024 and Mar 31 2024'), or time-based aggregations. Always use this column for date conditions."
+
+  - name: year
+    data_type: INTEGER
+    description: "The year the transaction occurred (extracted from the 'date' column)."
+    example_values: [2023, 2024]
+    constraints: "Derived from 'date'. Not Null."
+    purpose_for_llm: "Use for filtering or grouping expenses by calendar year (e.g., 'total spend in 2023', 'compare 2023 vs 2024'). Less granular than 'month' or 'date'."
+
+  - name: month
+    data_type: TEXT # Format 'YYYY-MM'
+    description: "The year and month the transaction occurred (extracted from the 'date' column, format: YYYY-MM)."
+    example_values: ["2023-10", "2024-01"]
+    constraints: "Derived from 'date'. Not Null."
+    purpose_for_llm: "Primary column for monthly analysis. Use for filtering or grouping by specific month (e.g., 'spend in January 2024', 'monthly trends', 'compare spending across months'). Use this when the query specifies a month or asks for monthly patterns."
+
+  - name: week
+    data_type: TEXT # Format 'YYYY-Www' (ISO week date)
+    description: "The ISO week number (W01-W53) within the year the transaction occurred (extracted from the 'date' column, format YYYY-Www)."
+    example_values: ["2023-W43", "2024-W03"]
+    constraints: "Derived from 'date'. Not Null."
+    purpose_for_llm: "Use for filtering or grouping expenses by week (e.g., 'last week's spend', 'weekly grocery total'). Useful for short-term pattern analysis."
+
+  - name: day_of_week
+    data_type: TEXT
+    description: "The name of the day the transaction occurred (e.g., Sunday, Monday)."
+    example_values: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    constraints: "Derived from 'date'. Not Null."
+    purpose_for_llm: "Use for analyzing spending patterns based on the day of the week (e.g., 'weekend restaurant spending', 'average spend on weekdays vs weekends')."
+
+  - name: account
+    data_type: TEXT
+    description: "The specific bank account used for the transaction. Belongs to either Anirban or Puspita. Each account maps deterministically to one user."
+    unique_values: ["Anirban-SBI", "Anirban-ICICI", "Puspita-SBI", "Puspita-Bandhan"]
+    constraints: "Not Null. Value must be one of the predefined accounts."
+    purpose_for_llm: |
+        Use for filtering expenses by the source account or comparing spending across accounts.
+        This column directly determines the 'user'. Refer to the 'relationships' section or the 'user' column definition for the exact mapping:
+        - 'Anirban-SBI' -> 'Anirban'
+        - 'Anirban-ICICI' -> 'Anirban'
+        - 'Puspita-SBI' -> 'Puspita'
+        - 'Puspita-Bandhan' -> 'Puspita'
+        If a query mentions a user AND an account, ensure they are consistent with this mapping.
+
+  - name: category
+    data_type: TEXT
+    description: "Broad classification of the expense (e.g., Rent, Grocery, Travel). Provides a high-level view of spending areas. Each Category maps to specific Sub-categories defined below."
+    unique_values: ["Investment", "Rent", "Travel", "Restaurant", "Insurance Premium", "Household", "Connectivity", "Waste", "Grocery", "Beauty", "Shopping", "Health", "Utilities", "Gifts & Donations", "Entertainment", "Education"]
+    constraints: "Not Null. Value must be one of the predefined categories."
+    mapping: # Explicit mapping from expense_metadata.json
+        Investment: ["SIP", "Mutual Funds", "Stocks", "FD/RD"]
+        Rent: ["House Rent"]
+        Travel: ["Day Trip", "Vacation", "Commute", "Cab", "Train", "Flight", "Hotel/Stay", "Parking Fee"]
+        Restaurant: ["Dine-in", "Takeaway", "Food Delivery", "Snacks", "Cafe", "Drinks"]
+        Insurance Premium: ["Life Insurance", "ULIP", "Health Insurance", "Vehicle Insurance"]
+        Household: ["Electricity Bill", "Plumbing", "Electrical Repairs", "Appliance Repair", "Cleaning", "Pest Control", "Bike Maintenance", "Car Maintenance", "Furniture", "Kitchen Tools", "Ironing", "Maid"]
+        Connectivity: ["Airtel WiFi", "Jio Recharge", "Airtel Mobile", "Netflix", "Prime Video", "Disney+ Hotstar"]
+        Waste: ["Smoke", "Alcohol"]
+        Grocery: ["BigBasket", "Amazon", "Flipkart Grocery", "Zepto", "Local Store", "Other"]
+        Beauty: ["Nykaa", "Meesho", "Purple", "Salon", "Makeup", "Skincare"] # Removed duplicate Salon
+        Shopping: ["Amazon", "Flipkart", "Meesho", "Nykaa", "Purple", "Lifestyle", "Max", "Myntra"]
+        Health: ["Doctor Visit", "Medicines", "Lab Test", "Health Checkup"]
+        Utilities: ["Electricity", "Water", "Gas Cylinder", "Maintenance", "Garbage Collection"]
+        Gifts & Donations: ["Family", "Friends", "Charity", "Temple"]
+        Entertainment: ["Movies", "Concerts", "Games"]
+        Education: ["Online Courses", "Books", "Workshops"]
+    purpose_for_llm: |
+        Primary column for high-level expense analysis.
+        Use this when the user asks about:
+        - General spending types (e.g., 'How much on Travel?').
+        - Broad overviews (e.g., 'Show my spending breakdown', 'Top spending categories').
+        - Comparing major areas (e.g., 'Compare Grocery vs Restaurant spending').
+        - Queries about 'main expenses' or 'overall spending'.
+        - Use the 'mapping' above to know valid sub-categories for a given category.
+
+  - name: sub_category
+    data_type: TEXT
+    description: "Detailed classification within a Category (e.g., within 'Travel', sub-categories are 'Cab', 'Flight'). Provides finer granularity. Value MUST belong to the list associated with the transaction's 'category' in the 'category' column mapping."
+    example_values: ["SIP", "House Rent", "Cab", "Dine-in", "Life Insurance", "Electricity Bill", "Airtel WiFi", "Smoke", "BigBasket", "Amazon", "Salon", "Doctor Visit", "Gas Cylinder", "Family", "Movies", "Online Courses"]
+    constraints: "Can be Null/Empty if a Category has no Sub-categories (e.g., Rent). Value must correspond to the selected Category based on the predefined mapping in the 'category' column."
+    purpose_for_llm: |
+        Use for detailed analysis *within* a category or when specific items are mentioned.
+        Prioritize using this column when the query includes terms like:
+        - Specific types: 'Flights', 'SIP', 'Maid Salary', 'BigBasket', 'Netflix', 'ULIP'.
+        - More detail than category: 'How much did we spend on cabs?', 'Track mutual fund investments'.
+        - Ambiguity Resolution:
+            - For 'Electricity Bill' payments, always use `sub_category = 'Electricity Bill'` (under `category = 'Household'`). Avoid `Utilities.Electricity` for bill payments.
+            - If query mentions 'Amazon', check context. If 'Amazon groceries', use `category = 'Grocery'` AND `sub_category = 'Amazon'`. If 'Amazon shopping', use `category = 'Shopping'` AND `sub_category = 'Amazon'`. If just 'Amazon', consider filtering `WHERE sub_category = 'Amazon'` across both categories or ask for clarification.
+            - For investment details (SIP, Mutual Funds etc.), use the relevant sub_category under `category = 'Investment'`.
+        - Confirm the `sub_category` queried is valid for the implied or stated `category` using the mapping in the 'category' column definition.
+
+  - name: type
+    data_type: TEXT
+    description: "User-provided free-text description of the specific transaction item or purpose (e.g., 'Lunch with colleagues', 'Monthly SIP deduction', 'Groceries for the week', 'Flight tickets BLR-DEL'). Can be very specific but inconsistent."
+    example_values: ["Monthly House Rent Payment", "Monthly Maid Salary", "Meat/Fish Purchase", "FK Quick Groceries", "Lunch Parcel", "IRCTC Booking - Home", "Mixer Grinder", "Uber to Airport"]
+    constraints: "Free text, max length approx 60 chars. Can be Null/Empty."
+    purpose_for_llm: |
+        Use ONLY for identifying very specific purchases when category/sub-category are too broad OR when the user provides a specific description.
+        Examples:
+        - 'Find the transaction for the Mixer grinder purchase'. -> `WHERE type LIKE '%Mixer grinder%'`
+        - 'What was that expense description containing "Airport"?' -> `WHERE type LIKE '%Airport%'`
+        - Less reliable for aggregation (SUM, AVG) due to free-text nature. Use category/sub-category for aggregation whenever possible.
+
+  - name: user
+    data_type: TEXT
+    description: "The person who owns the account used for the transaction. Automatically derived from the 'account' based on a fixed mapping."
+    unique_values: ["Anirban", "Puspita"]
+    constraints: "Not Null. Value is strictly determined by the 'account' used, according to the mapping defined in the 'relationships' section or the 'account' column definition."
+    purpose_for_llm: |
+        Use for filtering or comparing expenses made by Anirban vs. Puspita. Essential for user-specific queries (e.g., 'Show my spending', 'Who spent more last month?', 'Puspita's travel costs').
+        This value is derived from the 'account' column via the following fixed mapping:
+        - 'Anirban-SBI' -> 'Anirban'
+        - 'Anirban-ICICI' -> 'Anirban'
+        - 'Puspita-SBI' -> 'Puspita'
+        - 'Puspita-Bandhan' -> 'Puspita'
+        Queries filtering by both user and account must be consistent with this mapping.
+
+  - name: amount
+    data_type: REAL # Or NUMERIC, DECIMAL depending on SQLite specifics for currency
+    description: "The monetary value of the transaction in Indian Rupees (INR)."
+    example_values: [30000.00, 2500.0, 534.04, 1409.08, 100.0]
+    constraints: "Not Null. Must be a positive number."
+    purpose_for_llm: |
+        The primary measure of spending value.
+        Use for:
+        - Calculating totals, averages, sums (e.g., 'Total spend', 'Average restaurant bill').
+        - Finding minimum/maximum expenses (e.g., 'Largest expense this month').
+        - Filtering by value (e.g., 'transactions over 1000 INR', 'show expenses less than 50 INR'). Use operators like >, <, >=, <=.
+        - Answering queries about 'high value', 'low value', or 'expensive' items by applying appropriate amount filters.
