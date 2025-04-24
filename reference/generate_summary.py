@@ -30,9 +30,9 @@ TREE_PATH = REFERENCE_DIR / "instruction_file_tree.txt"
 
 # Exclusion lists (combined from original scripts)
 EXCLUDED_DIRS = {'.git', '__pycache__', '.vscode', '.idea', '.venv', 'venv', 
-                '.mypy_cache', '.pytest_cache', '.git', '.vscode', '.idea', 'venv'}
+                '.mypy_cache', '.pytest_cache', '.git', '.vscode', '.idea', 'venv', '.github'}
 EXCLUDED_FILES = {'.env', '.log', '.gitignore', '.env', '.gitignore'}
-EXCLUDED_EXTENSIONS = {'.pyc', '.log', '.env', '.db'}
+EXCLUDED_EXTENSIONS = {'.pyc', '.log', '.env', '.db', '.codespellignore'}
 
 # OpenAI setup
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))

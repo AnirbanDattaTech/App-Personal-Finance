@@ -1,10 +1,35 @@
 app-personal-finance/
     expense_metadata.json
     requirements-v2.0.txt
+    assistant/
+        finance-assistant/
+            .codespellignore
+            .env.example
+            langgraph.json
+            LICENSE
+            Makefile
+            pyproject.toml
+            README.md
+            src/
+                agent/
+                    configuration.py
+                    graph.py
+                    state.py
+                    __init__.py
+            static/
+                studio_ui.png
+            tests/
+                integration_tests/
+                    test_graph.py
+                    __init__.py
+                unit_tests/
+                    test_configuration.py
+                    __init__.py
     data/
         expenses.csv
         expenses.db
     metadata/
+        expenses_metadata_detailed.yaml
         expense_metadata.json
     reference/
         agentic_ds_app_prep.txt
@@ -18,6 +43,7 @@ app-personal-finance/
         instruction_code_details_compressed.txt
         instruction_file_tree.txt
         instruction_llm.txt
+        progress_summary.txt
         requirement_v1_streamlit_app.txt
         requirement_v2_ds_assistant.txt
         test_llm_gemini.py
