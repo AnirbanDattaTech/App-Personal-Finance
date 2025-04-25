@@ -31,11 +31,3 @@ Ensure, for all future project steps, code generation and brainstorming:
 ✅ Output dirs-	all dirs (inputs and outputs) are validated
 ✅ Model- gpt-4o or fallback gpt-3.5-turbo
 ✅ detailed step by step instructions (dsbsi from now).
-
-FOR ME ----
-I will use #context snapshot command in gpt plus to create a snapshot.
-I can also do:
-	#context snapshot assistant → only assistant design summary
-	#context snapshot codebase → current code files in use
-	#context snapshot ml → ML modeling or DSA-related setup
-	#context snapshot todo → list of pending next steps
