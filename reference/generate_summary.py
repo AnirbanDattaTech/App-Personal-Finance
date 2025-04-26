@@ -3,24 +3,25 @@
 generate_summary.py - Focused Project Context Generator for app-personal-finance
 
 Generates 'instructions_code_details.txt' containing:
-A. A file tree of the CORE project + test structure.
+A. A focused file tree of the project structure (using proven logic).
 B. Code details:
-   - Full code for essential .py files (agent source, streamlit source, tests).
-   - AI-generated summary + truncated snippet for essential config/metadata
-     files (schema YAML, langgraph.json).
+   - Full, whitespace/simple-comment-compressed code (preserving docstrings)
+     for all relevant .py files (src, app, tests, streamlit, root, ref).
+   - AI-generated summary + truncated snippet for files in reference/ (non-py) and
+     essential config/metadata files (schema YAML, langgraph.json, pyproject.toml).
+   - Head content for data/expenses.csv.
 
-Designed to provide meaningful context for LLM assistants, focusing on application
-logic, essential configurations, and testing strategy.
-Uses OpenAI API ONLY for summarizing essential non-Python files.
+Excludes .git, cache dirs, build artifacts, env files etc. from tree and details.
+Uses OpenAI API ONLY for summarizing specific non-Python files.
 """
 
 import os
 import logging
+import re
 from pathlib import Path
 from dotenv import load_dotenv
-from typing import List, TextIO, Set
-# Note: Removed pandas import as we are excluding data/csv files now
-# import pandas as pd
+from typing import List, TextIO, Set, Tuple
+import pandas as pd
 from openai import OpenAI
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 import tiktoken
@@ -37,156 +38,187 @@ logger = logging.getLogger(__name__)
 
 # --- Path Definitions ---
 try:
+    # Assuming this script is in reference/
     SCRIPT_DIR = Path(__file__).resolve().parent
     ROOT_DIR = SCRIPT_DIR.parent
     REFERENCE_DIR = ROOT_DIR / "reference"
     OUTPUT_PATH = REFERENCE_DIR / "instructions_code_details.txt"
 
-    # Define core directories containing essential code & tests
-    CORE_DIRS_TO_SCAN: Set[Path] = {
+    # Define directories containing files needed for context details (Section 3)
+    CONTEXT_DIRS_DETAILS: Set[Path] = {
         ROOT_DIR / "assistant" / "finance-assistant" / "src",
         ROOT_DIR / "assistant" / "finance-assistant" / "app",
-        ROOT_DIR / "assistant" / "finance-assistant" / "tests", # Include tests
+        ROOT_DIR / "assistant" / "finance-assistant" / "tests",
         ROOT_DIR / "streamlit",
-        ROOT_DIR / "metadata" # Keep metadata directory for the YAML
+        ROOT_DIR / "metadata",
+        ROOT_DIR / "reference",
+        ROOT_DIR # Scan root for top-level files
     }
-    # Define specific essential non-Python files relative to ROOT_DIR
-    ESSENTIAL_FILES: Set[Path] = {
+    # Define specific essential non-Python files relative to ROOT_DIR for details
+    ESSENTIAL_NON_PY_FILES: Set[Path] = {
         ROOT_DIR / "assistant" / "finance-assistant" / "langgraph.json",
+        ROOT_DIR / "assistant" / "finance-assistant" / "pyproject.toml",
         ROOT_DIR / "metadata" / "expenses_metadata_detailed.yaml",
     }
+    # Specific data files to handle specially for details
+    DATA_FILES_TO_INCLUDE: Set[Path] = {
+        ROOT_DIR / "data" / "expenses.csv"
+    }
+
     logger.info(f"Root directory set to: {ROOT_DIR}")
-    logger.info(f"Core directories to scan: {[d.relative_to(ROOT_DIR) for d in CORE_DIRS_TO_SCAN]}")
-    logger.info(f"Essential specific files: {[f.relative_to(ROOT_DIR) for f in ESSENTIAL_FILES]}")
 
 except Exception as e:
     logger.exception(f"Error setting up script paths: {e}")
     raise SystemExit("Could not determine project structure paths.") from e
 
-# --- Exclusion Lists (Applied during filtering) ---
-# Focus on excluding files *within* the CORE_DIRS_TO_SCAN if needed,
-# plus general non-code/binary types.
-EXCLUDED_DIRS_GENERAL: Set[str] = {
-    '__pycache__', '.mypy_cache', '.pytest_cache',
-    '.git', '.vscode', '.idea', '.venv', 'venv', # General dev/tooling dirs
-    'node_modules', 'build', 'dist', '*.egg-info' # Build artifacts
-    # Note: Explicitly NOT excluding 'tests' here as it's in CORE_DIRS_TO_SCAN
+# --- Exclusion Lists ---
+# Directories excluded from BOTH Tree (Section 2) and Details (Section 3)
+# Based on previous successful exclusion + adding langgraph_api, egg-info, .git
+EXCLUDED_DIRS_HARD: Set[str] = {
+    '.git', '__pycache__', '.vscode', '.idea', '.venv', 'venv',
+    '.mypy_cache', '.pytest_cache', 'node_modules', 'build', 'dist',
+    '.langgraph_api', 'agent.egg-info', # Added based on discussion
+    '.github' # Usually excluded unless workflow files needed later
 }
-EXCLUDED_FILES_GENERAL: Set[str] = {
+# Files excluded from Section 3 details ONLY
+EXCLUDED_FILES_DETAILS: Set[str] = {
     '.env', '.log', '.gitignore', '.DS_Store', 'Thumbs.db',
-    'LICENSE', 'Makefile', # Tooling/Meta files
-    'generate_summary.py', # Exclude self
-    'instructions_code_details.txt', # Exclude output
-    'agentic_ai_guidelines.txt', # Exclude guideline files
-    'instructions_agentic_ai.txt'
+    'LICENSE', 'Makefile', '.codespellignore',
+    'generate_summary.py', 'generate_summary1.py',
+    'instructions_code_details.txt', 'agentic_ai_guidelines.txt',
+    'agentic_ai_guidelines.md', 'instructions_agentic_ai.txt',
+    'requirements.txt', 'requirements-v2.0.txt'
 }
-# Exclude common binary/temporary/config extensions + database files
-# Keep .json and .yaml as potentially essential config types
-EXCLUDED_EXTENSIONS_GENERAL: Set[str] = {
+# Extensions excluded from Section 3 details ONLY
+EXCLUDED_EXTENSIONS_DETAILS: Set[str] = {
     '.pyc', '.log', '.env', '.db', '.db-journal', '.pckl',
     '.lock', '.svg', '.png', '.jpg', '.jpeg', '.gif', '.ico',
     '.zip', '.tar', '.gz', '.pdf', '.docx', '.xlsx',
-    '.csv', # Excluding data files now
-    '.css', # Excluding stylesheets
-    '.toml' # Excluding toml like pyproject.toml for now
+    '.css', '.md',
 }
-
 
 # --- OpenAI Setup ---
 try:
+    # (OpenAI client setup - same as before)
     openai_api_key = os.getenv("OPENAI_API_KEY")
-    if not openai_api_key:
-        raise ValueError("OPENAI_API_KEY environment variable not found.")
+    if not openai_api_key: raise ValueError("OPENAI_API_KEY not found.")
     client = OpenAI(api_key=openai_api_key)
     logger.info("OpenAI client initialized.")
-except ValueError as e:
-    logger.error(f"OpenAI API Key Error: {e}")
-    raise SystemExit("Missing OpenAI API Key.") from e
 except Exception as e:
     logger.exception(f"Failed to initialize OpenAI client: {e}")
     raise SystemExit("OpenAI client initialization failed.") from e
 
 
-# --- Helper Functions ---
-
-def filter_relevant_items(items: List[Path], root_dir: Path) -> List[Path]:
-    """Filters a list of paths based on exclusion rules."""
-    filtered_items: List[Path] = []
-    for item in items:
-        relative_path = item.relative_to(root_dir)
-        # Check if any part of the path is an excluded directory name
-        if any(part in EXCLUDED_DIRS_GENERAL for part in relative_path.parts):
-            continue
-        # Check specific file name exclusions
-        if item.name in EXCLUDED_FILES_GENERAL:
-            continue
-        # Check extension exclusions
-        if item.suffix.lower() in EXCLUDED_EXTENSIONS_GENERAL:
-            continue
-        # If it passes all checks, keep it
-        filtered_items.append(item)
-    return filtered_items
-
-
-def get_meaningful_context_files(root_dir: Path, core_dirs: Set[Path], essential_files: Set[Path]) -> List[Path]:
+# --- Tree Generation Function (Copied VERBATIM from generate_summary1.py) ---
+# Uses its own internal exclusion lists from that script for correctness
+def generate_folder_tree_v1(target_path: Path, output_file: Path) -> None:
     """
-    Finds essential Python files within core/test directories and specified essential files.
+    Generates a folder tree structure and saves it to a file.
+    Uses logic from generate_summary1.py.
 
     Args:
-        root_dir (Path): Project root directory.
-        core_dirs (Set[Path]): Set of directories containing core source/test code.
-        essential_files (Set[Path]): Set of specific essential non-Python config/metadata files.
-
-    Returns:
-        List[Path]: A list of Path objects for essential files for LLM context.
+        target_path (Path): The root directory to generate the tree from.
+        output_file (Path): The file path to save the tree structure.
     """
-    found_files: Set[Path] = set()
-    logger.info("Starting discovery of meaningful context files...")
+    logger.info(f"Generating folder tree (v1 logic) for: {target_path}")
+    # Define exclusions specific to this tree function, matching generate_summary1.py logic
+    # Added .langgraph_api, agent.egg-info, .git based on discussion
+    EXCLUDED_DIRS_TREE = {'.git', '__pycache__', '.vscode', '.idea', '.venv', 'venv',
+                         '.mypy_cache', '.pytest_cache', '.github',
+                         '.langgraph_api', 'agent.egg-info'}
+    EXCLUDED_FILES_TREE = {'.env', '.log', '.gitignore'} # Simplified list matching original
 
-    # 1. Add specific essential files if they exist and pass filters
-    for fpath in essential_files:
-        if fpath.is_file():
-             # Apply general filters even to essential files for safety
-            if fpath.name not in EXCLUDED_FILES_GENERAL and \
-               fpath.suffix.lower() not in EXCLUDED_EXTENSIONS_GENERAL and \
-               not any(part in EXCLUDED_DIRS_GENERAL for part in fpath.relative_to(root_dir).parts):
-                found_files.add(fpath)
-                logger.debug(f"Included essential file: {fpath.relative_to(root_dir)}")
-            else:
-                 logger.warning(f"Specified essential file excluded by general rules: {fpath}")
-        else:
-            logger.warning(f"Essential file specified but not found: {fpath}")
+    try:
+        with open(output_file, 'w', encoding='utf-8') as f:
+            for root, dirs, files in os.walk(target_path, topdown=True):
+                # Filter directories based on the TREE exclusion list
+                dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS_TREE]
+                level = root.replace(str(target_path), '').count(os.sep)
+                indent = ' ' * 4 * level
 
-    # 2. Scan core directories for ALL files initially
-    all_items_in_core: List[Path] = []
-    for core_dir in core_dirs:
-        if core_dir.is_dir():
-            logger.info(f"Scanning core/test directory: {core_dir.relative_to(root_dir)}")
-            all_items_in_core.extend(list(core_dir.rglob('*')))
-        else:
-             logger.warning(f"Core directory specified but not found: {core_dir}")
+                # Write directory name
+                if root == str(target_path):
+                     # Use the actual directory name, not the full path
+                    f.write(f'{target_path.name}/\n')
+                else:
+                    f.write(f'{indent}{os.path.basename(root)}/\n')
 
-    # 3. Filter the items found in core directories
-    relevant_items_in_core = filter_relevant_items(all_items_in_core, root_dir)
+                subindent = ' ' * 4 * (level + 1)
+                # Write file names, sorting for consistency
+                for file in sorted(files, key=str.lower):
+                    # Apply file exclusion specific to the tree if needed
+                    if file not in EXCLUDED_FILES_TREE:
+                         f.write(f'{subindent}{file}\n')
+        logger.info(f"Folder tree (v1 logic) successfully written to {output_file}")
+    except Exception as e:
+        logger.exception(f"Error generating folder tree (v1 logic): {e}")
+        # Write error to file if possible
+        try:
+            with open(output_file, 'w', encoding='utf-8') as f_err:
+                f_err.write(f"# Error generating folder tree: {e}\n")
+        except Exception:
+            pass # Ignore error writing the error
 
-    # 4. Add only Python files from the relevant items
-    for item in relevant_items_in_core:
-         if item.is_file() and item.suffix.lower() == '.py':
-             found_files.add(item)
-             logger.debug(f"Included core/test Python file: {item.relative_to(root_dir)}")
 
-    sorted_files = sorted(list(found_files), key=lambda p: str(p).lower())
-    logger.info(f"Found {len(sorted_files)} meaningful files for context.")
+# --- Helper Functions for Section 3 (Content Details - Unchanged from last version) ---
+
+def get_target_files(root_dir: Path, context_dirs: Set[Path], essential_non_py: Set[Path], data_files: Set[Path]) -> List[Path]:
+    """Finds all files to be included in Section 3 (details)."""
+    target_files: Set[Path] = set()
+    logger.info("Starting discovery of target files for Section 3 details...")
+    all_scanned_items: Set[Path] = set()
+    # Scan context directories
+    for scan_dir in context_dirs:
+        if scan_dir.is_dir():
+            logger.info(f"Scanning directory for details: {scan_dir.relative_to(root_dir).as_posix()}")
+            try:
+                for item in scan_dir.rglob('*'):
+                    if any(part in EXCLUDED_DIRS_HARD for part in item.relative_to(root_dir).parts): continue
+                    if item.is_file(): all_scanned_items.add(item)
+            except Exception as e: logger.error(f"Error scanning directory {scan_dir}: {e}")
+        elif scan_dir == root_dir:
+             try:
+                 for item in root_dir.glob('*'):
+                     if any(part in EXCLUDED_DIRS_HARD for part in item.relative_to(root_dir).parts): continue
+                     if item.is_file(): all_scanned_items.add(item)
+             except Exception as e: logger.error(f"Error scanning root directory {root_dir}: {e}")
+        else: logger.warning(f"Directory specified for scanning not found or invalid: {scan_dir}")
+    # Add essential and data files
+    all_scanned_items.update(essential_non_py)
+    all_scanned_items.update(data_files)
+    # Filter
+    for item in all_scanned_items:
+         if not item.is_file(): continue
+         relative_path = item.relative_to(root_dir)
+         if any(part in EXCLUDED_DIRS_HARD for part in relative_path.parts): continue
+         if item.name in EXCLUDED_FILES_DETAILS: continue
+         if item.suffix.lower() in EXCLUDED_EXTENSIONS_DETAILS:
+             if item not in essential_non_py and item not in data_files and not (item.is_relative_to(REFERENCE_DIR) and item.suffix.lower() not in ['.zip','.gz']): # Allow text files in reference
+                 continue
+         target_files.add(item)
+    sorted_files = sorted(list(target_files), key=lambda p: str(p).lower())
+    logger.info(f"Found {len(sorted_files)} target files for Section 3 details after filtering.")
     return sorted_files
 
-
-def read_file_content(file_path: Path) -> str:
-    """Reads the content of a text file."""
+def read_file_content(file_path: Path, is_csv: bool = False, csv_head_rows: int = 5) -> str:
+    """Reads the content of a text file or head of CSV."""
+    # (Content unchanged from previous version)
     logger.debug(f"Reading content from: {file_path}")
     try:
         if not file_path.is_file():
              logger.warning(f"File not found during read attempt: {file_path}")
              return "File not found."
+        if is_csv:
+            try:
+                df = pd.read_csv(file_path, nrows=csv_head_rows, on_bad_lines='skip')
+                logger.info(f"Read head ({csv_head_rows} rows) of CSV: {file_path.name}")
+                return df.to_string(index=False)
+            except pd.errors.EmptyDataError:
+                logger.warning(f"CSV file is empty: {file_path}")
+                return "CSV file is empty."
+            except Exception as e_csv:
+                 logger.error(f"Error reading CSV {file_path}: {e_csv}", exc_info=False)
+                 return f"Unable to read CSV due to error: {type(e_csv).__name__}"
         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
             content = f.read()
             logger.info(f"Read {len(content)} characters from: {file_path.name}")
@@ -195,234 +227,214 @@ def read_file_content(file_path: Path) -> str:
         logger.error(f"Error reading file {file_path}: {e}", exc_info=False)
         return f"Unable to read file due to error: {type(e).__name__}"
 
-# Summarization Function (Retained for essential non-Python files)
+def compress_python_code(code: str) -> str:
+    """Compresses Python code: removes whitespace/simple comments, keeps docstrings."""
+    # (Content unchanged from previous version)
+    if not code or code.strip() == "": return ""
+    lines = code.splitlines()
+    compressed_lines = []
+    in_docstring = False
+    docstring_char = None
+    for line in lines:
+        stripped_line = line.strip()
+        is_docstring_line = False
+        if '"""' in stripped_line or "'''" in stripped_line:
+            potential_char = '"""' if '"""' in stripped_line else "'''"
+            if stripped_line.count(potential_char) % 2 != 0:
+                 if not in_docstring:
+                     if stripped_line.startswith(potential_char):
+                         in_docstring = True
+                         docstring_char = potential_char
+                         is_docstring_line = True
+                 elif docstring_char and stripped_line.endswith(docstring_char):
+                     in_docstring = False
+                     docstring_char = None
+                     is_docstring_line = True
+            elif in_docstring: is_docstring_line = True
+            elif stripped_line.startswith(potential_char) and stripped_line.endswith(potential_char) and len(stripped_line) >= len(potential_char)*2:
+                 is_docstring_line = True
+        if is_docstring_line or in_docstring:
+             compressed_lines.append(line)
+             continue
+        if not stripped_line: continue
+        if stripped_line.startswith('#'): continue
+        indent_level = len(line) - len(line.lstrip(' '))
+        compressed_lines.append(' ' * indent_level + stripped_line)
+    final_lines = []
+    last_line_blank = True
+    for line in compressed_lines:
+        is_blank = not line.strip()
+        if is_blank and last_line_blank: continue
+        final_lines.append(line)
+        last_line_blank = is_blank
+    return "\n".join(final_lines)
+
+
 @retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
 def summarize_content(content: str, file_path_str: str, model: str = "gpt-4o", max_input_tokens: int = 8000) -> str:
-    """Summarizes content using the OpenAI API (for essential non-Python files)."""
-    logger.info(f"Requesting summary for ESSENTIAL config/metadata: {file_path_str} using model {model}")
-    # Basic checks moved here for clarity
-    if not content or content.strip() == "" or content.startswith("Unable to read file") or content.startswith("File not found"):
+    """Summarizes content using the OpenAI API (for specific non-Python files)."""
+    # (Content unchanged from previous version)
+    logger.info(f"Requesting summary for essential/reference file: {file_path_str} using {model}")
+    if not content or content.strip() == "" or content.startswith(("Unable to read", "File not found", "CSV file is empty.")):
         logger.warning(f"Skipping summary for empty or unreadable file: {file_path_str}")
         return "Content empty or unreadable, summary skipped."
     try:
-        try:
-            encoding = tiktoken.encoding_for_model(model)
-        except KeyError:
-            logger.warning(f"Model '{model}' not found in tiktoken. Using 'cl100k_base'.")
-            encoding = tiktoken.get_encoding("cl100k_base")
-
+        try: encoding = tiktoken.encoding_for_model(model)
+        except KeyError: encoding = tiktoken.get_encoding("cl100k_base")
         tokens = encoding.encode(content)
         if len(tokens) > max_input_tokens:
-            logger.warning(f"Content for {file_path_str} too long ({len(tokens)} tokens), truncating to {max_input_tokens}.")
+            logger.warning(f"Content for {file_path_str} too long ({len(tokens)} tokens), truncating.")
             content = encoding.decode(tokens[:max_input_tokens]) + "\n... [TRUNCATED]"
-
         logger.debug(f"Sending {len(encoding.encode(content))} tokens to OpenAI for {file_path_str}.")
-
         response = client.chat.completions.create(
             model=model,
             messages=[{
                 "role": "system",
-                "content": "You are a highly skilled technical assistant. Your task is to provide a concise, accurate summary of the provided configuration or metadata file's primary purpose and key settings/structure in no more than 50 words."
+                "content": "You are a skilled technical assistant. Provide a concise summary (max 50 words) of the provided configuration, metadata, or reference file's primary purpose and key content/structure."
             }, {
                 "role": "user",
-                "content": f"Summarize the following config/metadata file content from '{file_path_str}' in no more than 50 words:\n\n```\n{content}\n```"
+                "content": f"Summarize the file content from '{file_path_str}' in no more than 50 words:\n\n```\n{content}\n```"
             }],
-            temperature=0.2,
-            max_tokens=100,
-            timeout=60
+            temperature=0.2, max_tokens=100, timeout=60
         )
         summary = response.choices[0].message.content.strip()
         logger.info(f"Summary received for: {file_path_str}")
-        logger.debug(f"Summary for {file_path_str}: {summary}")
         return summary
     except Exception as e:
         logger.error(f"OpenAI API error during summarization for {file_path_str}: {e}", exc_info=True)
         return "Summary could not be generated due to API error."
 
-# Formatting Function
-def format_compressed_block(fpath: Path, summary: str, content: str, root_dir: Path) -> str:
-    """
-    Formats the file details into the compressed block structure.
-    Includes full content for .py files and truncated content for essential others.
-
-    Args:
-        fpath (Path): The full path to the file.
-        summary (str): The AI-generated summary (or placeholder for .py).
-        content (str): The full file content (or read error message).
-        root_dir (Path): The project root directory for relative path calculation.
-
-    Returns:
-        str: The formatted string block for the file.
-    """
+def format_detailed_block(fpath: Path, summary: str, code_or_snippet: str, root_dir: Path) -> str:
+    """Formats the file details block for Section 3."""
+    # (Content unchanged from previous version)
     relative_path = fpath.relative_to(root_dir)
     file_ext = fpath.suffix.lower()
     marker = "#PY " if file_ext == '.py' else "#FILE "
-
-    # Define truncation length for essential non-Python files
-    max_len_essential_other = 2000 # Allow more context for YAML/JSON config
-
-    if content.startswith("Unable to read") or content.startswith("File not found"):
-         code_output = content
-         if summary.startswith("Content empty"):
-             summary = f"Note: {content}"
-    elif file_ext == '.py':
-        code_output = content # Include full Python code
-        summary = "Full Python code included below." # Override summary
-    else: # Handle essential non-Python files (YAML, JSON)
-        code_output = content[:max_len_essential_other] + ('\n[...]' if len(content) > max_len_essential_other else '')
-
     block_lines = [
         f"{marker}File: {fpath.name}",
         f"@path: {relative_path.as_posix()}",
         f"@summary: {summary}",
         f"@code:",
-        f"{code_output}"
+        f"{code_or_snippet}"
     ]
     return "\n".join(block_lines)
-
-# Tree Generation Function
-def generate_folder_tree(directory: Path, core_dirs: Set[Path], essential_files: Set[Path], outfile: TextIO) -> None:
-    """
-    Generates a text-based folder tree of CORE directories/files and writes it.
-
-    Args:
-        directory (Path): The root directory of the project.
-        core_dirs (Set[Path]): Core directories to include in the tree.
-        essential_files (Set[Path]): Specific essential files to include.
-        outfile (TextIO): The open file handle to write the tree to.
-    """
-    logger.info(f"Generating focused folder tree starting from: {directory}")
-    outfile.write(f"{directory.name}/\n")
-
-    items_to_render: List[Path] = []
-    
-    # Add essential files first
-    items_to_render.extend(essential_files)
-    
-    # Add files within core directories
-    for core_dir in core_dirs:
-        if core_dir.is_dir():
-             # Add the directory itself relative to root
-             # items_to_render.add(core_dir) # Adding dirs complicates sorting/display slightly
-             for item in core_dir.rglob('*'):
-                 items_to_render.append(item)
-
-    # Filter and prepare for tree display
-    tree_entries = set() # Use set to avoid duplicate paths if essential files are inside core dirs
-    for item in items_to_render:
-         # Basic filtering (redundant with get_meaningful_context_files but safe)
-         if item.name in EXCLUDED_FILES_GENERAL or \
-            item.suffix.lower() in EXCLUDED_EXTENSIONS_GENERAL or \
-            any(part in EXCLUDED_DIRS_GENERAL for part in item.relative_to(directory).parts):
-             continue
-             
-         # Ensure we only consider files or directories within the CORE_DIRS scope
-         # or the explicitly listed ESSENTIAL_FILES
-         is_essential = item in essential_files
-         is_in_core_dir = any(item.is_relative_to(core_dir) for core_dir in core_dirs)
-
-         if is_essential or (is_in_core_dir and (item.is_dir() or item.suffix == '.py')):
-             tree_entries.add(item.relative_to(directory))
-
-    # Build tree structure string
-    processed_paths = set()
-    output_lines = []
-
-    for rel_path in sorted(list(tree_entries), key=lambda p: p.parts):
-        # Add parent directories to the output if not already added
-        for i in range(len(rel_path.parts) -1):
-            parent_part = Path(*rel_path.parts[:i+1])
-            if parent_part not in processed_paths:
-                depth = len(parent_part.parts) -1
-                indent = '    ' * (depth + 1)
-                output_lines.append(f"{indent}{parent_part.name}/")
-                processed_paths.add(parent_part)
-                
-        # Add the file or final directory itself
-        depth = len(rel_path.parts) -1
-        indent = '    ' * (depth + 1)
-        if Path(directory / rel_path).is_dir(): # Check original path type
-             # Add directory only if not already added via parent logic
-             if rel_path not in processed_paths:
-                 output_lines.append(f"{indent}{rel_path.name}/")
-                 processed_paths.add(rel_path)
-        else:
-             output_lines.append(f"{indent}{rel_path.name}")
-             processed_paths.add(rel_path) # Treat file path as processed
-
-    # Write unique lines maintaining approximate order
-    unique_lines = []
-    seen = set()
-    for line in output_lines:
-        if line not in seen:
-             unique_lines.append(line)
-             seen.add(line)
-
-    outfile.write("\n".join(unique_lines) + "\n")
-    logger.info("Focused folder tree generation complete.")
-
 
 # --- Main Execution Flow ---
 def main() -> None:
     """Main function"""
     logger.info("--- Starting Focused Project Context Generation ---")
+    # Create a temporary file path for the tree
+    TREE_TEMP_PATH = REFERENCE_DIR / "_temp_tree.txt"
     try:
         REFERENCE_DIR.mkdir(parents=True, exist_ok=True)
 
-        with open(OUTPUT_PATH, 'w', encoding='utf-8') as outfile:
-            logger.info(f"Opened output file for writing: {OUTPUT_PATH}")
+        # --- Generate Tree FIRST using V1 logic ---
+        logger.info("--- Generating Section 2 (Tree) using v1 logic ---")
+        # Generate tree to a temporary file
+        generate_folder_tree_v1(ROOT_DIR, TREE_TEMP_PATH)
+        # Read the generated tree content
+        tree_content = TREE_TEMP_PATH.read_text(encoding='utf-8') if TREE_TEMP_PATH.exists() else "# Error: Tree file not generated."
+        logger.info("--- Finished Section 2 (Tree) generation ---")
 
-            outfile.write("# Focused Project Context: Core File Tree & Code Details\n")
-            outfile.write("# Generated by: generate_summary.py\n")
-            outfile.write("# Purpose: Provides meaningful context (core logic, essential config, tests) for LLM assistants.\n")
-            outfile.write("# Includes full code for .py files and AI summaries + truncated snippets for essential config/metadata.\n")
-            outfile.write("\n")
+        # --- Prepare Section 3 Details ---
+        logger.info("--- Generating Section 3 (Details) content ---")
+        target_files = get_target_files(ROOT_DIR, CONTEXT_DIRS_DETAILS, ESSENTIAL_NON_PY_FILES, DATA_FILES_TO_INCLUDE)
+        section_3a_content = ["# --- 3A. .py files (Full Compressed Code) ---"]
+        section_3b_content = ["# --- 3B. Non-.py files (Summaries + Snippets/Head) ---"]
 
-            logger.info("--- Generating Section A: Focused File Tree ---")
-            outfile.write("# --- A. Project File Tree (Core Logic, Config, Tests) ---\n\n")
-            # Pass core dirs and essential files to tree generator for focused output
-            generate_folder_tree(ROOT_DIR, CORE_DIRS_TO_SCAN, ESSENTIAL_FILES, outfile)
-            outfile.write("\n")
-            logger.info("--- Finished Section A: Focused File Tree ---")
+        if not target_files:
+            logger.warning("No target files found to process for details.")
+            section_3a_content.append("\n# (No relevant Python files found)")
+            section_3b_content.append("\n# (No relevant non-Python files found)")
+        else:
+            logger.info(f"Processing {len(target_files)} target files for details...")
+            python_files = sorted([f for f in target_files if f.suffix.lower() == '.py'], key=lambda p: str(p).lower())
+            non_python_files = sorted([f for f in target_files if f.suffix.lower() != '.py'], key=lambda p: str(p).lower())
 
-            logger.info("--- Generating Section B: Meaningful File Details ---")
-            outfile.write("# --- B. File Details (Python Code + Essential Config/Metadata) ---\n")
+            # Process Python files
+            if not python_files: section_3a_content.append("\n# (No relevant Python files found)")
+            for i, fpath in enumerate(python_files):
+                rel_path_str = str(fpath.relative_to(ROOT_DIR).as_posix())
+                logger.info(f"Processing PY file {i+1}/{len(python_files)}: {rel_path_str}")
+                content = read_file_content(fpath)
+                if content.startswith(("Unable to read", "File not found")):
+                    code_output, summary = content, f"Note: {content}"
+                else:
+                    code_output = compress_python_code(content)
+                    summary = "Full Python code (compressed) included below."
+                block = format_detailed_block(fpath, summary, code_output, ROOT_DIR)
+                section_3a_content.append(f"\n{block}\n")
+                logger.debug(f"Buffered block for PY: {rel_path_str}")
 
-            meaningful_files = get_meaningful_context_files(ROOT_DIR, CORE_DIRS_TO_SCAN, ESSENTIAL_FILES)
-
-            if not meaningful_files:
-                logger.warning("No meaningful context files found to process.")
-                outfile.write("\n# (No meaningful files found based on inclusion/exclusion rules)\n")
+            # Process Non-Python files
+            if not non_python_files: section_3b_content.append("\n# (No relevant non-Python files found)")
             else:
-                logger.info(f"Processing {len(meaningful_files)} meaningful files...")
-                for i, fpath in enumerate(meaningful_files):
-                    rel_path_str = str(fpath.relative_to(ROOT_DIR).as_posix())
-                    logger.info(f"Processing file {i+1}/{len(meaningful_files)}: {rel_path_str}")
+                 max_len_snippet = 1000
+                 for i, fpath in enumerate(non_python_files):
+                     rel_path_str = str(fpath.relative_to(ROOT_DIR).as_posix())
+                     logger.info(f"Processing Non-PY file {i+1}/{len(non_python_files)}: {rel_path_str}")
+                     is_csv = fpath in DATA_FILES_TO_INCLUDE
+                     is_essential_config = fpath in ESSENTIAL_NON_PY_FILES
+                     is_in_reference = REFERENCE_DIR.resolve() in fpath.resolve().parents
+                     content = read_file_content(fpath, is_csv=is_csv, csv_head_rows=5)
+                     summary, snippet_or_head = "", ""
+                     if content.startswith(("Unable to read", "File not found", "CSV file is empty.")):
+                         summary, snippet_or_head = f"Note: {content}", content
+                     elif is_csv:
+                         summary, snippet_or_head = "Head (first 5 rows) of the expenses CSV data.", content
+                     elif is_essential_config or is_in_reference:
+                         summary = summarize_content(content, rel_path_str)
+                         snippet_or_head = content[:max_len_snippet] + ('\n[...]' if len(content) > max_len_snippet else '')
+                     else: continue # Skip unexpected files
+                     block = format_detailed_block(fpath, summary, snippet_or_head, ROOT_DIR)
+                     section_3b_content.append(f"\n{block}\n")
+                     logger.debug(f"Buffered block for Non-PY: {rel_path_str}")
 
-                    content = read_file_content(fpath)
-                    summary = "" # Initialize
+        logger.info("--- Finished Section 3 (Details) content generation ---")
 
-                    # --- Get summary ONLY for ESSENTIAL NON-PYTHON files ---
-                    if fpath in ESSENTIAL_FILES and fpath.suffix.lower() != '.py':
-                        if not (content.startswith("Unable to read") or content.startswith("File not found")):
-                            summary = summarize_content(content, rel_path_str)
-                        else:
-                            summary = f"Note: {content}" # Use error as summary
-                    # -----------------------------------------------------
+        # --- Write Final Output File ---
+        logger.info(f"Writing final output to: {OUTPUT_PATH}")
+        with open(OUTPUT_PATH, 'w', encoding='utf-8') as outfile:
+            # Section 1
+            outfile.write("# --- 1. File Description ---\n\n")
+            outfile.write("This file provides context for LLM assistants about the 'app-personal-finance' project.\n")
+            outfile.write("It includes:\n")
+            outfile.write("A. A file tree showing the project structure (excluding specified cache/build/git dirs).\n")
+            outfile.write("B. Details for key files:\n")
+            outfile.write("   - Python (.py): Full, whitespace/comment-compressed code (docstrings preserved).\n")
+            outfile.write("   - Essential Config/Metadata/Reference: AI summary + truncated snippet.\n")
+            outfile.write("   - data/expenses.csv: Head rows only.\n")
+            outfile.write("The goal is to provide meaningful context focusing on application logic, tests, essential configuration, and reference materials.\n")
+            outfile.write("\n")
 
-                    compressed_block = format_compressed_block(fpath, summary, content, ROOT_DIR)
-                    outfile.write(f"\n{compressed_block}\n")
-                    logger.debug(f"Written context block for: {rel_path_str}")
+            # Section 2
+            outfile.write("# --- 2. Folder and File structure tree ---\n\n")
+            outfile.write(tree_content)
+            outfile.write("\n")
 
-            logger.info("--- Finished Section B: Meaningful File Details ---")
+            # Section 3
+            outfile.write("# --- 3. Code file summary ---\n")
+            outfile.write("\n".join(section_3a_content))
+            outfile.write("\n") # Separator
+            outfile.write("\n".join(section_3b_content))
+            outfile.write("\n") # Ensure final newline
 
-        logger.info(f"✅ Successfully generated focused context file: {OUTPUT_PATH}")
+        logger.info(f"✅ Successfully generated combined context file: {OUTPUT_PATH}")
 
     except Exception as e:
-        logger.exception(f"An error occurred during context generation: {e}")
+        logger.exception(f"An critical error occurred during context generation: {e}")
         print(f"❌ Error generating context file. Check logs. Error: {e}")
+    finally:
+         # Clean up temporary tree file
+         if TREE_TEMP_PATH.exists():
+             try:
+                 TREE_TEMP_PATH.unlink()
+                 logger.info(f"Removed temporary tree file: {TREE_TEMP_PATH}")
+             except OSError as e:
+                 logger.error(f"Error removing temporary tree file {TREE_TEMP_PATH}: {e}")
 
-    logger.info("--- Focused Context Generation Complete ---")
+
+    logger.info("--- Context Generation Complete ---")
 
 
 if __name__ == "__main__":

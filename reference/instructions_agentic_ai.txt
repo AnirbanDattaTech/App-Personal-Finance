@@ -220,9 +220,9 @@ GOAL: Define specific instructions for me, the LLM assistant, to ensure effectiv
 *At the start of each session, please ensure the following documents are provided or confirm their contents are up-to-date within instructions_agentic_ai.txt. Remind if any are missing.*
 
 *   6.2.1. AGENTIC AI INSTRUCTIONS: instructions_agentic_ai.txt (This file)
-*   6.2.2. PROJECT STRUCTURE: instructions_project_structure.txt (File tree showing current project layout)
+*   6.2.2. PROJECT STRUCTURE: instructions_code_details.txt (File tree showing current project layout)
 *   6.2.3. METADATA REFERENCE: instructions_metadata.txt (Content or reference to metadata/expenses_metadata_detailed.yaml and potentially expense_metadata.json)
-*   6.2.4. DSA GUIDELINES: instruction_advanced_question_types.txt (Definitions and examples for DSA ML task classification - Needed for Phase 2/DW)
+*   6.2.4. DSA GUIDELINES: instructions_advanced_question_types.txt (Definitions and examples for DSA ML task classification - Needed for Phase 2/DW)
 
 ---------
 4. PROJECT REQUIREMENT - PERSONAL FINANCE ASSISTANT (PFA) PHASE 1.5: BETWEEN TARGET MILESTONE 1 and 2 - ONGOING
