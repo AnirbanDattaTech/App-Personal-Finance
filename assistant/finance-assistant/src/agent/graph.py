@@ -64,11 +64,13 @@ try:
     # Initialize Gemini LLM - Using flash for speed/cost
     LLM = ChatGoogleGenerativeAI(
         model="gemini-1.5-flash-latest",
+        # model="gemini-2.0-flash-thinking-exp-01-21",
         google_api_key=google_api_key,
         temperature=0.1, # Lower temperature for more deterministic tasks initially
         convert_system_message_to_human=True # Important for Gemini compatibility
     )
     logger.info("ChatGoogleGenerativeAI model initialized (gemini-1.5-flash-latest).")
+    # logger.info("ChatGoogleGenerativeAI model initialized (gemini-2.0-flash-thinking-exp-01-21).")
 except Exception as e:
     logger.error(f"Failed to initialize ChatGoogleGenerativeAI: {e}", exc_info=True)
     raise # Stop execution if LLM setup fails
@@ -217,7 +219,6 @@ User: Generate the SQLite query for the following question: {user_query}
     chain = prompt | LLM
 
     try:
-        # --- MODIFICATION START ---
         # Prepare the input dictionary with keys matching the template variables
         input_data = {"schema_info": SCHEMA_METADATA, "user_query": query}
 
@@ -228,8 +229,6 @@ User: Generate the SQLite query for the following question: {user_query}
 
         # Invoke the chain directly with the dictionary containing the required keys
         response = chain.invoke(input_data)
-        # --- MODIFICATION END ---
-
 
         sql_query = response.content.strip().replace("```sql", "").replace("```", "").strip()
         if sql_query.endswith(';'):
@@ -266,7 +265,6 @@ def execute_sql_node(state: AgentState) -> dict:
     logger.info("--- Executing Node: execute_sql_node ---")
     sql_query = state.get('sql_query')
 
-    # --- MODIFICATION: Ensure results fields are set consistently on error ---
     if state.get('error'):
         logger.warning(f"Skipping SQL execution due to previous error: {state['error']}")
         # Ensure results state fields are appropriately empty/error-indicating
@@ -274,7 +272,6 @@ def execute_sql_node(state: AgentState) -> dict:
     if not sql_query:
         logger.error("No SQL query found in state to execute.")
         return {"error": "SQL query generation failed or was missing.", "sql_results_list": [], "sql_results_str": "Error: No SQL query found."}
-    # --- END MODIFICATION ---
 
     logger.info(f"Attempting to execute SQL query: [{sql_query}]")
     try:
@@ -295,24 +292,18 @@ def execute_sql_node(state: AgentState) -> dict:
                     try: df[col] = df[col].round(2)
                     except Exception: pass # Ignore formatting errors
 
-            # --- MODIFICATION: Convert to list of dicts and string ---
             results_list = df.to_dict('records') # Convert DataFrame to list of dictionaries
             results_str = df.to_string(index=False, na_rep='<NA>') # Create string version
-            # --- END MODIFICATION ---
         else:
             results_list = [] # Explicitly set to empty list
             results_str = "Query returned no results."
 
-        # --- MODIFICATION: Return the list and string ---
         return {"sql_results_list": results_list, "sql_results_str": results_str}
-        # --- END MODIFICATION ---
 
     except Exception as e:
         logger.error(f"SQL execution failed for query [{sql_query}]: {e}", exc_info=True)
         error_msg = f"Failed to execute SQL query. Error: {e}. Query Attempted: [{sql_query}]"
-        # --- MODIFICATION: Ensure state consistency on error ---
         return {"error": error_msg, "sql_results_list": [], "sql_results_str": f"Error executing SQL."}
-        # --- END MODIFICATION ---
 
 def generate_chart_node(state: AgentState) -> dict:
     """

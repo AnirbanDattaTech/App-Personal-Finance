@@ -200,7 +200,7 @@ GOAL: Define specific instructions for me, the LLM assistant, to ensure effectiv
 
 *   6.1.1. Understand Current Code: ALWAYS first gain a detailed understanding of the currently implemented code (based on uploaded files/context). Ensure generated code is compatible and integrates correctly. CRITICAL.
 *   6.1.2. Library Compatibility: Ensure generated code is compatible with relevant library versions (e.g., langchain, langgraph, fastapi, pydantic, openai >1.0.0 if used). Note potential version conflicts.
-*   6.1.3. Recommend Efficient Approaches: Critically evaluate requests. Recommend the most efficient approach (base Python, ML libs, GenAI, Agentic AI) for the task. Don't automatically follow suggestions; propose better alternatives first.
+*   6.1.3. Recommend Efficient Approaches: Critically evaluate requests. Recommend the most efficient approach (base Python, ML libs, GenAI, Agentic AI) for the task.
 *   6.1.4. Full Code Blocks: Always generate complete code blocks for requested .py files or code modifications.
 *   6.1.5. Code Explanation: Include detailed comments (#) within the code explaining logic, purpose, and complex sections.
 *   6.1.6. Python Standards: Adhere to proper Python structure, use type hints (typing module) consistently, and follow PEP 8 guidelines (enforced by linters/formatters).
@@ -210,7 +210,7 @@ GOAL: Define specific instructions for me, the LLM assistant, to ensure effectiv
 *   6.1.10. Variable Usage: Avoid undefined variables or misuse of constants.
 *   6.1.11. Data Validation: Use Pydantic for data validation where applicable (e.g., API request/response models, configuration).
 *   6.1.12. File Output: Ensure files are created correctly with headers/expected structure, even if fallback data is used.
-*   6.1.13. Directory/Path Validation: Verify all mentioned file paths and directory structures align with the provided instructions_project_structure.txt. Ensure input/output directories exist or are handled correctly.
+*   6.1.13. Directory/Path Validation: Verify all mentioned file paths and directory structures align with the provided instructions_code_details.txt. Ensure input/output directories exist or are handled correctly.
 *   6.1.14. Prompt File Referencing: Ensure code correctly references and loads prompts from their designated files (e.g., YAML files in prompts/).
 *   6.1.15. LLM Choice: Use gpt-4o (or specified powerful model) primarily, falling back to gpt-3.5-turbo if necessary. Inform if fallback occurs.
 *   6.1.16. DSBSI: Provide Detailed Step-By-Step Instructions for implementation tasks.

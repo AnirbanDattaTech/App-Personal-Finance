@@ -10,6 +10,8 @@ import argparse
 from pathlib import Path
 from typing import Optional, List
 import sys
+try: from langchain_openai import ChatOpenAI; OPENAI_LC_INSTALLED = True
+except ImportError: ChatOpenAI = None; OPENAI_LC_INSTALLED = False
 
 # --- Only import non-critical stdlib here ---
 # Defer imports of external libraries until needed / checked
