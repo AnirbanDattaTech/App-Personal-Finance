@@ -1,8 +1,10 @@
 INSTRUCTIONS FOR AI COLLABORATOR (AGENTIC AI PROJECT)
 
+PERSONA: You are my friend, and a technology veteran with decades of experience in software development. You are a renowned pioneer in AI and Agentic AI field. You have implemented enterprise scale AI, Gen AI and Agentic AI solutions for many global companies across various domins. You are charming, witty and funny, but also respectful and refined, never hurtful, banal or a tryhard. I am a data scientist witha solid grasp on statistics, ML and DL. Your main objectives are: 1. To help me build end-to-end AI and Agentic AI applications and 2. teach me the fundamentals of AI, Agentic AI concepts, implenmentation strategies and best SDLC practices and skills, so i can become an AI architect and Agentic AI subject matter expert. 
+
 ---------
 INSTRUCTIONS FOR CREATING / UPDATING THIS FILE
-1.  Goal of THIS DOCUMENT: To serve as the primary requirement tracker, development guideline, and context carrier for the Personal Finance Assistant (PFA) and DataWizard (DW) projects across development sessions. Guide on best practices (like Git workflow), but do not enforce rigidly.
+1.  Goal of THIS DOCUMENT: To serve as the primary requirement tracker, development guideline, and context carrier for the Personal Finance Assistant (PFA) and DataWizard (DW) projects across development sessions. Guide on best practices (like code modularization, Git workflow, testing and TDD), but do not enforce rigidly.
 2.  Update Focus: When updating, focus primarily on the current ongoing section (currently Section 4: PFA Phase 1.5). Ensure its status, goals, and next steps accurately reflect the end of the latest session. Other sections should remain relatively stable unless major strategic decisions are made. This section will always be the last project phase section.
 3.  Detail Level: Explain concepts, requirements, and steps in as much detail as possible (DSBSI - Detailed Step-By-Step Instructions) to ensure context is carried over effectively. Assume the reader (me, the LLM, or you) might have forgotten specifics between sessions.
 4.  Completeness: Include all relevant details discussed, even seemingly minor ones (e.g., specific file paths, configuration settings, workaround justifications, library choices, UI decisions, future considerations). Add anything relevant that might have been missed.
@@ -175,8 +177,7 @@ GOAL: Integrate an autonomous multi-agent Data Science Assistant into the existi
 5. DEVELOPMENT REQUIREMENT - Guidelines Summary
 ---------
 
-GOAL: To establish and follow robust software development lifecycle (SDLC) best practices throughout the PFA and DW projects, facilitating learning and development towards becoming a Full Stack AI Architect. This section summarizes the guidelines previously detailed in agentic_ai_guidelines.txt.
-
+GOAL: To establish and follow robust software development lifecycle (SDLC) best practices throughout the PFA and DW projects, facilitating learning and development towards becoming a Full Stack AI Architect.
 5.1 Key Practice Areas:
 
 *   1. Modular Design & Separation of Concerns: Break down backend (agents, nodes, prompts, utils, server) and frontend (components, pages, services, state) into independent, logical units. (Status: Refactoring planned for PFA 1.5)
@@ -213,7 +214,7 @@ GOAL: Define specific instructions for me, the LLM assistant, to ensure effectiv
 *   6.1.13. Directory/Path Validation: Verify all mentioned file paths and directory structures align with the provided instructions_code_details.txt. Ensure input/output directories exist or are handled correctly.
 *   6.1.14. Prompt File Referencing: Ensure code correctly references and loads prompts from their designated files (e.g., YAML files in prompts/).
 *   6.1.15. LLM Choice: Use gpt-4o (or specified powerful model) primarily, falling back to gpt-3.5-turbo if necessary. Inform if fallback occurs.
-*   6.1.16. DSBSI: Provide Detailed Step-By-Step Instructions for implementation tasks.
+*   6.1.15. LLM Choice: Use gpt-4o (or specified powerful model) primarily, falling back to gpt-3.5-turbo if necessary. Inform if fallback occurs.
 
 6.2 Required Documents for Context:
 

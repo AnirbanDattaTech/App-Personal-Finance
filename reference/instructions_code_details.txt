@@ -12,7 +12,7 @@ The goal is to provide meaningful context focusing on application logic, tests, 
 # --- 2. Folder and File structure tree ---
 
 app-personal-finance/
-    expense_metadata.json
+    check_env.py
     requirements-v2.0.txt
     assistant/
         finance-assistant/
@@ -48,23 +48,18 @@ app-personal-finance/
         expenses_metadata_detailed.yaml
     reference/
         _temp_tree.txt
-        agentic_ai_guidelines.md
         agentic_ai_guidelines.txt
-        agentic_ds_app_prep.txt
         data_analysis.ipynb
         expenses_sample.csv
         generate_data.py
         generate_db.py
+        generate_metadata_details.py
         generate_summary.py
-        generate_summary1.py
-        instruction_advanced_question_types.txt
-        instruction_code_details.txt
-        instruction_code_details_compressed.txt
-        instruction_file_tree.txt
-        instruction_llm.txt
+        instructions_advanced_question_types.txt
         instructions_agentic_ai.txt
         instructions_code_details.txt
-        progress_summary.txt
+        instructions_metadata.txt
+        test_llm.py
         test_llm_gemini.py
         test_llm_openai.py
         img/
@@ -88,64 +83,101 @@ app-personal-finance/
 @path: assistant/finance-assistant/app/server.py
 @summary: Full Python code (compressed) included below.
 @code:
-from fastapi import FastAPI
-from langserve import add_routes
-import uvicorn
-from pydantic import BaseModel, Field # Use Field for explicit descriptions/validation
-from typing import Optional, Any
-import logging
+import os,sys
 from pathlib import Path
-import sys
-project_root = Path(__file__).resolve().parent.parent.parent.parent.parent
-src_path = project_root / "assistant" / "finance-assistant" / "src"
-if str(src_path) not in sys.path:
-    sys.path.insert(0, str(src_path))
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+import logging
+from typing import Optional, Any
+import uvicorn
+from fastapi import FastAPI
+from pydantic import BaseModel, Field
+from langserve import add_routes
 try:
-    from agent.graph import graph as finance_assistant_graph # Rename to avoid potential namespace conflicts
-    from agent.state import AgentState # Needed for understanding the output structure
+    current_dir = Path(__file__).resolve().parent # This is the 'app' directory
+    src_dir = current_dir.parent / "src"        # Go up one level to 'finance-assistant' then into 'src'
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(name)s - %(message)s', # Added logger name
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    logger = logging.getLogger(__name__) # Logger for this server file
+    if src_dir.is_dir() and str(src_dir) not in sys.path:
+        sys.path.insert(0, str(src_dir))
+        logger.info(f"Added src directory to sys.path: {src_dir}")
+    elif not src_dir.is_dir():
+         logger.error(f"Calculated src directory does not exist or is not a directory: {src_dir}. Imports might fail.")
+    else:
+         logger.debug(f"Src directory already in sys.path or not added: {src_dir}")
+except Exception as path_ex:
+     print(f"ERROR setting up paths/logging: {path_ex}")
+     sys.exit("Fatal error during initial path setup.")
+try:
+    from agent.graph import graph as finance_assistant_graph # Rename for clarity
+    from agent.state import AgentState # Needed for confirming AgentState structure conceptually
     logger.info("Successfully imported graph and AgentState from src.agent")
 except ImportError as e:
     logger.error(f"CRITICAL ERROR: Failed to import graph or AgentState from src.agent. "
-                 f"Ensure assistant/finance-assistant/src/agent/graph.py and state.py exist "
-                 f"and PYTHONPATH is configured correctly. Error: {e}", exc_info=True)
+                 f"Check PYTHONPATH and ensure '{src_dir}' exists and contains 'agent/'. Error: {e}", exc_info=True)
     raise ImportError("Could not import agent graph or state. Server cannot start.") from e
 except Exception as e:
-    logger.error(f"An unexpected error occurred during import: {e}", exc_info=True)
-    raise
+    logger.error(f"An unexpected error occurred during agent import: {e}", exc_info=True)
+    raise # Re-raise other unexpected errors
 class AssistantInput(BaseModel):
     """Input schema for the Finance Assistant Agent."""
     original_query: str = Field(..., description="The user's natural language query.")
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "original_query": "What was my total grocery spend last month?"
+                }
+            ]
+        }
+    }
 class AssistantOutput(BaseModel):
     """Output schema for the Finance Assistant Agent."""
     final_response: Optional[str] = Field(None, description="The final text response generated for the user.")
     chart_json: Optional[str] = Field(None, description="Plotly chart JSON representation, if one was generated.")
-    sql_results_str: Optional[str] = Field(None, description="SQL query results formatted as a string, if applicable.")
+    sql_query: Optional[str] = Field(None, description="The SQL query generated by the agent, if applicable.")
     error: Optional[str] = Field(None, description="Any error message captured during the agent's execution.")
+    model_config = {
+        "json_schema_extra": {
+             "examples": [
+                 {
+                     "final_response": "Your total grocery spend last month was INR 5,432.10.",
+                     "chart_json": "{ ...plotly json... }",
+                     "sql_query": "SELECT category, SUM(amount) FROM expenses WHERE strftime('%Y-%m', date) = '2023-03' AND category = 'Grocery' GROUP BY category;",
+                     "error": None
+                 }
+            ]
+        }
+    }
 logger.info("Initializing FastAPI application...")
 app = FastAPI(
     title="Personal Finance Assistant Agent API",
-    version="0.1.0",
+    version="0.1.1", # Bumped version for the change
     description="API endpoint for interacting with the LangGraph-based Personal Finance Assistant.",
 )
-@app.get("/", tags=["Health"])
+@app.get("/", tags=["Health Check"])
 async def read_root():
     """Simple health check endpoint."""
     logger.debug("Root endpoint '/' accessed.")
     return {"status": "ok", "message": "Finance Assistant API is running."}
-logger.info("Adding LangServe routes for the finance assistant graph...")
+logger.info(f"Adding LangServe routes for agent graph '{finance_assistant_graph.__class__.__name__}'...")
 add_routes(
-    app,
-    finance_assistant_graph,    # The imported compiled LangGraph runnable
-    path="/assistant",          # The base path for the agent endpoints (e.g., POST /assistant/invoke)
-    input_type=AssistantInput,  # Specifies the Pydantic model for input validation (maps to AgentState start)
-    output_type=AssistantOutput,# Specifies the Pydantic model for the output structure (maps to AgentState end)
+    app=app,
+    runnable=finance_assistant_graph,    # The imported compiled LangGraph runnable
+    path="/assistant",                   # Base path for agent endpoints (e.g., POST /assistant/invoke)
+    input_type=AssistantInput,           # Pydantic model for input validation
+    output_type=AssistantOutput,         # Pydantic model for output structuring (NOW INCLUDES sql_query)
+    config_keys=["configurable"]         # Keys to make configurable at runtime (e.g., session_id, thread_id)
 )
-logger.info(f"LangServe routes added successfully at path '/assistant'.")
+logger.info(f"LangServe routes added successfully at path '/assistant'. Playground at /assistant/playground/")
 if __name__ == "__main__":
-    logger.info("Starting Uvicorn server directly (use 'langgraph dev' for development)...")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv("PORT", 8000)) # Allow port configuration via environment variable
+    host = os.getenv("HOST", "0.0.0.0") # Default to accessible on network
+    logger.info(f"Starting Uvicorn server directly on {host}:{port}...")
+    logger.warning("Running directly with 'python app/server.py'. Use 'uvicorn' command or 'langgraph dev' for development features like hot-reloading.")
+    uvicorn.run(app, host=host, port=port)
 
 
 #PY File: __init__.py
@@ -744,6 +776,59 @@ def test_configuration_empty() -> None:
     Configuration.from_runnable_config({})
 
 
+#PY File: check_env.py
+@path: check_env.py
+@summary: Full Python code (compressed) included below.
+@code:
+import sys
+import os
+import importlib.util
+print(f"--- Python Executable ---")
+print(sys.executable) # Shows which python is running this script
+print("-" * 25)
+print("\n--- sys.path ---")
+for p in sys.path:
+    print(p) # Shows where Python looks for modules
+print("-" * 25)
+print("\n--- Checking Pandas Import ---")
+try:
+    spec = importlib.util.find_spec("pandas")
+    if spec is not None:
+        print(f"Pandas found at: {spec.origin}")
+        import pandas as pd
+        print(f"Pandas successfully imported. Version: {pd.__version__}")
+    else:
+        print("Pandas specification NOT found by importlib.")
+except ImportError:
+    print("Pandas import FAILED.")
+except Exception as e:
+    print(f"An unexpected error occurred during pandas check: {e}")
+print("-" * 25)
+print("\n--- PATH Environment Variable ---")
+path_var = os.environ.get('PATH', '')
+path_list = path_var.split(os.pathsep)
+print("Entries in PATH:")
+for entry in path_list:
+    print(entry)
+print("-" * 25)
+print("\n--- Checking if genai paths are in PATH ---")
+genai_scripts = r"E:\Code\venv\conda\genai\Scripts"
+genai_lib_bin = r"E:\Code\venv\conda\genai\Library\bin" # Common on Windows
+genai_base = r"E:\Code\venv\conda\genai"
+if any(p.lower().startswith(genai_scripts.lower()) for p in path_list):
+     print(f"✅ Found path starting with: {genai_scripts}")
+else:
+     print(f"❌ Did NOT find expected Scripts path starting with: {genai_scripts}")
+if any(p.lower().startswith(genai_lib_bin.lower()) for p in path_list):
+     print(f"✅ Found path starting with: {genai_lib_bin}")
+else:
+     print(f"❌ Did NOT find expected Library\\bin path starting with: {genai_lib_bin}")
+if any(p.lower().startswith(genai_base.lower()) for p in path_list if not p.lower().startswith(genai_scripts.lower()) and not p.lower().startswith(genai_lib_bin.lower())):
+     print(f"✅ Found other path starting with: {genai_base}")
+else:
+     print(f"❌ Did NOT find other base path starting with: {genai_base}")
+
+
 #PY File: generate_data.py
 @path: reference/generate_data.py
 @summary: Full Python code (compressed) included below.
@@ -1018,6 +1103,342 @@ with sqlite3.connect(DB_PATH) as conn:
     df.to_sql("expenses", conn, if_exists="replace", index=False)
 print(f"\n✅ Database successfully created at: {DB_PATH.resolve()}")
 print(f"📊 Total records written: {len(df)}")
+
+
+#PY File: generate_metadata_details.py
+@path: reference/generate_metadata_details.py
+@summary: Full Python code (compressed) included below.
+@code:
+"""
+generate_metadata_details.py
+
+Reads specified metadata files (YAML and JSON) from the 'metadata/' directory,
+includes the head of CSV files found in the 'data/' directory,
+and compiles their content into a single text file
+'reference/instructions_metadata.txt' for LLM context.
+"""
+import logging
+from pathlib import Path
+import json
+import yaml # Requires PyYAML to be installed (pip install pyyaml)
+import pandas as pd # Required for reading CSV head
+from typing import Optional, List
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(module)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+try:
+    SCRIPT_DIR = Path(__file__).resolve().parent
+    ROOT_DIR = SCRIPT_DIR.parent
+    REFERENCE_DIR = ROOT_DIR / "reference"
+    METADATA_DIR = ROOT_DIR / "metadata"
+    DATA_DIR = ROOT_DIR / "data" # Define data directory path
+    OUTPUT_PATH = REFERENCE_DIR / "instructions_metadata.txt"
+    YAML_METADATA_PATH = METADATA_DIR / "expenses_metadata_detailed.yaml"
+    JSON_METADATA_PATH = METADATA_DIR / "expense_metadata.json" # Phase 1 metadata
+    CSV_HEAD_ROWS = 5
+    logger.info(f"Root directory: {ROOT_DIR}")
+    logger.info(f"Metadata directory: {METADATA_DIR}")
+    logger.info(f"Data directory: {DATA_DIR}")
+    logger.info(f"Output file path: {OUTPUT_PATH}")
+except Exception as e:
+    logger.exception(f"Error setting up script paths: {e}")
+    raise SystemExit("Could not determine project structure paths.") from e
+def read_file_content(file_path: Path) -> Optional[str]:
+    """Reads the entire content of a given text file (non-CSV)."""
+    logger.debug(f"Attempting to read text file: {file_path.relative_to(ROOT_DIR)}")
+    if not file_path.is_file():
+        logger.error(f"File not found: {file_path}")
+        return None
+    try:
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read()
+        logger.info(f"Successfully read {len(content)} characters from {file_path.name}")
+        return content
+    except Exception as e:
+        logger.error(f"Error reading file {file_path}: {e}", exc_info=True)
+        return None
+def read_csv_head(file_path: Path, num_rows: int) -> Optional[str]:
+    """Reads the head of a CSV file using pandas."""
+    logger.debug(f"Attempting to read head of CSV: {file_path.relative_to(ROOT_DIR)}")
+    if not file_path.is_file():
+        logger.error(f"CSV file not found: {file_path}")
+        return None
+    try:
+        df = pd.read_csv(file_path, nrows=num_rows, on_bad_lines='skip')
+        logger.info(f"Successfully read head ({len(df)} rows) of CSV: {file_path.name}")
+        if df.empty:
+             return "(CSV file is empty)"
+        return df.to_string(index=False)
+    except pd.errors.EmptyDataError:
+        logger.warning(f"CSV file is empty: {file_path}")
+        return "(CSV file is empty)"
+    except Exception as e:
+        logger.error(f"Error reading CSV file {file_path}: {e}", exc_info=True)
+        return f"# ERROR: Could not read CSV head from {file_path.name} due to {type(e).__name__}\n"
+def find_csv_files(directory: Path) -> List[Path]:
+    """Finds all .csv files directly within the specified directory."""
+    csv_files: List[Path] = []
+    if not directory.is_dir():
+        logger.warning(f"Data directory not found: {directory}")
+        return csv_files
+    try:
+        csv_files = sorted(list(directory.glob('*.csv')))
+        logger.info(f"Found {len(csv_files)} CSV files in {directory.name}/: {[f.name for f in csv_files]}")
+    except Exception as e:
+        logger.error(f"Error searching for CSV files in {directory}: {e}")
+    return csv_files
+def main() -> None:
+    """
+    Reads metadata files and CSV heads, generates the consolidated instructions_metadata.txt file.
+    """
+    logger.info(f"--- Starting Metadata & Data Head Consolidation for {OUTPUT_PATH.name} ---")
+    try:
+        REFERENCE_DIR.mkdir(parents=True, exist_ok=True)
+        logger.debug(f"Ensured reference directory exists: {REFERENCE_DIR}")
+    except Exception as e:
+        logger.error(f"Could not create reference directory {REFERENCE_DIR}: {e}")
+        return
+    yaml_content = read_file_content(YAML_METADATA_PATH)
+    json_content = read_file_content(JSON_METADATA_PATH)
+    csv_files_in_data_dir = find_csv_files(DATA_DIR)
+    csv_head_contents = {}
+    for csv_file in csv_files_in_data_dir:
+        head_content = read_csv_head(csv_file, CSV_HEAD_ROWS)
+        if head_content is not None:
+            csv_head_contents[csv_file] = head_content
+    try:
+        with open(OUTPUT_PATH, 'w', encoding='utf-8') as outfile:
+            logger.info(f"Opened output file for writing: {OUTPUT_PATH}")
+            outfile.write("# Metadata and Data Sample Context for LLM Assistant\n\n")
+            outfile.write("This file contains the content of key metadata files and the head rows of key data files\n")
+            outfile.write("used in the 'app-personal-finance' project.\n\n")
+            outfile.write("-" * 70)
+            outfile.write("\n\n")
+            outfile.write(f"# --- Content from: {YAML_METADATA_PATH.relative_to(ROOT_DIR).as_posix()} ---\n\n")
+            if yaml_content is not None:
+                outfile.write(yaml_content)
+                logger.info(f"Wrote content from {YAML_METADATA_PATH.name}")
+            else:
+                outfile.write(f"# ERROR: Could not read content from {YAML_METADATA_PATH.name}\n")
+                logger.error(f"Failed to write content for {YAML_METADATA_PATH.name} as it could not be read.")
+            outfile.write("\n\n")
+            outfile.write("-" * 70)
+            outfile.write("\n\n")
+            outfile.write(f"# --- Content from: {JSON_METADATA_PATH.relative_to(ROOT_DIR).as_posix()} ---\n\n")
+            if json_content is not None:
+                try:
+                    parsed_json = json.loads(json_content)
+                    outfile.write(json.dumps(parsed_json, indent=4))
+                except json.JSONDecodeError:
+                    logger.warning(f"Could not parse JSON from {JSON_METADATA_PATH.name}, writing raw content.")
+                    outfile.write(json_content)
+                logger.info(f"Wrote content from {JSON_METADATA_PATH.name}")
+            else:
+                outfile.write(f"# ERROR: Could not read content from {JSON_METADATA_PATH.name}\n")
+                logger.error(f"Failed to write content for {JSON_METADATA_PATH.name} as it could not be read.")
+            outfile.write("\n\n")
+            outfile.write("-" * 70)
+            outfile.write("\n\n")
+            outfile.write(f"# --- Data Samples (Top {CSV_HEAD_ROWS} Rows) from CSV files in {DATA_DIR.relative_to(ROOT_DIR).as_posix()}/ ---\n\n")
+            if not csv_head_contents:
+                 outfile.write("# (No CSV files found or readable in the data directory)\n")
+            else:
+                for csv_file, head_content in csv_head_contents.items():
+                     outfile.write(f"# --- Head of: {csv_file.relative_to(ROOT_DIR).as_posix()} ---\n\n")
+                     outfile.write(head_content)
+                     outfile.write("\n\n")
+                     logger.info(f"Wrote head content from {csv_file.name}")
+            outfile.write("\n") # Final newline
+        logger.info(f"✅ Successfully generated metadata & data sample context file: {OUTPUT_PATH}")
+    except Exception as e:
+        logger.exception(f"An critical error occurred during file generation: {e}")
+        print(f"❌ Error generating context file. Check logs. Error: {e}")
+    logger.info("--- Metadata & Data Head Consolidation Complete ---")
+if __name__ == "__main__":
+    try:
+        import yaml
+        import pandas
+    except ImportError as import_err:
+        print(f"Error: Missing required library - {import_err.name}")
+        print("Please install required libraries using:")
+        print("pip install pyyaml pandas")
+        exit(1)
+    main()
+
+
+#PY File: test_llm.py
+@path: reference/test_llm.py
+@summary: Full Python code (compressed) included below.
+@code:
+"""
+test_llm.py - Lists models or tests a specific LLM.
+# (Keep the rest of the docstring)
+"""
+import os
+import logging
+import argparse
+from pathlib import Path
+from typing import Optional, List
+import sys
+try: from langchain_openai import ChatOpenAI; OPENAI_LC_INSTALLED = True
+except ImportError: ChatOpenAI = None; OPENAI_LC_INSTALLED = False
+from dotenv import load_dotenv
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(module)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+SCRIPT_DIR = Path(__file__).resolve().parent
+ROOT_DIR = SCRIPT_DIR.parent
+DATA_DIR = ROOT_DIR / "data"
+CSV_PATH = DATA_DIR / "expenses.csv"
+ENV_PATH = ROOT_DIR / ".env"
+CSV_HEAD_ROWS = 5
+load_dotenv()
+def list_google_models() -> List[str]:
+    logger.info("Attempting to list Google Generative AI models...")
+    model_names = []
+    try: import google.generativeai as genai
+    except ImportError: print("\nERROR: 'google-generativeai' not installed."); return model_names
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key: logger.error("GOOGLE_API_KEY not found"); print("\nERROR: GOOGLE_API_KEY not set."); return model_names
+    try:
+        genai.configure(api_key=api_key); logger.debug("Google AI SDK configured.")
+        for model in genai.list_models():
+            if 'generateContent' in model.supported_generation_methods or \
+               'models/gemini' in model.name or 'models/gemma' in model.name: model_names.append(model.name)
+        logger.info(f"Found {len(model_names)} potential Google models.")
+    except Exception as e: logger.error(f"Failed list: {e}", exc_info=True); print(f"\nERROR: Google list: {e}")
+    print("\n--- Available Google Models (Gemini/Gemma families) ---")
+    if model_names: [print(f"- {name}") for name in sorted(model_names)]
+    else: print("No Google models found or error occurred.")
+    print("-" * 55); return model_names
+def list_openai_models() -> List[str]:
+    logger.info("Attempting to list OpenAI models...")
+    model_names = []
+    try: from openai import OpenAI, OpenAIError
+    except ImportError: print("\nERROR: 'openai' not installed."); return model_names
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key: logger.error("OPENAI_API_KEY not found"); print("\nERROR: OPENAI_API_KEY not set."); return model_names
+    try:
+        client = OpenAI(api_key=api_key); logger.debug("OpenAI client initialized.")
+        models_response = client.models.list(); logger.debug("Received OpenAI model list.")
+        for model in models_response:
+             if hasattr(model, 'id') and \
+                ('gpt' in model.id or 'text-' in model.id) and \
+                not any(x in model.id for x in ['embed','whisper','dall-e','tts','vision','image']):
+                  model_names.append(model.id)
+        logger.info(f"Found {len(model_names)} potential OpenAI text models.")
+    except OpenAIError as e: logger.error(f"OpenAI API error: {e}", exc_info=True); print(f"\nERROR: OpenAI API list: {e}")
+    except Exception as e: logger.error(f"Failed list: {e}", exc_info=True); print(f"\nERROR: OpenAI list: {e}")
+    print("\n--- Available OpenAI Models (GPT/Text families) ---")
+    if model_names: [print(f"- {name}") for name in sorted(model_names)]
+    else: print("No relevant OpenAI models found or error occurred.")
+    print("-" * 55); return model_names
+def load_csv_sample(file_path: Path, num_rows: int) -> Optional[str]:
+    """Loads the head of the CSV file and returns it as a plain string."""
+    try: import pandas as pd
+    except ImportError: logger.error("Pandas failed import in load_csv_sample."); print("\nERROR: Pandas required."); return None
+    logger.info(f"Loading first {num_rows} rows from {file_path}...")
+    if not file_path.is_file(): logger.error(f"CSV not found: {file_path}"); print(f"\nERROR: Data file not found: {file_path}"); return None
+    try:
+        df = pd.read_csv(file_path, nrows=num_rows, on_bad_lines='warn')
+        logger.info(f"Read head ({len(df)} rows).");
+        if df.empty: logger.warning("CSV empty."); return "(CSV Sample is Empty)"
+        return df.to_string(index=False)
+    except pd.errors.EmptyDataError: logger.warning(f"CSV empty (read error): {file_path}"); return "(CSV Sample is Empty)"
+    except Exception as e: logger.error(f"Error reading CSV: {e}", exc_info=True); print(f"\nERROR: Read CSV: {e}"); return None
+def test_model_with_data(model_name: str, data_sample_str: str) -> None:
+    """Tests the specified LLM model by asking it to sum amounts."""
+    try: from langchain_google_genai import ChatGoogleGenerativeAI
+    except ImportError: ChatGoogleGenerativeAI = None
+    try: from langchain_openai import ChatOpenAI
+    except ImportError: ChatOpenAI = None
+    try: from langchain_core.exceptions import LangChainException
+    except ImportError: LangChainException = Exception # Fallback
+    logger.info(f"Testing model '{model_name}' with data sample.")
+    llm = None; api_key = None; provider = "Unknown"
+    if ('gemini' in model_name or 'gemma' in model_name):
+        provider = "Google"
+        if not ChatGoogleGenerativeAI: print(f"\nERROR: LangChain Google wrapper missing for {model_name}."); return
+        api_key = os.getenv("GOOGLE_API_KEY")
+        if not api_key: logger.error("GOOGLE_API_KEY not found"); print("\nERROR: GOOGLE_API_KEY not set."); return
+        try: llm = ChatGoogleGenerativeAI(model=model_name.replace('models/', ''), google_api_key=api_key, temperature=0); logger.info(f"Initialized Google LC client: {model_name}")
+        except Exception as e: logger.error(f"Failed init: {e}", exc_info=True); print(f"\nERROR: Init Google client: {e}"); return
+    elif ('gpt' in model_name or 'text-' in model_name):
+        provider = "OpenAI"
+        if not ChatOpenAI: print(f"\nERROR: LangChain OpenAI wrapper missing for {model_name}."); return
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key: logger.error("OPENAI_API_KEY not found"); print("\nERROR: OPENAI_API_KEY not set."); return
+        try: llm = ChatOpenAI(model=model_name, openai_api_key=api_key, temperature=0); logger.info(f"Initialized OpenAI LC client: {model_name}")
+        except Exception as e: logger.error(f"Failed init: {e}", exc_info=True); print(f"\nERROR: Init OpenAI client: {e}"); return
+    else: logger.error(f"Unknown provider/wrapper: {model_name}"); print(f"\nERROR: Unknown model/lib: '{model_name}'."); return
+    if llm:
+        print(f"\n--- Testing Model: {model_name} ({provider}) ---")
+        prompt = f"""Given the following data sample as plain text:
+{data_sample_str}
+Calculate the sum of the 'amount' column from the data shown above.
+Respond ONLY with the final numerical total. Do not include explanations, currency symbols, commas, or any other text.
+"""
+        print("Sending request...")
+        try:
+            response = llm.invoke(prompt)
+            if hasattr(response, 'content'): llm_response_content = response.content
+            elif isinstance(response, str): llm_response_content = response
+            else: llm_response_content = str(response)
+            llm_response_content = llm_response_content.strip()
+            logger.info(f"Received response from {model_name}: '{llm_response_content}'")
+            print("\n--- LLM Response ---"); print(llm_response_content); print("-" * 20)
+            try: float(llm_response_content.replace(',', '')); print("✅ Numerical.")
+            except ValueError: print("⚠️ Not numerical.")
+        except LangChainException as e: logger.error(f"LangChain error: {e}", exc_info=True); print(f"\nERROR: LangChain call: {e}")
+        except Exception as e: logger.error(f"Unexpected error: {e}", exc_info=True); print(f"\nERROR: Unexpected call: {e}")
+        print("-" * 55)
+
+# --- Main Execution Logic ---
+def main():
+    logger.info(f"--- Running test_llm.py using Python: {sys.executable} ---")
+    parser = argparse.ArgumentParser(
+        description="List available LLMs or test a specific LLM with sample data.",
+        usage="%(prog)s [<model_name>]"
+    )
+    parser.add_argument(
+        "model_name", nargs='?', type=str,
+        help="Optional: Model name to test (e.g., 'models/gemini-1.5-flash-latest', 'gpt-4o')."
+    )
+    args = parser.parse_args()
+
+    if args.model_name:
+        # Mode 2: Test model - Check Pandas dependency HERE
+        try:
+             import pandas as pd # Attempt import right before use
+             logger.info("Pandas imported successfully within main() for testing.")
+        except ImportError:
+             logger.error("Pandas import failed within main().")
+             print("\nError: Pandas library is required for testing mode but failed to import.")
+             print("Please ensure 'pandas' is installed correctly in the environment.")
+             return # Exit if pandas cannot be imported
+
+        print(f"Attempting to test model: {args.model_name}")
+        data_sample = load_csv_sample(CSV_PATH, CSV_HEAD_ROWS)
+        if data_sample:
+            test_model_with_data(args.model_name, data_sample)
+        else:
+            print("\nCannot perform model test because data sample failed to load (or Pandas missing).")
+    else:
+        # Mode 1: List models
+        print("No model specified...")
+        list_google_models()
+        list_openai_models()
+        print("\nTo test a model, run: python test_llm.py \"<model_name>\"")
+
+if __name__ == "__main__":
+    main()
+    print("\n--- Script Finished ---")
 
 
 #PY File: test_llm_gemini.py
@@ -1712,24 +2133,27 @@ import streamlit as st
 import requests
 import json
 import plotly.io as pio
-import pandas as pd # Keep for potential future use, even if not displaying df directly now
 import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-LANGSERVE_API_URL = "http://localhost:8000/assistant/invoke"
+LANGSERVE_INVOKE_URL = "http://localhost:8000/assistant/invoke" # Use invoke endpoint
 def call_assistant_api(query: str) -> dict | None:
-    """Sends the query to the LangServe backend and returns the parsed response."""
+    """Sends the query to the LangServe invoke endpoint and returns the parsed output."""
     payload = {"input": {"original_query": query}}
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
     try:
-        logger.info(f"Sending request to API: {LANGSERVE_API_URL} with query: '{query}'")
-        response = requests.post(LANGSERVE_API_URL, json=payload, headers=headers, timeout=120) # Increased timeout
-        response.raise_for_status() # Raise an exception for bad status codes (4xx or 5xx)
+        logger.info(f"Sending request to API: {LANGSERVE_INVOKE_URL} with query: '{query}'")
+        response = requests.post(LANGSERVE_INVOKE_URL, json=payload, headers=headers, timeout=120)
+        response.raise_for_status()
         response_data = response.json()
-        logger.info(f"API Raw Response: {response_data}") # Log the raw response
+        logger.info(f"API Raw Response: {response_data}")
         if "output" in response_data:
             api_output = response_data.get("output", {})
             logger.info(f"Extracted API Output: {api_output}")
+            if not isinstance(api_output, dict):
+                 logger.error(f"API 'output' key did not contain a dictionary. Response: {response_data}")
+                 st.error("Received an unexpected response format from the assistant (output is not a dict).")
+                 return None
             return api_output
         else:
             logger.error(f"API response missing 'output' key. Response: {response_data}")
@@ -1748,63 +2172,49 @@ def call_assistant_api(query: str) -> dict | None:
          st.error(f"An unexpected error occurred: {e}")
          return None
 def render():
-    """Renders the Assistant tab."""
+    """Renders the Assistant tab using the invoke endpoint."""
     st.subheader("💰 Personal Finance Assistant")
-    chat_col = st.container() # Use container for chat flow
-    viz_col, data_col = st.columns([0.6, 0.4]) # Allocate 60% width to viz, 40% to data
     if "messages" not in st.session_state:
         st.session_state.messages = [
             {"role": "assistant", "content": "Greetings! How can I help you with your finances today?"}
         ]
-    with chat_col:
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"]) # Display assistant/user text
-                if message["role"] == "assistant":
-                    if "chart_json" in message and message["chart_json"]:
-                        try:
-                            chart_fig = pio.from_json(message["chart_json"])
-                            with viz_col:
-                                st.plotly_chart(chart_fig, use_container_width=True)
-                        except Exception as e:
-                            logger.error(f"Error rendering previous chart: {e}")
-                            with viz_col:
-                                st.warning("Could not render previous chart.")
-                    if "sql_results_str" in message and message["sql_results_str"]:
-                         with data_col:
-                            with st.expander("View Raw Data"):
-                                 st.text(message["sql_results_str"])
+    logger.debug(f"Displaying {len(st.session_state.messages)} messages from history.")
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"]) # Display only text content
     if prompt := st.chat_input("Ask me about your expenses..."):
         logger.info(f"User input received: '{prompt}'")
         st.session_state.messages.append({"role": "user", "content": prompt})
-        with chat_col:
-            with st.chat_message("user"):
-                st.markdown(prompt)
-        with chat_col:
-            with st.chat_message("assistant"):
-                message_placeholder = st.empty()
-                message_placeholder.markdown("Thinking...") # Provide feedback
-                api_response = call_assistant_api(prompt)
-                if api_response:
-                    final_response = api_response.get("final_response", "Sorry, I couldn't generate a response.")
-                    chart_json = api_response.get("chart_json") # Can be None
-                    sql_results_str = api_response.get("sql_results_str") # Can be None
-                    error_msg = api_response.get("error") # Check for errors from the agent
-                    if error_msg:
-                        logger.error(f"Assistant API returned an error: {error_msg}")
-                        final_response = f"An error occurred: {error_msg}" # Display error to user
-                        message_placeholder.error(final_response) # Use error styling
-                    else:
-                        message_placeholder.markdown(final_response) # Display final text
-                    assistant_message_data = {
-                        "role": "assistant",
-                        "content": final_response,
-                        "chart_json": chart_json,
-                        "sql_results_str": sql_results_str
-                    }
-                    st.session_state.messages.append(assistant_message_data)
-                    with viz_col:
-                        if chart_json:
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
+            message_placeholder.markdown("Thinking...")
+            api_response = call_assistant_api(prompt)
+            if api_response:
+                final_response = api_response.get("final_response", "Sorry, I couldn't generate a response.")
+                chart_json = api_response.get("chart_json")
+                sql_query = api_response.get("sql_query")
+                error_msg = api_response.get("error")
+                if error_msg:
+                    logger.error(f"Assistant API returned an error: {error_msg}")
+                    final_response = f"An error occurred: {error_msg}"
+                    message_placeholder.error(final_response)
+                else:
+                    message_placeholder.markdown(final_response) # Fill the text placeholder
+                assistant_message_data = {
+                    "role": "assistant",
+                    "content": final_response,
+                    "chart_json": chart_json,
+                    "sql_query": sql_query
+                }
+                st.session_state.messages.append(assistant_message_data)
+                if chart_json or sql_query: # Only create columns if there's something to show
+                    viz_col, sql_col = st.columns([0.6, 0.4])
+                    placeholder_viz = viz_col.empty()
+                    placeholder_sql = sql_col.empty()
+                    with placeholder_viz:
+                        if chart_json and not error_msg:
                             try:
                                 chart_fig = pio.from_json(chart_json)
                                 st.plotly_chart(chart_fig, use_container_width=True)
@@ -1812,19 +2222,17 @@ def render():
                             except Exception as e:
                                 logger.error(f"Error rendering chart JSON: {e}")
                                 st.warning("Could not display the generated chart.")
-                    with data_col:
-                        if sql_results_str and not error_msg : # Only show if no error and results exist
-                            with st.expander("View Retrieved Data", expanded=False):
-                                 st.text(sql_results_str)
-                                 logger.info("SQL results string displayed.")
-                else:
-                     message_placeholder.error("Failed to get a response from the assistant.")
-                     st.session_state.messages.append({
-                         "role": "assistant",
-                         "content": "Failed to get a response from the assistant."
-                     })
-                     with viz_col: st.empty()
-                     with data_col: st.empty()
+                    with placeholder_sql:
+                        if sql_query and not error_msg :
+                            with st.expander("View Generated SQL", expanded=False):
+                                 st.code(sql_query, language="sql")
+                                 logger.info("SQL query displayed.")
+            else:
+                 message_placeholder.error("Failed to get a response from the assistant.")
+                 st.session_state.messages.append({
+                     "role": "assistant",
+                     "content": "Failed to get a response from the assistant."
+                 })
 
 
 #PY File: reports.py
@@ -2439,7 +2847,7 @@ def render():
 
 #FILE File: langgraph.json
 @path: assistant/finance-assistant/langgraph.json
-@summary: The 'langgraph.json' file configures a project with dependencies, specifies a graph located in 'agent/graph.py', and references an environment configuration file '.env'.
+@summary: The 'langgraph.json' file configures a finance assistant's environment by specifying dependencies, a graph path for the agent's functionality, and an environment file. It outlines the structure for integrating and managing the assistant's operational components.
 @code:
 {
   "dependencies": ["."],
@@ -2453,7 +2861,7 @@ def render():
 
 #FILE File: pyproject.toml
 @path: assistant/finance-assistant/pyproject.toml
-@summary: The 'pyproject.toml' file configures a Python project named "agent" version "0.0.1", designed as a starter template for creating a new LangGraph agent. It specifies dependencies, optional development tools, build system requirements, and linting rules using Ruff. The project requires Python 3.9 or higher and uses the MIT license.
+@summary: The 'pyproject.toml' file configures a Python project named "agent" with version "0.0.1". It specifies dependencies, build requirements, and optional development tools. It includes metadata like author details and license type. The file also sets up linting rules using 'ruff' and defines package directories for setuptools.
 @code:
 [project]
 name = "agent"
@@ -2519,7 +2927,7 @@ lint.ignore = [
 
 #FILE File: expenses_metadata_detailed.yaml
 @path: metadata/expenses_metadata_detailed.yaml
-@summary: The file 'expenses_metadata_detailed.yaml' defines the structure and purpose of the 'expenses' table, which tracks financial transactions for users Anirban and Puspita. It includes columns for transaction details like date, amount, category, and user, with relationships and mappings to ensure data consistency and facilitate detailed financial analysis.
+@summary: The file 'expenses_metadata_detailed.yaml' outlines the structure and purpose of an "expenses" table, detailing columns like date, category, and amount for tracking financial transactions of users Anirban and Puspita. It includes relationships, data types, constraints, and usage guidelines for analyzing spending patterns and answering financial queries.
 @code:
 table_name: expenses
 description: "Stores all recorded financial transactions for users Anirban and Puspita. Each row represents a single expense event. Used to track spending patterns, budget adherence, and answer financial queries."
@@ -2548,10 +2956,10 @@ columns:
 
 #FILE File: _temp_tree.txt
 @path: reference/_temp_tree.txt
-@summary: The file 'reference/_temp_tree.txt' outlines the directory structure of a personal finance application. It includes configuration files, source code for a finance assistant, data files, metadata, testing scripts, and Streamlit components for UI. Key components are organized under directories like 'assistant', 'data', 'metadata', 'reference', and 'streamlit'.
+@summary: The file 'reference/_temp_tree.txt' outlines the directory structure of a personal finance application. It includes scripts for environment checks, requirements, a finance assistant module, data files, metadata, reference documents, and a Streamlit interface with utilities and tabs for expenses, reports, and visuals.
 @code:
 app-personal-finance/
-    expense_metadata.json
+    check_env.py
     requirements-v2.0.txt
     assistant/
         finance-assistant/
@@ -2587,49 +2995,15 @@ app-personal-finance/
         expenses_metadata_detailed.yaml
     reference/
         _temp_tree.txt
-        agentic_ai_guidelines.md
-        agentic_ai_guidel
-[...]
-
-
-#FILE File: agentic_ds_app_prep.txt
-@path: reference/agentic_ds_app_prep.txt
-@summary: The file outlines steps for preparing data before implementing Agentic AI, focusing on generating realistic financial transaction data from 2023 to 2025. It specifies data structure, including columns like date, account, category, and amount, and emphasizes realistic spending patterns, fixed expenses, and category-specific transaction rules for two users, Anirban and Puspita.
-@code:
-## THINGS TO DO BEFORE AGENTIC AI IMPLEMENTATION
-
-STEP 1: GENERATE MORE DATA
- - Generate more data, similar to the sample dummy_expenses.csv, from 2023.01.01 - 2025.04.20 (current date). Important considerations for data generation:
-	- SUPER IMPORTANT: columns: 
-	1. date: dd-mm-yyyy	
-	2. year: yyyy	
-	3. month: yyyy-mm	
-	4. week: 2021-W01 to latest, 2025-xxx	
-	5. day_of_week: {Monday, Tuesday,... Sunday} according to date, refer calendar
-	6. account: "Account": [
-        "Anirban-SBI",
-        "Anirban-ICICI",
-        "Puspita-SBI",
-        "Puspita-Bandhan"
-    ],	
-	7. category: refer below and metadata
-	8. sub_category: refer below and metadata	
-	9. type: "Free text input describing the nature or name of the transaction (e.g., 'Family dinner', 'Cab to airport')",
-	10. user:	 "User": {
-        "Anirban-SBI": "Anirban",
-        "Anirban-ICICI": "Anirban",
-        "Puspita-SBI": "Puspita",
-        "Puspita-Bandhan": "Puspita"
-    },
-	11. amount:"INR value of the transaction, max 50000"
-
-
+        agentic_ai_guidelines.txt
+        data_analysis.ipynb
+     
 [...]
 
 
 #FILE File: data_analysis.ipynb
 @path: reference/data_analysis.ipynb
-@summary: The file 'data_analysis.ipynb' is a Jupyter Notebook for performing Exploratory Data Analysis (EDA) on personal finance data. It loads and validates a generated CSV file ('dummy_expenses_generated.csv') against predefined rules and metadata. The notebook includes data loading, date parsing, null value checks, and transaction count validation, with inline plots for visualization.
+@summary: The 'data_analysis.ipynb' file is an exploratory data analysis (EDA) notebook for personal finance data. It analyzes a generated expense dataset ('dummy_expenses_generated.csv') to validate its structure and suitability for AI/ML tasks. The notebook includes data loading, basic checks, date parsing, null value checks, and transaction count validation against predefined rules.
 @code:
 {
  "cells": [
@@ -2664,7 +3038,7 @@ STEP 1: GENERATE MORE DATA
 
 #FILE File: expenses_sample.csv
 @path: reference/expenses_sample.csv
-@summary: The file 'expenses_sample.csv' records personal expenses, detailing transactions by date, account, category, sub-category, type, user, and amount. It includes expenses like rent, groceries, and travel, categorized by user (Anirban or Puspita) and account, providing a structured financial overview for January 2023.
+@summary: The file 'expenses_sample.csv' records personal expenses, detailing transactions by date, account, category, sub-category, type, user, and amount. It includes expenses like rent, groceries, and travel, categorized by user (Anirban or Puspita) and account, with timestamps for precise tracking.
 @code:
 date,year,month,week,day_of_week,account,category,sub_category,type,user,amount
 01-01-2023,2023,2023-01,2023-W52,Sunday,Anirban-ICICI,Rent,House Rent,Monthly House Rent Payment,Anirban,30000.0
@@ -2679,9 +3053,9 @@ date,year,month,week,day_of_week,account,category,sub_category,type,user,amount
 [...]
 
 
-#FILE File: instruction_advanced_question_types.txt
-@path: reference/instruction_advanced_question_types.txt
-@summary: The file provides guidelines for categorizing data science questions into five advanced types: Regression, Forecasting, Classification, Segmentation, and Unsupervised Clustering. It includes detailed examples and reasoning for each type, tailored for a personal finance advisor app, to help the Data Science Sub Agent (DSA) effectively address user inquiries.
+#FILE File: instructions_advanced_question_types.txt
+@path: reference/instructions_advanced_question_types.txt
+@summary: The file outlines advanced question types for a Data Science Sub Agent (DSA) to categorize and answer within a personal finance advisor app. It details five machine learning categories: Regression, Forecasting, Classification, Segmentation, and Unsupervised Clustering, providing examples and reasoning for each, focusing on financial prediction and analysis tasks.
 @code:
 These are sample user questions.These are the questions which the DATA SCIENCE SUB AGENT (DSA) needs to answer. The DSA will categorize questions in one of the 5 advanced question types:Regression, Forecasting, Classification, Segmentation, Unsupervised Clustering. Here we have detailed reasoning for 5 example question across each of the 5 ML types (Regression, Forecasting, Classification, Segmentation, Unsupervised Clustering), specifically tailored for my 2-person personal finance advisor app.
 
@@ -2695,143 +3069,33 @@ These are sample user questions.These are the questions which the DATA SCIENCE S
 [...]
 
 
-#FILE File: instruction_code_details.txt
-@path: reference/instruction_code_details.txt
-@summary: The file 'instruction_code_details.txt' provides detailed descriptions of various configuration and metadata files for a project. It includes summaries of files like `expense_metadata.json` for transaction structures, `requirements-v2.0.txt` for project dependencies, and `.env.example` for environment variable setup. It also covers server setup, licensing, and project metadata.
+#FILE File: instructions_metadata.txt
+@path: reference/instructions_metadata.txt
+@summary: The file provides metadata and sample data for the 'app-personal-finance' project, detailing the structure and purpose of the 'expenses' table. It includes descriptions of columns, relationships, and data types, focusing on financial transactions for users Anirban and Puspita, with categories and sub-categories for detailed expense analysis.
 @code:
-# instruction_code_details.txt
-"""
-Describes the functionality of each file...
-"""
+# Metadata and Data Sample Context for LLM Assistant
 
-File: expense_metadata.json
-Location: expense_metadata.json
-Summary: The file outlines a transaction record structure, including a date format and account names. It categorizes expenses into areas like Investment, Rent, Travel, Restaurant, Insurance Premium, Household, Connectivity, and Waste, detailing specific items under each category.
-Code: """
-{
-    "Date": "Date of the transaction (format: YYYY-MM-DD)",
-    "Account": [
-        "Anirban-SBI",
-        "Anirban-ICICI",
-        "Puspita-SBI",
-        "Puspita-Bandhan"
-    ],
-	"categories": {
-        "Investment": ["SIP", "Mutual Funds", "Stocks", "FD/RD"],
-        "Rent": ["House Rent"],
-        "Travel": ["Day Trip", "Vacation", "Commute", "Cab", "Train", "Flight", "Hotel/Stay", "Parking Fee"],
-        "Restaurant": ["Dine-in", "Takeaway", "Food Delivery", "Snacks", "Cafe", "Drinks"],
-        "Insurance Premium": ["Life Insurance", "ULIP", "Health I
-[...]
+This file contains the content of key metadata files and the head rows of key data files
+used in the 'app-personal-finance' project.
 
+----------------------------------------------------------------------
 
-#FILE File: instruction_code_details_compressed.txt
-@path: reference/instruction_code_details_compressed.txt
-@summary: The file 'instruction_code_details_compressed.txt' provides summaries and paths for various configuration, metadata, and reference files related to a personal finance assistant project. It includes transaction record structures, dependency lists, environment setups, project configurations, licensing, and testing frameworks, emphasizing modular design and AI integration.
-@code:
+# --- Content from: metadata/expenses_metadata_detailed.yaml ---
 
-#FILE expense_metadata.json
-@path: expense_metadata.json
-@summary: The file outlines a transaction record structure, including a date format and account names. It categorizes expenses into areas like Investment, Rent, Travel, Restaurant, Insurance Premium, Household, Connectivity, and Waste, detailing specific items under each category.
-@code:
-{
-"Date": "Date of the transaction (format: YYYY-MM-DD)",
-"Account": [
-"Anirban-SBI",
-"Anirban-ICICI",
-"Puspita-SBI",
-"Puspita-Bandhan"
-],
-"categories": {
-"Investment": ["SIP", "Mutual Funds", "Stocks", "FD/RD"],
-"Rent": ["House Rent"],
-"Travel": ["Day Trip", "Vacation", "Commute", "Cab", "Train", "[...]
+table_name: expenses
+description: "Stores all recorded financial transactions for users Anirban and Puspita. Each row represents a single expense event. Used to track spending patterns, budget adherence, and answer financial queries."
+primary_key: id # Assuming 'id' is a UUID added during DB creation
 
-#FILE requirements-v2.0.txt
-@path: requirements-v2.0.txt
-@summary: The file lists dependencies for a core application, database, and GenAI & embeddings. It includes libraries like Streamlit, Pandas, Numpy, and specific versions for `python-dotenv` and `SQLAlchemy`. It also mentions `aiosqlite` for async SQLite support and tools for Gemini suppo
-[...]
-
-
-#FILE File: instruction_file_tree.txt
-@path: reference/instruction_file_tree.txt
-@summary: The file outlines the directory structure of a personal finance application, detailing components like metadata, requirements, source code, tests, and reference materials. Key elements include configuration files, scripts for data handling, a finance assistant module, and Streamlit-based UI components for managing expenses and generating reports.
-@code:
-app-personal-finance/
-    expense_metadata.json
-    requirements-v2.0.txt
-    assistant/
-        finance-assistant/
-            .codespellignore
-            .env.example
-            langgraph.json
-            LICENSE
-            Makefile
-            pyproject.toml
-            README.md
-            .langgraph_api/
-                .langgraph_checkpoint.1.pckl
-                .langgraph_checkpoint.2.pckl
-                .langgraph_ops.pckl
-                .langgraph_retry_counter.pckl
-                store.pckl
-                store.vectors.pckl
-            agent.egg-info/
-                dependency_links.txt
-                PKG-INFO
-                requires.txt
-                SOURCES.txt
-                top_level.txt
-            app/
-                server.py
-            src/
-                agent/
-                    configuration.py
-                    graph.py
-                    state.py
-                    __init__.py
-            static/
-                studio_ui.png
-            te
-[...]
-
-
-#FILE File: instruction_llm.txt
-@path: reference/instruction_llm.txt
-@summary: The file 'instruction_llm.txt' provides guidelines for developing an autonomous data science assistant for a personal finance app. It emphasizes understanding the current codebase, ensuring compatibility, and using efficient AI methods. It outlines requirements for code generation, including structure, compatibility, and detailed documentation, referencing various project files and phases.
-@code:
-Uploading the necessary files and reference links for context, read and understand:
-
-INSTRUCTION_LLM: Specific instructions for you to follow: instruction_llm.txt, *THIS FILE*
-INITIAL_REQUIREMENT (PHASE 1: DONE): requirement_v1_streamlit_app.txt - PHASE 1: This is the INITIAL REQUIREMENT. FOR UNDERSTANDING INITIAL SCOPE ONLY. CURRENT IMPLEMENTATION HAS CHANGED. REFER TO CODEBASE FOR CURRENT STATE.
-CURRENT_REQUIREMENT (PHASE 2: ONGOING): reference/requirement_v2_ds_assistant.txt - PHASE 2: This is the CURRENT REQUIREMENT.
-PROJECT_STRUCTURE: reference/instruction_file_tree.txt
-PROJECT_CODE_FILE_CONTENT: reference/instruction_code_details_compressed.txt
-SAMPLE_DATA: expenses_sample.csv
-SAMPLE_METADATA: expense_metadata.json
-
-REQUIREMENT: Help me build an autonomous, multi agent data science assistant for my personal finances app (Refer: CURRENT_REQUIREMENT) through code generation and brainstorming.
-
-PUBLIC GIT REPO FOR PROJECT: https://github.com/AnirbanDattaTech/App-Personal-Finance.git
-[...]
-
-
-#FILE File: progress_summary.txt
-@path: reference/progress_summary.txt
-@summary: The file outlines the current status and future steps for developing an autonomous multi-agent data science assistant. It details the completed single-agent prototype, its technical stack, known issues, and file structure. Future plans include designing a multi-agent architecture, implementing various specialized agents, and enhancing functionalities like SQL generation and data visualization.
-@code:
-# Project Status & Next Steps Summary (2025-04-24)
-
-## I. Current Development Status
-
-*   **Goal:** Phase 2 - Autonomous Multi-Agent Data Science Assistant.
-*   **Current Stage:** Completed initial **single-agent prototype** implementation.
-*   **Functionality:**
-    *   A LangGraph agent (using Google Gemini `gemini-1.5-flash-latest`) handles simple natural language queries about financial expenses.
-    *   The agent performs: Query Classification -> SQL Generation -> SQL Execution -> Basic Chart Generation -> Text Response Generation.
-    *   A LangServe/FastAPI backend (`assistant/finance-assistant/app/server.py`) exposes this agent via an API endpoint (`/assistant/invoke`).
-    *   A Streamlit frontend tab (`streamlit/tabs/assistant.py`) provides a chat interface.
-    *   Streamlit UI successfully interacts with the backend API.
-    *   UI displays chat history, the agent's final text response, a Plotly chart (if generated by the agent), and the raw SQL results (within an expander)
+# Explicit relationship mapping derived from expense_metadata.json
+relationships:
+  - type: derived
+    from_column: account
+    to_column: user
+    mapping:
+      "Anirban-SBI": "Anirban"
+      "Anirban-ICICI": "Anirban"
+      "Puspita-SBI": "Puspita"
+      "Puspita-Bandhan": "Puspita"
+    description: "The 'user' is strictly determined by the 'account' used in the tr
 [...]
 
