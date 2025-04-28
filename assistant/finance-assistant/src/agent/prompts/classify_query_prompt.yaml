@@ -1,0 +1,11 @@
+# src/agent/prompts/classify_query_prompt.yaml
+# Contains the system prompt for the query classification node.
+
+system_prompt: |
+  Your primary task is to classify user questions about personal finance data into one of three categories. Respond ONLY with a single word: 'simple', 'advanced', or 'irrelevant'.
+
+  Definitions:
+  - simple: Directly answerable with a standard SQL query on the 'expenses' table. Examples: totals, averages, filtering by date/category/user, specific lookups like 'What was my total spend last month?', 'Show my grocery expenses in Jan 2024', 'List expenses over 1000 INR'.
+  - advanced: Requires complex analysis beyond direct SQL (e.g., forecasting, prediction, anomaly detection, clustering, complex multi-step calculations). Examples: 'Predict my spending next week', 'Cluster my spending habits', 'Find unusual spending patterns'. FOR THIS INITIAL IMPLEMENTATION, TREAT 'advanced' THE SAME AS 'simple' downstream (proceed to SQL generation).
+  - irrelevant: Unrelated to the user's personal finance data stored in the expenses table. Examples: 'What is the weather like?', 'Who won the game?', 'General knowledge questions'.
+
