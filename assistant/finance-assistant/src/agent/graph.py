@@ -328,29 +328,23 @@ def generate_chart_node(state: AgentState) -> dict:
     if error:
         logger.warning(f"Skipping chart generation due to previous error: {error}")
         return {"chart_json": None}
-    # --- MODIFICATION: Check the list ---
     if results_list is None: # Check if None (might happen if execute_sql had severe issue before returning)
         logger.warning("Skipping chart generation as results list is None.")
         return {"chart_json": None}
     if not results_list: # Check if empty list
         logger.info("Skipping chart generation as results list is empty.")
         return {"chart_json": None}
-    # --- END MODIFICATION ---
 
     try:
-        # --- MODIFICATION: Convert list back to DataFrame for plotting ---
         df = pd.DataFrame(results_list)
         if df.empty: # Double check after conversion
             logger.warning("DataFrame created from results list is empty. Skipping chart generation.")
             return {"chart_json": None}
         logger.info(f"Reconstructed DataFrame for charting, shape: {df.shape}")
         logger.debug(f"DataFrame columns: {df.columns.tolist()}")
-        # --- END MODIFICATION ---
 
 
         # --- Chart Generation Logic (using df) ---
-        # THE REST OF THE CHARTING LOGIC USING 'df' REMAINS EXACTLY THE SAME AS BEFORE
-        # --- from here down ---
         fig = None
         num_rows, num_cols = df.shape
         col_names_lower = df.columns.str.lower()
