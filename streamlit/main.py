@@ -2,6 +2,7 @@
 """
 Main Streamlit application file for the Personal Expense Tracker.
 Handles page navigation and calls rendering functions for each tab.
+ADDED 'budget' tab import and rendering logic.
 """
 import streamlit as st
 import pandas as pd
@@ -13,7 +14,8 @@ from pathlib import Path # Good practice for path handling
 # and the tabs are in a subdirectory 'tabs'
 # and utils are directly in 'streamlit'
 try:
-    from tabs import add_expense, reports, visuals, assistant 
+    # --- ADD 'budget' TO THE IMPORTS ---
+    from tabs import add_expense, reports, visuals, assistant, budget # Added budget
     from style_utils import load_css
     from db_utils import fetch_all_expenses  # For CSV download
     st.session_state['imports_successful'] = True
@@ -55,8 +57,8 @@ else:
 st.sidebar.title("Navigation")
 page = st.sidebar.radio(
     "Go to",
-    # List of available tabs
-    ["Add Expenses", "Reports", "Visualizations", "Assistant"], # Assistant is now a valid option
+    # --- ADD 'Budget' TO THE LIST OF OPTIONS ---
+    ["Add Expenses", "Reports", "Visualizations", "Assistant", "Budget"], # Added Budget
     label_visibility="collapsed",
     key="main_nav"
 )
@@ -105,6 +107,9 @@ if st.session_state.get('imports_successful', False):
     elif page == "Assistant":
          # --- ✅ Call the renamed Assistant tab's render function ---
          assistant.render() # **** CALL THE RENAMED MODULE'S FUNCTION ****
+    # --- ADD RENDERING LOGIC FOR THE 'Budget' PAGE ---
+    elif page == "Budget":
+         budget.render() # Call the new budget tab's render function
     else:
         st.error("Invalid page selected.")
 else:
