@@ -54,7 +54,7 @@ def call_assistant_api(query: str) -> dict | None:
 # --- Main Render Function (Non-Streaming - Final Layout Fix) ---
 def render():
     """Renders the Assistant tab using the invoke endpoint."""
-    st.subheader("💰 Personal Finance Assistant")
+    st.subheader("Personal Finance Assistant")
 
     # --- Initialize Chat History ---
     if "messages" not in st.session_state:

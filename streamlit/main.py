@@ -37,7 +37,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 st.set_page_config(
     layout="wide",
     page_title="Personal Expense Tracker",
-    page_icon="💰"
+    page_icon="💎"
 )
 
 # --- Load CSS ---

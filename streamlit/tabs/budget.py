@@ -66,7 +66,7 @@ def create_budget_bar_chart(budget: float, spend: float, title: str) -> go.Figur
 # --- Main Render Function ---
 def render():
     """Renders the Budget page mock UI with cleaned-up metric display and placeholder edit buttons."""
-    st.subheader("💰 Monthly Budget Overview")
+    st.subheader("Monthly Budget Overview")
 
     # --- Get Current Month ---
     current_date = datetime.date.today()
