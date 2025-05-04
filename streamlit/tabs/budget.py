@@ -1,156 +1,245 @@
 # streamlit/tabs/budget.py
 """
-Renders the static 'Budget' tab UI based on predefined mock data.
-Includes placeholders for Start/End Balance.
-Uses a grid layout for metrics.
-Replaces inline edit buttons with a single placeholder "Edit" button per account,
-intended to trigger a popover/form in the functional version.
+Renders the 'Budget' tab UI, dynamically fetching data from and sending
+updates to the backend FastAPI budget API.
+Uses st.expander to hide the edit form by default, improving compactness.
+Applies add_expense.py form layout strategy for alignment.
 """
 import streamlit as st
 import plotly.graph_objects as go
 import datetime
 import pandas as pd # Using pandas for easy bar chart data creation
+import requests # To make API calls
+import logging # For logging API errors
+from typing import Dict, Any, Optional
+import time # For sleep after toast
+
+# --- Configuration ---
+# Base URL of the running FastAPI backend
+API_BASE_URL = "http://127.0.0.1:8000"
+BUDGET_API_URL = f"{API_BASE_URL}/budgets"
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+
+# --- Helper Function for API GET Request ---
+# [NOTE: fetch_budget_data_from_api function remains the same as provided]
+def fetch_budget_data_from_api(year_month: str) -> Optional[Dict[str, Any]]:
+    """Fetches the budget summary data from the backend API for a given month."""
+    get_url = f"{BUDGET_API_URL}/{year_month}"
+    try:
+        logger.info(f"Attempting to fetch budget data from: {get_url}")
+        response = requests.get(get_url, timeout=10)
+        response.raise_for_status()
+        api_response = response.json()
+        logger.info(f"Successfully fetched budget data for {year_month}.")
+        if "data" in api_response and isinstance(api_response["data"], dict):
+            return api_response["data"]
+        else:
+            logger.error(f"API response for {year_month} missing 'data' dictionary: {api_response}")
+            st.error("Received unexpected data format from the budget API.")
+            return None
+    except requests.exceptions.ConnectionError:
+        logger.error(f"Connection error fetching budget data from {get_url}.")
+        st.error(f"Could not connect to the backend API at {API_BASE_URL}. Is it running?")
+        return None
+    except requests.exceptions.Timeout:
+        logger.error(f"Timeout fetching budget data from {get_url}.")
+        st.error("The request to the backend API timed out.")
+        return None
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"HTTP error fetching budget data: {e.response.status_code} - {e.response.text}")
+        st.error(f"Failed to fetch budget data. API returned status {e.response.status_code}.")
+        return None
+    except requests.exceptions.RequestException as e:
+        logger.exception(f"General error fetching budget data: {e}")
+        st.error(f"An unexpected error occurred while fetching budget data: {e}")
+        return None
+    except Exception as e:
+        logger.exception(f"Unexpected error processing API response: {e}")
+        st.error(f"An error occurred processing the API response: {e}")
+        return None
+
+# --- Helper Function for API POST Request ---
+# [NOTE: post_budget_update function remains the same as provided]
+def post_budget_update(year_month: str, account: str, payload: Dict[str, Any]) -> bool:
+    """Posts budget updates to the backend API."""
+    post_url = f"{BUDGET_API_URL}/{year_month}/{account}"
+    try:
+        logger.info(f"Attempting to POST budget update to: {post_url} with payload: {payload}")
+        response = requests.post(post_url, json=payload, timeout=15)
+        response.raise_for_status()
+        response_data = response.json()
+        if response_data.get("success"):
+            logger.info(f"Successfully updated budget for {account} in {year_month}.")
+            return True
+        else:
+            error_message = response_data.get("message", "Unknown error from API.")
+            logger.warning(f"API reported failure updating budget: {error_message}")
+            st.toast(f"⚠️ {error_message}", icon="⚠️")
+            return False
+    except requests.exceptions.ConnectionError:
+        logger.error(f"Connection error posting budget update to {post_url}.")
+        st.toast(f"❌ Error: Could not connect to the backend API at {API_BASE_URL}.", icon="❌")
+        return False
+    except requests.exceptions.Timeout:
+        logger.error(f"Timeout posting budget update to {post_url}.")
+        st.toast("❌ Error: The request to the backend API timed out.", icon="❌")
+        return False
+    except requests.exceptions.HTTPError as e:
+        error_detail = "Unknown error"
+        try:
+            error_json = e.response.json()
+            if "detail" in error_json:
+                 if isinstance(error_json["detail"], list) and error_json["detail"]:
+                      first_error = error_json["detail"][0]
+                      loc = first_error.get('loc', ['?', '?'])
+                      field = loc[-1] if len(loc) > 1 else 'N/A'
+                      error_detail = f"{first_error.get('msg', 'Validation error')} (Field: {field})"
+                 elif isinstance(error_json["detail"], str):
+                      error_detail = error_json["detail"]
+                 else:
+                      error_detail = str(error_json["detail"])
+            else:
+                error_detail = e.response.text
+        except Exception:
+            error_detail = e.response.text
+        logger.error(f"HTTP error posting budget update: {e.response.status_code} - {error_detail}")
+        st.toast(f"❌ Error {e.response.status_code}: {error_detail}", icon="❌")
+        return False
+    except requests.exceptions.RequestException as e:
+        logger.exception(f"General error posting budget update: {e}")
+        st.toast(f"❌ Error: An unexpected error occurred: {e}", icon="❌")
+        return False
+    except Exception as e:
+        logger.exception(f"Unexpected error processing POST response: {e}")
+        st.toast(f"❌ Error processing API response: {e}", icon="❌")
+        return False
+
 
 # --- Helper Function for Bar Chart (Remains the same) ---
+# [NOTE: create_budget_bar_chart function remains the same as provided]
 def create_budget_bar_chart(budget: float, spend: float, title: str) -> go.Figure:
     """Creates a simple Plotly bar chart comparing budget vs spend."""
-    display_budget_for_range = max(budget, 1.0) # Use at least 1 for y-axis range
-
-    df = pd.DataFrame({
-        'Category': ['Budget', 'Current Spend'],
-        'Amount': [budget, spend]
-    })
-
+    display_budget_for_range = max(budget, 1.0) if spend > 0 else budget
+    df = pd.DataFrame({'Category': ['Budget', 'Current Spend'], 'Amount': [budget, spend]})
     fig = go.Figure()
-
-    # Budget Bar
-    fig.add_trace(go.Bar(
-        x=['Budget'],
-        y=[budget],
-        name='Budget',
-        marker_color='lightblue',
-        text=f"₹{budget:,.0f}",
-        textposition='outside',
-        hoverinfo='name+y'
-    ))
-
-    # Spend Bar
-    fig.add_trace(go.Bar(
-        x=['Current Spend'],
-        y=[spend],
-        name='Current Spend',
-        marker_color='salmon',
-        text=f"₹{spend:,.0f}",
-        textposition='outside',
-        hoverinfo='name+y'
-    ))
-
-    # Customize layout
+    fig.add_trace(go.Bar(x=['Budget'], y=[budget], name='Budget', marker_color='lightblue', text=f"₹{budget:,.0f}", textposition='outside', hoverinfo='name+y'))
+    fig.add_trace(go.Bar(x=['Current Spend'], y=[spend], name='Current Spend', marker_color='salmon', text=f"₹{spend:,.0f}", textposition='outside', hoverinfo='name+y'))
     fig.update_layout(
         title=dict(text=title, x=0.5, font_size=16),
-        yaxis_title="Amount (INR)",
-        xaxis_title=None,
-        xaxis=dict(showticklabels=False),
-        yaxis=dict(range=[0, max(display_budget_for_range, spend) * 1.2]),
-        showlegend=True,
+        yaxis_title="Amount (INR)", xaxis_title=None, xaxis=dict(showticklabels=False),
+        yaxis=dict(range=[0, max(display_budget_for_range, spend) * 1.2]), showlegend=True,
         legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
-        bargap=0.4,
-        margin=dict(l=40, r=20, t=50, b=90),
-        height=350
+        bargap=0.4, margin=dict(l=40, r=20, t=50, b=90), height=350
     )
     fig.update_yaxes(hoverformat = ".2f")
-
     return fig
-
 
 # --- Main Render Function ---
 def render():
-    """Renders the Budget page mock UI with cleaned-up metric display and placeholder edit buttons."""
+    """Renders the Budget page dynamically using API data."""
     st.subheader("Monthly Budget Overview")
 
-    # --- Get Current Month ---
     current_date = datetime.date.today()
-    current_month_str = current_date.strftime("%B %Y")
+    current_year_month = current_date.strftime("%Y-%m")
+    current_month_display = current_date.strftime("%B %Y")
 
-    # --- Mock Data ---
-    mock_data = {
-        "Anirban-ICICI": {
-            "budget": 50000.0,
-            "spend": 30000.0,
-            "start_balance": 60000.0,
-            "end_balance": 20000.0
-        },
-        "Anirban-SBI": {
-            "budget": 0.0,
-            "spend": 4000.0,
-            "start_balance": 15000.0,
-            "end_balance": 5000.0
-        }
-    }
+    api_data = fetch_budget_data_from_api(current_year_month)
 
-    # --- Main Layout ---
+    if api_data is None:
+        st.warning("Could not load budget data. Please ensure the backend API is running and refresh.")
+        if st.button("Retry Fetching Data"):
+            st.rerun()
+        return
+
     col_icici, col_sbi = st.columns(2)
+    accounts_to_display = ["Anirban-ICICI", "Anirban-SBI"]
+    account_columns = {"Anirban-ICICI": col_icici, "Anirban-SBI": col_sbi}
 
-    # --- Process Each Account Column ---
-    accounts = {"Anirban-ICICI": col_icici, "Anirban-SBI": col_sbi}
-
-    for account_name, column in accounts.items():
-        with column:
-            budget = mock_data[account_name]["budget"]
-            spend = mock_data[account_name]["spend"]
-            start_balance = mock_data[account_name]["start_balance"]
-            end_balance = mock_data[account_name]["end_balance"]
+    for account_name in accounts_to_display:
+        with account_columns[account_name]:
+            account_data = api_data.get(account_name, {})
+            budget = float(account_data.get("budget_amount", 0.0))
+            spend = float(account_data.get("current_spend", 0.0))
+            start_balance = float(account_data.get("start_balance", 0.0))
+            end_balance = float(account_data.get("end_balance", 0.0))
             remaining = budget - spend
-            percent_remaining = (remaining / budget) * 100 if budget > 0 else (-100 if spend > 0 else 0)
 
-            st.markdown(f"#### {account_name}")
-            st.markdown(f"**Month:** {current_month_str}")
-            st.divider()
+            st.markdown(f"##### {account_name} ({current_month_display})")
 
-            # --- Grid Layout for Metrics (No inline buttons) ---
-
-            # Row 1: Budget
+            # Metrics Display remains the same
             st.metric(label="Budget", value=f"₹{budget:,.2f}")
-
-            # Row 2: Current Spend & Remaining
             row2_col1, row2_col2 = st.columns(2)
             with row2_col1:
                 st.metric(label="Current Spend", value=f"₹{spend:,.2f}")
             with row2_col2:
-                st.metric(label="Remaining (Budget)", value=f"₹{remaining:,.2f}", delta=f"{percent_remaining:.1f}%")
-
-            # Row 3: Start & End Balance
+                st.metric(label="Remaining", value=f"₹{remaining:,.2f}")
             row3_col1, row3_col2 = st.columns(2)
             with row3_col1:
-                st.metric(label="Starting Balance", value=f"₹{start_balance:,.2f}")
+                st.metric(label="Start Balance", value=f"₹{start_balance:,.2f}")
             with row3_col2:
-                 st.metric(label="Ending Balance", value=f"₹{end_balance:,.2f}")
+                st.metric(label="End Balance", value=f"₹{end_balance:,.2f}")
 
-            # --- Placeholder Edit Button (Below metrics grid) ---
-            st.button(
-                "Edit Budget & Balances",
-                key=f"edit_all_{account_name}",
-                help="Set Budget, Starting Balance, and Ending Balance for Current Month (Feature coming soon!)",
-                disabled=True # Disabled for mock
-            )
+            # --- Edit Form within Expander ---
+            with st.expander("Update Budget/Balances", expanded=False):
+                # Use a unique key for the form based on the account
+                with st.form(key=f"edit_form_{account_name}"):
 
-            # --- Progress Bar ---
-            progress_value = 1.0 if spend > 0 and budget == 0 else (spend / budget if budget > 0 else 0)
+                    new_budget = st.number_input(
+                        label="Budget Amount",
+                        min_value=0.0, value=budget, format="%.2f",
+                        step=1000.0, key=f"edit_budget_{account_name}",
+                        label_visibility="visible"
+                    )
+
+                    # CHANGE: Row 2 - Balances (Side-by-side)
+                    form_col1, form_col2 = st.columns(2)
+                    with form_col1:
+                        new_start_balance = st.number_input(
+                            label="Starting Balance",
+                            value=start_balance, format="%.2f",
+                            step=1000.0, key=f"edit_start_bal_{account_name}",
+                            label_visibility="visible"
+                        )
+                    with form_col2:
+                        new_end_balance = st.number_input(
+                            label="Ending Balance",
+                            value=end_balance, format="%.2f",
+                            step=1000.0, key=f"edit_end_bal_{account_name}",
+                            label_visibility="visible"
+                        )
+
+                    submitted = st.form_submit_button("Save")
+
+                    if submitted:
+                        # Submission logic remains the same
+                        update_payload = {
+                            "budget_amount": new_budget,
+                            "start_balance": new_start_balance,
+                            "end_balance": new_end_balance
+                        }
+                        success = post_budget_update(current_year_month, account_name, update_payload)
+                        if success:
+                            st.toast("✅ Budget updated!", icon="✅")
+                            time.sleep(1) # Keep brief pause before rerun
+                            st.rerun()
+            # --- End Edit Form ---
+
+            # Progress Bar remains the same
+            progress_value = 0.0
+            if budget > 0:
+                progress_value = max(0.0, min(1.0, spend / budget))
+            elif spend > 0:
+                progress_value = 1.0
             st.progress(progress_value)
 
-            st.divider() # Separator before chart
-
-            # --- Bar Chart ---
-            chart = create_budget_bar_chart(budget, spend, f"{account_name} Budget vs Spend")
+            # Bar Chart remains the same
+            chart = create_budget_bar_chart(budget, spend, f"{account_name}")
             st.plotly_chart(chart, use_container_width=True)
 
-    # --- 'Update Spend Details' Button (Below Columns) ---
+    # Refresh button remains at bottom left
     st.divider()
-    _, center_col, _ = st.columns([1, 1, 1]) # Centering column
-    with center_col:
-        st.button(
-            "🔄 Update Spend Details",
-            key="update_spend_button",
-            help="Fetch latest spend data for the current month (Feature coming soon!)",
-            disabled=True # Disabled for mock
-        )
+    if st.button("🔄 Refresh", key="update_spend_button", help="Fetch latest data"):
+        st.rerun()

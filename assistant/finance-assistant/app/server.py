@@ -46,6 +46,14 @@ except Exception as e:
     logger.error(f"An unexpected error occurred during agent component import: {e}", exc_info=True)
     raise
 
+# --- Import Routers ---
+try:
+    from app.routers.budget_api import router as budget_router
+    logger.info("Successfully imported budget API router.")
+except ImportError as e:
+    logger.error(f"CRITICAL ERROR: Failed to import budget API router. Error: {e}", exc_info=True)
+    budget_router = None # Allow app to run but budget routes won't work
+
 # --- Define API Input/Output Schemas (Keep as before) ---
 class AssistantInput(BaseModel):
     """Input schema for the Finance Assistant Agent."""
@@ -81,11 +89,18 @@ add_routes(
     app=app,
     runnable=finance_assistant_graph,
     path="/assistant",
-    input_type=AssistantInput,
-    output_type=AssistantOutput,
+    # input_type=AssistantInput,
+    # output_type=AssistantOutput,
     config_keys=["configurable"]
 )
 logger.info(f"LangServe routes added successfully at path '/assistant'. Playground at /assistant/playground/")
+
+# --- Add Other API Routers ---
+if budget_router:
+    app.include_router(budget_router)
+    logger.info("Included budget API router at prefix /budgets.")
+else:
+     logger.error("Budget API router not loaded, routes will be unavailable.")
 
 
 # --- Run with Uvicorn (Keep as before) ---

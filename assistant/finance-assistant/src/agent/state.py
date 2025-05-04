@@ -1,7 +1,7 @@
 # assistant/finance-assistant/src/agent/state.py
 """Define the state structures for the agent."""
 
-from __future__ import annotations # Ensures compatibility with type hints
+# from __future__ import annotations # Ensures compatibility with type hints
 
 # Use typing.TypedDict for standard LangGraph state
 from typing import TypedDict, Optional, List, Dict, Any
