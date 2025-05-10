@@ -8,7 +8,7 @@ database:
   # Filename of the database currently in use.
   # Change this to switch between databases (e.g., "expenses_sample.db").
   # active_db: "expenses.db" 
-  active_db: "expenses.db"
+  active_db: "expenses_dev.db"
 
 llm:
   # Default LLM model identifier to use for the agent.
