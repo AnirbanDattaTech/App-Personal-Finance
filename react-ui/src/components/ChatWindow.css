@@ -1,0 +1,30 @@
+/* react-ui/src/components/ChatWindow.css */
+.chat-window {
+  flex-grow: 1; /* Takes up available space */
+  overflow-y: auto; /* Enables scrolling for messages */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between message bubbles */
+}
+
+.typing-indicator span {
+  display: inline-block;
+  animation: blink 1.4s infinite both;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0% { opacity: .2; }
+  20% { opacity: 1; }
+  100% { opacity: .2; }
+}

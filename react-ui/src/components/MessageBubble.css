@@ -1,0 +1,60 @@
+/* react-ui/src/components/MessageBubble.css */
+.message-bubble {
+  padding: 10px 15px;
+  border-radius: 18px;
+  max-width: 75%;
+  word-wrap: break-word; /* Prevents long words from overflowing */
+  line-height: 1.4;
+}
+
+.message-bubble.user {
+  background-color: #007bff; /* Blue for user */
+  color: white;
+  align-self: flex-end; /* Align to the right */
+  margin-left: auto; /* Pushes it to the right */
+  border-bottom-right-radius: 5px;
+}
+
+.message-bubble.assistant {
+  background-color: #e9ecef; /* Light grey for assistant */
+  color: #333;
+  align-self: flex-start; /* Align to the left */
+  margin-right: auto; /* Pushes it to the left */
+  border-bottom-left-radius: 5px;
+}
+
+.message-text {
+  margin-bottom: 8px; /* Space before chart/SQL if they exist */
+}
+.message-text:last-child { /* If no chart/sql, remove bottom margin */
+    margin-bottom: 0;
+}
+
+
+.chart-container {
+  margin-top: 10px;
+  background-color: #fff; /* White background for chart area inside bubble */
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sql-container {
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+.sql-container summary {
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #0056b3; /* Darker blue for summary */
+}
+
+.sql-container pre {
+  background-color: #f8f9fa; /* Light background for SQL code block */
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto; /* Scroll for long SQL lines */
+  border: 1px solid #dee2e6;
+}
