@@ -1,21 +1,34 @@
-# --- Database Files ---
-# Ignore the live SQLite database and its journal file
-# *.db
-# *.db-journal
-# *.sqlite
-# *.sqlite3
-# *.sqlite3-journal
+# --- Environment & Secrets ---
+# Ignore environment variables and secrets files - CRITICAL
+.env
+.env.*
+.venv/
+env/
+venv/
+ENV/
+.streamlit/secrets.toml
+
+# --- OS Specific ---
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# --- IDE Specific ---
+# Ignore IDE configuration folders
+.idea/
+.vscode/
+.spyderproject
+.spyproject
+.ropeproject
 
 # --- Python ---
-# Byte-compiled / optimized / DLL files
+# Ignore byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
 
-# Distribution / packaging
+# Ignore distribution / packaging artifacts
 .Python
 build/
 develop-eggs/
@@ -35,15 +48,15 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# PyInstaller
+# Ignore PyInstaller artifacts
 *.manifest
 *.spec
 
-# Installer logs
+# Ignore installer logs
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Unit test / coverage reports
+# Ignore unit test / coverage reports
 htmlcov/
 .tox/
 .nox/
@@ -58,116 +71,100 @@ coverage.xml
 .pytest_cache/
 cover/
 
-# Translations
+# Ignore translations artifacts
 *.mo
 *.pot
 
-# Django stuff:
-*.log
-# Note: *.sqlite3 already covered above
+# Ignore Django specific log files (already covered by *.log below)
+# *.log
 
-# Flask stuff:
+# Ignore Flask specific instance folder
 instance/
 .webassets-cache
 
-# Scrapy stuff:
+# Ignore Scrapy specific folder
 .scrapy
 
-# Sphinx documentation
+# Ignore Sphinx documentation build output
 docs/_build/
 
-# PyBuilder
+# Ignore PyBuilder output
 .pybuilder/
 target/
 
-# Jupyter Notebook
+# Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints
 
-# IPython
+# Ignore IPython configuration
 profile_default/
 ipython_config.py
 
-# pyenv
-# .python-version
-
-# pipenv
+# Ignore lock files (Optional, uncomment if not needed in repo)
 # Pipfile.lock
-
-# UV
+# poetry.lock
+# pdm.lock
 # uv.lock
 
-# poetry
-# poetry.lock
-
-# pdm
-# pdm.lock
-.pdm.toml
-.pdm-python
-.pdm-build/
-
-# PEP 582
+# Ignore PEP 582 directory
 __pypackages__/
 
-# Celery stuff
+# Ignore Celery artifacts
 celerybeat-schedule
 celerybeat.pid
 
-# SageMath parsed files
+# Ignore SageMath parsed files
 *.sage.py
 
-# Environments (Redundant entries removed, kept common ones)
-.env
-.venv/
-env/
-venv/
-ENV/
-# env.bak/ # Less common
-# venv.bak/ # Less common
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
+# Ignore mypy cache
 .mypy_cache/
 .dmypy.json
 dmypy.json
 
-# Pyre type checker
+# Ignore Pyre cache
 .pyre/
 
-# pytype static type analyzer
+# Ignore pytype cache
 .pytype/
 
-# Cython debug symbols
+# Ignore Cython debug symbols
 cython_debug/
 
-# PyCharm / JetBrains (Keep .idea ignored)
-.idea/
-
-# PyPI configuration file
+# Ignore PyPI configuration file
 .pypirc
 
-# Misc
-# env-path.txt # If used
+# --- Project Specific ---
+# Ignore generated data files (CSV, Excel, DB)
+*.csv
+*.xls
+*.xlsx
+*.db
+*.db-journal*
+*.sqlite
+*.sqlite3
+*.sqlite3-journal*
+*.sql
 
-# --- OS Specific ---
-# OS generated files
-.DS_Store
-Thumbs.db
+# Ignore log files
+*.log
+*.trace
 
-# --- IDE Specific ---
-.vscode/ # Keep ignoring VS Code settings
+# Ignore the entire 'reference' folder and its contents
+reference/
 
-# --- Streamlit Specific ---
-# Streamlit secrets file - VERY IMPORTANT TO IGNORE
-.streamlit/secrets.toml
+# Ignore LangGraph API folder (if generated locally)
+.langgraph_api/
 
-# Note: We are intentionally *NOT* ignoring the 'reference/' folder for now.
-# Note: We are intentionally *NOT* ignoring 'requirements.txt'.
+# Ignore specific static assets if not needed (like UI screenshots)
+assistant/finance-assistant/static/studio_ui.png
+
+# Ignore generated metadata/summary files IF they are purely derived
+# Example: (Keep if manually maintained or essential config)
+# reference/instructions_*.txt # KEEP THESE - they are source instructions
+# metadata/expense_metadata.json # Keep - likely source config
+# metadata/expenses_metadata_detailed.yaml # Keep - likely source config
+# data/ # Ignore the entire data directory for safety
+data/
+
+# --- Miscellaneous ---
+# Add any other specific files or patterns to ignore below
+# Example: temp_output.txt

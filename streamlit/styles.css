@@ -226,3 +226,16 @@ form[data-testid="stForm"] div[data-testid="stNumberInput"][key="add_amount"] {
     margin-top: 1.1rem; /* Adjust this value to visually align with first row */
                      /* This assumes the first row (Account/Type) doesn't need extra top margin */
 }
+
+/* Add this to streamlit/styles.css */
+/* Target the div containing the main value within st.metric */
+[data-testid="stMetricValue"] > div {
+    font-size: 1.75rem !important; /* Adjust size as needed (e.g., 1.5rem, 2rem) */
+}
+
+/* Optional: Target the label if needed */
+/*
+[data-testid="stMetricLabel"] p {
+    font-size: 0.9rem !important;
+}
+*/

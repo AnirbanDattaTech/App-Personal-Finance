@@ -1,0 +1,25 @@
+# config/config.yaml
+# Central configuration settings for the Personal Finance Assistant project.
+
+database:
+  # Directory containing database files, relative to the project root.
+  directory: "data"
+
+  # Filename of the database currently in use.
+  # Change this to switch between databases (e.g., "expenses_sample.db").
+  # active_db: "expenses.db" 
+  active_db: "expenses_dev.db"
+
+llm:
+  # Default LLM model identifier to use for the agent.
+  # Options based on current testing: "gemini-1.5-flash-latest", "gemini-1.5-pro-latest" (or other valid Gemini model IDs)
+  # Future: Add 'provider' key here (e.g., "google", "openai")
+  default_model: "gemini-1.5-flash-latest"
+
+paths:
+  # Path to the detailed metadata file, relative to the project root.
+  metadata_file: "metadata/expenses_metadata_detailed.yaml"
+
+# Future sections can be added below, e.g., for UI settings:
+# streamlit:
+#   setting_1: value_1
